@@ -39,9 +39,6 @@ class ReferencePanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->resources([
-                config('filament-logger.activity_resource')
-            ])
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Reference/Resources'), for: 'App\\Filament\\Reference\\Resources')
             ->discoverPages(in: app_path('Filament/Reference/Pages'), for: 'App\\Filament\\Reference\\Pages')

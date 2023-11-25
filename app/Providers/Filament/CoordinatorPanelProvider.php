@@ -39,9 +39,6 @@ class CoordinatorPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->resources([
-                config('filament-logger.activity_resource')
-            ])
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Coordinator/Resources'), for: 'App\\Filament\\Coordinator\\Resources')
             ->discoverPages(in: app_path('Filament/Coordinator/Pages'), for: 'App\\Filament\\Coordinator\\Pages')
