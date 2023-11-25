@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Filament\Reference\Resources\CertificateResource\Pages;
+
+use App\Filament\Reference\Resources\CertificateResource;
+use Filament\Actions;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateCertificate extends CreateRecord
+{
+    protected static string $resource = CertificateResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+}
