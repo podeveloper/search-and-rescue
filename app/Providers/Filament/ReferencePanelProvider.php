@@ -39,6 +39,10 @@ class ReferencePanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->brandName('MAKUD SAR')
+            ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.jpg' : 'img/panel-logo.jpg'))
+            ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
+            ->favicon(asset('img/favicon-32x32.png'))
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Reference/Resources'), for: 'App\\Filament\\Reference\\Resources')
             ->discoverPages(in: app_path('Filament/Reference/Pages'), for: 'App\\Filament\\Reference\\Pages')

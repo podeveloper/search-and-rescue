@@ -28,6 +28,10 @@ class CandidatePanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->brandName('MAKUD SAR')
+            ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.jpg' : 'img/panel-logo.jpg'))
+            ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
+            ->favicon(asset('img/favicon-32x32.png'))
             ->discoverResources(in: app_path('Filament/Candidate/Resources'), for: 'App\\Filament\\Candidate\\Resources')
             ->discoverPages(in: app_path('Filament/Candidate/Pages'), for: 'App\\Filament\\Candidate\\Pages')
             ->pages([

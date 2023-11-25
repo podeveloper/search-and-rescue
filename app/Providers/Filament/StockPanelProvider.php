@@ -42,6 +42,10 @@ class StockPanelProvider extends PanelProvider
             ->resources([
                 //
             ])
+            ->brandName('MAKUD SAR')
+            ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.jpg' : 'img/panel-logo.jpg'))
+            ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
+            ->favicon(asset('img/favicon-32x32.png'))
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Stock/Resources'), for: 'App\\Filament\\Stock\\Resources')
             ->discoverPages(in: app_path('Filament/Stock/Pages'), for: 'App\\Filament\\Stock\\Pages')

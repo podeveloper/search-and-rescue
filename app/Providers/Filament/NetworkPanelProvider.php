@@ -42,6 +42,10 @@ class NetworkPanelProvider extends PanelProvider
             ->resources([
                 //
             ])
+            ->brandName('MAKUD SAR')
+            ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.jpg' : 'img/panel-logo.jpg'))
+            ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
+            ->favicon(asset('img/favicon-32x32.png'))
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Network/Resources'), for: 'App\\Filament\\Network\\Resources')
             ->discoverPages(in: app_path('Filament/Network/Pages'), for: 'App\\Filament\\Network\\Pages')
