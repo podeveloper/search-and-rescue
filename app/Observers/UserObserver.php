@@ -1,0 +1,125 @@
+<?php
+
+namespace App\Observers;
+
+use App\Helpers\FilamentRequest;
+use App\Jobs\SendUserAppliedNotificationToCoordinators;
+use App\Models\Address;
+use App\Models\RegistrationQuestionAnswer;
+use App\Models\SocialAccount;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
+class UserObserver
+{
+    /**
+     * Handle the User "creating" event.
+     */
+    public function creating(User $user): void
+    {
+        $randomString = Str::random(8);
+        $user->password_temp = $randomString;
+        $user->password = Hash::make($randomString);
+    }
+
+    /**
+     * Handle the User "created" event.
+     */
+    public function created(User $user): void
+    {
+        $user->assignRole('candidate');
+
+        $request = FilamentRequest::get(request());
+
+        if ($request)
+        {
+            if ($request->speaking_languages)
+            {
+                foreach ($request->speaking_languages as $language)
+                {
+                    $user->languages()->attach($language);
+                }
+            }
+
+            $socialPlatforms = ['instagram','facebook','twitter'];
+            foreach ($socialPlatforms as $platform)
+            {
+                if ($request->$platform){
+                    SocialAccount::create([
+                        'user_id' => $user->id,
+                        'platform' => $platform,
+                        'username' => $request->$platform,
+                    ]);
+                }
+            }
+
+            if ($request->country_id) {
+                Address::create([
+                    'type' => 'home',
+                    'country_id' => $request->country_id,
+                    'city_id' => $request->city_id,
+                    'district_id' => $request->district_id,
+                    'user_id' => $user->id,
+                ]);
+            }
+
+            $questions = $this->extract($request,'question_');
+            foreach ($questions as $questionId => $answer)
+            {
+                RegistrationQuestionAnswer::create([
+                    'text' => $answer,
+                    'user_id' => $user->id,
+                    'question_id' => $questionId,
+                ]);
+            }
+        }
+
+        SendUserAppliedNotificationToCoordinators::dispatch($user);
+    }
+
+    /**
+     * Handle the User "updated" event.
+     */
+    public function updated(User $user): void
+    {
+        //
+    }
+
+    /**
+     * Handle the User "deleted" event.
+     */
+    public function deleted(User $user): void
+    {
+        //
+    }
+
+    /**
+     * Handle the User "restored" event.
+     */
+    public function restored(User $user): void
+    {
+        //
+    }
+
+    /**
+     * Handle the User "force deleted" event.
+     */
+    public function forceDeleted(User $user): void
+    {
+        //
+    }
+
+    function extract($object,$searchKey) {
+        $questions = [];
+
+        foreach ((array) $object as $key => $value) {
+            if (strpos($key, $searchKey) === 0 && $value !== null) {
+                $questionNumber = substr($key, strlen($searchKey));
+                $questions[$questionNumber] = $value;
+            }
+        }
+
+        return $questions;
+    }
+}
