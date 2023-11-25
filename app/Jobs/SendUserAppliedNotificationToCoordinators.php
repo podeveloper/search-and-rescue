@@ -16,14 +16,14 @@ class SendUserAppliedNotificationToCoordinators
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $volunteer;
+    public $user;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(User $volunteer)
+    public function __construct(User $user)
     {
-        $this->volunteer = $volunteer;
+        $this->user = $user;
     }
 
     /**
@@ -35,7 +35,7 @@ class SendUserAppliedNotificationToCoordinators
             $coordinators = User::whereHas('roles', fn($query) => $query->where('name', 'coordinator'))->get();
 
             Notification::make()
-                ->title('New Volunteer Application: ' . $this->volunteer->full_name)
+                ->title('New Candidate Application: ' . $this->user->full_name)
                 ->icon('heroicon-o-user')
                 ->sendToDatabase($coordinators);
         }catch (\Exception $exception)
