@@ -2,9 +2,9 @@
 
 return [
     'reference' => 'Reference Panel',
+    'candidate' => 'Candidate Member Panel',
+    'official' => 'Official Member Panel',
     'network' => 'Network Panel',
     'stock' => 'Stock Panel',
-    'call_center' => 'Call Center Panel',
     'coordinator' => 'Coordinator Panel',
-    'training' => 'Training Panel',
 ];

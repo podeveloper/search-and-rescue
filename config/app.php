@@ -171,6 +171,8 @@ return [
         App\Providers\Filament\NetworkPanelProvider::class,
         App\Providers\Filament\StockPanelProvider::class,
         App\Providers\Filament\ReferencePanelProvider::class,
+        App\Providers\Filament\CandidatePanelProvider::class,
+        App\Providers\Filament\OfficialPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
     ])->toArray(),
 
