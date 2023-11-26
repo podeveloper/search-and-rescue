@@ -55,6 +55,12 @@ class UserResource extends Resource
                     ->label(__('general.profile_photo')),
                 Forms\Components\Section::make('Personal Info')
                     ->schema([
+                        Forms\Components\TextInput::make('national_id_number')
+                            ->required()
+                            ->numeric(),
+                        Forms\Components\TextInput::make('passport_number')
+                            ->nullable()
+                            ->string(),
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->string()
@@ -223,6 +229,16 @@ class UserResource extends Resource
                         ->circular()
                         ->toggleable()
                         ->label(__('general.profile_photo')),
+                    Tables\Columns\TextColumn::make('national_id_number')
+                        ->weight(FontWeight::Bold)
+                        ->searchable()
+                        ->sortable()
+                        ->toggleable(),
+                    Tables\Columns\TextColumn::make('passport_number')
+                        ->weight(FontWeight::Bold)
+                        ->searchable()
+                        ->sortable()
+                        ->toggleable(),
                     Tables\Columns\TextColumn::make('name')
                         ->weight(FontWeight::Bold)
                         ->searchable()
@@ -438,7 +454,22 @@ class UserResource extends Resource
                 ])->collapsible()
             ])
             ->filters([
-
+                Tables\Filters\Filter::make('national_id_number')
+                    ->form([
+                        Forms\Components\TextInput::make('national_id_number'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $national_id_number = $data['national_id_number'];
+                        return $national_id_number ? $query->where('national_id_number', 'like', '%' . $national_id_number . '%') : $query;
+                    }),
+                Tables\Filters\Filter::make('passport_number')
+                    ->form([
+                        Forms\Components\TextInput::make('passport_number'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $passport_number = $data['passport_number'];
+                        return $passport_number ? $query->where('passport_number', 'like', '%' . $passport_number . '%') : $query;
+                    }),
                 Tables\Filters\Filter::make('name')
                     ->form([
                         Forms\Components\TextInput::make('name')
