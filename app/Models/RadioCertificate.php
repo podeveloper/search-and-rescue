@@ -12,6 +12,7 @@ class RadioCertificate extends Model
 
     protected $fillable = [
         'call_sign',
+        'radio_net_sign',
         'licence_number',
         'licence_class',
         'date_of_issue',

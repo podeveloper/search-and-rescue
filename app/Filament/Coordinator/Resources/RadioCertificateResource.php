@@ -28,6 +28,8 @@ class RadioCertificateResource extends Resource
                 Forms\Components\TextInput::make('call_sign')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('radio_net_sign')
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('licence_number')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('licence_class')
@@ -47,6 +49,8 @@ class RadioCertificateResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('call_sign')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('radio_net_sign')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('licence_number')
                     ->searchable(),

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('radio_certificates', function (Blueprint $table) {
             $table->id();
             $table->string('call_sign');
+            $table->string('radio_net_sign')->nullable();
             $table->string('licence_number')->nullable();
             $table->string('licence_class')->nullable();
             $table->date('date_of_issue')->nullable();
