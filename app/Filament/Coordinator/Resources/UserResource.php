@@ -3,6 +3,7 @@
 namespace App\Filament\Coordinator\Resources;
 
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\AddressesRelationManager;
+use App\Filament\Coordinator\Resources\UserResource\RelationManagers\DriverLicencesRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\RegistrationQuestionAnswersRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\SocialAccountsRelationManager;
 use App\Filament\Reference\Resources\UserResource\RelationManagers\CertificatesRelationManager;
@@ -675,6 +676,7 @@ class UserResource extends Resource
             SocialAccountsRelationManager::class,
             CertificatesRelationManager::class,
             RegistrationQuestionAnswersRelationManager::class,
+            DriverLicencesRelationManager::class,
         ];
     }
 
