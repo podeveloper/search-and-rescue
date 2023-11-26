@@ -2,8 +2,8 @@
 
 namespace App\Filament\Coordinator\Resources\UserResource\RelationManagers;
 
-use App\Filament\Coordinator\Resources\DriverLicenceResource;
-use App\Models\DriverLicence;
+use App\Filament\Coordinator\Resources\RadioCertificateResource;
+use App\Models\RadioCertificate;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -12,19 +12,19 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class DriverLicencesRelationManager extends RelationManager
+class RadioCertificateRelationManager extends RelationManager
 {
-    protected static string $relationship = 'driverLicences';
+    protected static string $relationship = 'radioCertificate';
 
     public function form(Form $form): Form
     {
-        return DriverLicenceResource::form($form);
+        return RadioCertificateResource::form($form);
     }
 
     public function table(Table $table): Table
     {
-        return DriverLicenceResource::table($table)
-            ->recordTitleAttribute('class')
+        return RadioCertificateResource::table($table)
+            ->recordTitleAttribute('call_sign')
             ->filters([
                 //
             ])
@@ -34,11 +34,11 @@ class DriverLicencesRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\Action::make('pdf')
                     ->icon('heroicon-o-document-text')
-                    ->url(function (DriverLicence $record){
+                    ->url(function (RadioCertificate $record){
                         return $record->pdf ? route('files.show', ['path' => $record->pdf]) : '';
                     })
                     ->openUrlInNewTab()
-                    ->visible(fn (DriverLicence $record): string => $record->pdf != null),
+                    ->visible(fn (RadioCertificate $record): string => $record->pdf != null),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

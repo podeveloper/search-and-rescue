@@ -261,4 +261,13 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasOne(HealthProfile::class);
     }
+    public function firstAidCertificate()
+    {
+        return $this->hasOne(FirstAidCertificate::class, 'user_id');
+    }
+
+    public function radioCertificate()
+    {
+        return $this->hasOne(RadioCertificate::class, 'user_id');
+    }
 }
