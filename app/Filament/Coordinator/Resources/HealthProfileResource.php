@@ -18,14 +18,15 @@ class HealthProfileResource extends Resource
     protected static ?string $model = HealthProfile::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Select::make('blood_type')
+                    ->columnSpanFull()
+                    ->options(HealthProfile::types()),
                 Forms\Components\Textarea::make('medications')
                     ->maxLength(65535)
                     ->columnSpanFull(),
@@ -46,10 +47,13 @@ class HealthProfileResource extends Resource
                 Forms\Components\TextInput::make('emergency_contact_phone')
                     ->tel()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('blood_type')
-                    ->maxLength(255),
                 Forms\Components\Textarea::make('other_health_information')
                     ->columnSpanFull(),
+                Forms\Components\Select::make('user_id')
+                    ->relationship('user', 'full_name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
             ]);
     }
 
@@ -57,14 +61,14 @@ class HealthProfileResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user_id')
+                Tables\Columns\TextColumn::make('user.full_name')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('blood_type')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('emergency_contact_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('emergency_contact_phone')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('blood_type')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

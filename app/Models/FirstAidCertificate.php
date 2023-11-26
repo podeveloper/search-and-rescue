@@ -11,11 +11,12 @@ class FirstAidCertificate extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'user_id',
         'licence_number',
         'training_institution',
         'date_of_issue',
-        'expiration_date'
+        'expiration_date',
+        'pdf',
+        'user_id',
     ];
 
     protected $dates = [

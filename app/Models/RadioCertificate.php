@@ -17,6 +17,7 @@ class RadioCertificate extends Model
         'licence_class',
         'date_of_issue',
         'expiration_date',
+        'pdf',
         'user_id',
     ];
 
@@ -25,5 +26,14 @@ class RadioCertificate extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public static function classifications()
+    {
+        return [
+            'A' => 'A',
+            'B' => 'B',
+            'C' => 'C',
+        ];
     }
 }

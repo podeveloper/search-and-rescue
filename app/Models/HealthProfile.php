@@ -27,4 +27,13 @@ class HealthProfile extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public static function types()
+    {
+        return [
+            'A' => 'A',
+            'B' => 'B',
+            'C' => 'C',
+        ];
+    }
 }

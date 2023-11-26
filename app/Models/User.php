@@ -252,7 +252,7 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Vehicle::class);
     }
 
-    public function driverLicence()
+    public function driverLicences()
     {
         return $this->hasOne(DriverLicence::class, 'user_id');
     }
@@ -260,5 +260,14 @@ class User extends Authenticatable implements FilamentUser
     public function healthProfile()
     {
         return $this->hasOne(HealthProfile::class);
+    }
+    public function firstAidCertificate()
+    {
+        return $this->hasOne(FirstAidCertificate::class, 'user_id');
+    }
+
+    public function radioCertificate()
+    {
+        return $this->hasOne(RadioCertificate::class, 'user_id');
     }
 }
