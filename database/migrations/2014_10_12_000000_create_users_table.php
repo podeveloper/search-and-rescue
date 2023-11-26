@@ -35,6 +35,8 @@ return new class extends Migration
             $table->foreignId('organisation_id')->nullable()->constrained()->nullOnDelete();
             $table->string('organisation_text')->nullable();
             $table->string('marital_status')->nullable();
+            $table->string('national_id_number');
+            $table->string('passport_number');
             $table->boolean('is_admin')->default(false);
             $table->boolean('kvkk')->default(true);
             $table->longText('note')->nullable();

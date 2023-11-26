@@ -52,6 +52,8 @@ class User extends Authenticatable implements FilamentUser
         'organisation_id',
         'organisation_text',
         'marital_status',
+        'national_id_number',
+        'passport_number',
         'is_admin',
         'kvkk',
         'note',
@@ -243,5 +245,20 @@ class User extends Authenticatable implements FilamentUser
     public function registrationQuestionAnswers(): HasMany
     {
         return $this->hasMany(RegistrationQuestionAnswer::class);
+    }
+
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class);
+    }
+
+    public function driverLicence()
+    {
+        return $this->hasOne(DriverLicence::class, 'user_id');
+    }
+
+    public function healthProfile()
+    {
+        return $this->hasOne(HealthProfile::class);
     }
 }
