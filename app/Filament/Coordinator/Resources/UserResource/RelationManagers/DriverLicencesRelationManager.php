@@ -24,7 +24,6 @@ class DriverLicencesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return DriverLicenceResource::table($table)
-            ->recordTitleAttribute('class')
             ->filters([
                 //
             ])

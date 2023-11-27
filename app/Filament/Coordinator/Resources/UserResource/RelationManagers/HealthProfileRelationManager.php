@@ -23,7 +23,6 @@ class HealthProfileRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return HealthProfileResource::table($table)
-            ->recordTitleAttribute('blood_type')
             ->filters([
                 //
             ])

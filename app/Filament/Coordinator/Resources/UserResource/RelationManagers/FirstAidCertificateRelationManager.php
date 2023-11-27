@@ -26,7 +26,6 @@ class FirstAidCertificateRelationManager extends RelationManager
     {
 
         return FirstAidCertificateResource::table($table)
-            ->recordTitleAttribute('licence_number')
             ->filters([
                 //
             ])

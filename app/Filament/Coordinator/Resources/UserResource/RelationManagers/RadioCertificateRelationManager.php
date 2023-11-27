@@ -24,7 +24,6 @@ class RadioCertificateRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return RadioCertificateResource::table($table)
-            ->recordTitleAttribute('call_sign')
             ->filters([
                 //
             ])

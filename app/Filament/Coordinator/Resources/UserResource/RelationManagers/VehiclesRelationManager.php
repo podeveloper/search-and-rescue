@@ -23,7 +23,6 @@ class VehiclesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return VehicleResource::table($table)
-            ->recordTitleAttribute('licence_plate')
             ->filters([
                 //
             ])
