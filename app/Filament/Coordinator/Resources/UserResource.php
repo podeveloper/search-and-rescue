@@ -46,7 +46,15 @@ class UserResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['name', 'surname', 'full_name', 'email', 'phone','nationality.name','educationLevel.name','occupation.name','occupation_text','organisation.name','organisation_text','languages.name','tags.name','categories.name','certificates.title','addresses.country.name','addresses.city.name','addresses.district.name'];
+        return [
+            'name', 'surname', 'full_name', 'email', 'phone','nationality.name','educationLevel.name','occupation.name','occupation_text','organisation.name','organisation_text','languages.name','tags.name','categories.name','certificates.title','addresses.country.name','addresses.city.name','addresses.district.name',
+            'driverLicences.class',
+            'firstAidCertificate.training_institution',
+            'healthProfile.medications','healthProfile.allergies','healthProfile.medical_conditions','healthProfile.vision_aids',
+            'healthProfile.prosthetics','healthProfile.emergency_contact_name','healthProfile.emergency_contact_phone','healthProfile.blood_type',
+            'radioCertificate.call_sign','radioCertificate.radio_net_sign','radioCertificate.licence_class',
+            'vehicles.brand','vehicles.model','vehicles.year','vehicles.color','vehicles.licence_plate',
+        ];
     }
 
     public static function form(Form $form): Form

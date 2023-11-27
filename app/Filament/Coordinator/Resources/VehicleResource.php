@@ -60,6 +60,7 @@ class VehicleResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('user.full_name')
                     ->numeric()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('brand')
                     ->searchable(),
@@ -67,6 +68,7 @@ class VehicleResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('year')
                     ->numeric()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('color')
                     ->searchable(),
