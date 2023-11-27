@@ -30,6 +30,15 @@ class HealthProfile extends Model
 
     public static function types()
     {
-        return ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+        return [
+            "A+" => "A+",
+            "A-" => "A-",
+            "B+" => "B+",
+            "B-" => "B-",
+            "AB+" => "AB+",
+            "AB-" => "AB-",
+            "0+" => "0+",
+            "0-" => "0-"
+        ];
     }
 }
