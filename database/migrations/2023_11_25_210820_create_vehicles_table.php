@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vehicle_models', function (Blueprint $table) {
+        Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
-            $table->string('make')->nullable();
+            $table->string('brand')->nullable();
             $table->string('model')->nullable();
             $table->integer('year')->nullable();
             $table->string('color')->nullable();

@@ -9,6 +9,7 @@ use App\Filament\Coordinator\Resources\UserResource\RelationManagers\HealthProfi
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\RadioCertificateRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\RegistrationQuestionAnswersRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\SocialAccountsRelationManager;
+use App\Filament\Coordinator\Resources\UserResource\RelationManagers\VehiclesRelationManager;
 use App\Filament\Reference\Resources\UserResource\RelationManagers\CertificatesRelationManager;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Candidate\Resources;
@@ -683,6 +684,7 @@ class UserResource extends Resource
             FirstAidCertificateRelationManager::class,
             RadioCertificateRelationManager::class,
             HealthProfileRelationManager::class,
+            VehiclesRelationManager::class,
         ];
     }
 

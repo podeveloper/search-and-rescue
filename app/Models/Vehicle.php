@@ -11,7 +11,7 @@ class Vehicle extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'make',
+        'brand',
         'model',
         'year',
         'color',
@@ -24,5 +24,22 @@ class Vehicle extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public static function colors(): array
+    {
+        return [
+            'red'    => 'Red',
+            'green'  => 'Green',
+            'blue'   => 'Blue',
+            'yellow' => 'Yellow',
+            'orange' => 'Orange',
+            'purple' => 'Purple',
+            'pink'   => 'Pink',
+            'brown'  => 'Brown',
+            'gray'   => 'Gray',
+            'black'  => 'Black',
+            'white'  => 'White',
+        ];
     }
 }
