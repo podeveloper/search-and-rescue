@@ -270,4 +270,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasOne(RadioCertificate::class, 'user_id');
     }
+
+    public function forestFireFightingCertificate()
+    {
+        return $this->hasOne(ForestFireFightingCertificate::class, 'user_id');
+    }
 }

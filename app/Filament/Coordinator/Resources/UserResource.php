@@ -5,6 +5,7 @@ namespace App\Filament\Coordinator\Resources;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\AddressesRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\DriverLicencesRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\FirstAidCertificateRelationManager;
+use App\Filament\Coordinator\Resources\UserResource\RelationManagers\ForestFireFightingCertificateRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\HealthProfileRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\RadioCertificateRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\RegistrationQuestionAnswersRelationManager;
@@ -693,6 +694,7 @@ class UserResource extends Resource
             RadioCertificateRelationManager::class,
             HealthProfileRelationManager::class,
             VehiclesRelationManager::class,
+            ForestFireFightingCertificateRelationManager::class,
         ];
     }
 
