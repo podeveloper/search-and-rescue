@@ -25,6 +25,8 @@ class OfficialPanelProvider extends PanelProvider
         return $panel
             ->id('official')
             ->path('official')
+            ->login()
+            ->passwordReset()
             ->colors([
                 'primary' => Color::Amber,
             ])

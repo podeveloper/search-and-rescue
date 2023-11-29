@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Candidate\Pages\Auth\Apply;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -25,6 +26,9 @@ class CandidatePanelProvider extends PanelProvider
         return $panel
             ->id('candidate')
             ->path('candidate')
+            ->login()
+            ->passwordReset()
+            ->registration(Apply::class)
             ->colors([
                 'primary' => Color::Amber,
             ])
