@@ -14,6 +14,10 @@ use App\Http\Controllers\FileController;
 */
 
 Route::get('/', function () {
+    if (!auth()->check())
+    {
+        return redirect()->to(request()->url().'/candidate/login');
+    }
     return view('welcome');
 });
 

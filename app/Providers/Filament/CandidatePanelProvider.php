@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Candidate\Pages\Auth\Apply;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -25,10 +26,13 @@ class CandidatePanelProvider extends PanelProvider
         return $panel
             ->id('candidate')
             ->path('candidate')
+            ->login()
+            ->passwordReset()
+            ->registration(Apply::class)
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->brandName('MAKUD SAR')
+            ->brandName(env('APP_NAME'))
             ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.jpg' : 'img/panel-logo.jpg'))
             ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
             ->favicon(asset('img/favicon-32x32.png'))
