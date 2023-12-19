@@ -13,12 +13,11 @@ use App\Http\Controllers\FileController;
 |
 */
 
+Route::get('login', fn () => redirect()->route('filament.candidate.auth.login'))->name('login');
+
 Route::get('/', function () {
-    if (!auth()->check())
-    {
-        return redirect()->to(request()->url().'/candidate/login');
-    }
-    return view('welcome');
+    $redirectUrl = request()->url().'/candidate';
+    return auth()->check() ? redirect()->to($redirectUrl) : redirect()->to($redirectUrl.'/login');
 });
 
 Route::get('/files/{path}', [FileController::class, 'show'])
