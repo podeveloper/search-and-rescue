@@ -668,7 +668,6 @@ class UserResource extends Resource
             ->defaultSort('full_name','asc')
             ->filtersFormColumns(4)
             ->actions([
-                Tables\Actions\CreateAction::make(),
                 Tables\Actions\EditAction::make(),
                 Impersonate::make()->redirectTo(URL::to('/admin'))
             ])
@@ -714,10 +713,5 @@ class UserResource extends Resource
         return Cache::rememberForever($cacheKey, function () {
             return self::getModel()::count();
         });
-    }
-
-    public static function canCreate(): bool
-    {
-        return false;
     }
 }
