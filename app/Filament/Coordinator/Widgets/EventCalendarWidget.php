@@ -105,6 +105,7 @@ class EventCalendarWidget extends FullCalendarWidget
             Grid::make()
                 ->schema([
                     TextInput::make('title')
+                        ->required()
                         ->label(__('general.title')),
                     TextInput::make('description')
                         ->label(__('general.description')),
