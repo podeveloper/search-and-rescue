@@ -21,13 +21,16 @@ class EssentialSeeder extends Seeder
         $this->call(OccupationSeeder::class);
         $this->call(RoleSeeder::class);
 
-        \App\Models\User::factory()->createQuietly([
+        $adminUser = \App\Models\User::factory()->createQuietly([
             'name' => config('seed.admin.name'),
             'surname' => 'Admin',
             'full_name' => config('seed.admin.name') . ' ' . 'Admin',
             'email' => config('seed.admin.email'),
+            'username' => 'adminuser',
             'is_admin' => true,
             'password' => bcrypt(config('seed.admin.password')),
         ]);
+
+        $adminUser->assignRole('coordinator');
     }
 }
