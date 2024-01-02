@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\CacheUpdateTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Certificate extends Model
 {
-    use HasFactory, SoftDeletes, CacheUpdateTrait;
+    use HasFactory, SoftDeletes;
 
     public $timestamps = false;
 
@@ -19,10 +18,6 @@ class Certificate extends Model
         'text',
     ];
 
-    protected static function boot() {
-        parent::boot();
-        self::bootCacheUpdateTrait();
-    }
 
     public function users()
     {

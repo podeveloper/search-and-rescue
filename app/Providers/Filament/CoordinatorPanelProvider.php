@@ -2,6 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Coordinator\Pages\Dashboard;
+use App\Filament\Coordinator\Widgets\EventCalendarWidget;
+use App\Filament\Coordinator\Widgets\GenderStatsOverview;
+use App\Filament\Coordinator\Widgets\TodoCalendarWidget;
+use App\Filament\Coordinator\Widgets\TodoChart;
+use App\Filament\Coordinator\Widgets\TodoOverview;
 use BezhanSalleh\FilamentLanguageSwitch\FilamentLanguageSwitchPlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -22,8 +28,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use lockscreen\FilamentLockscreen\Http\Middleware\Locker;
-use lockscreen\FilamentLockscreen\Lockscreen;
 use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
@@ -32,7 +36,6 @@ class CoordinatorPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
             ->id('coordinator')
             ->path('coordinator')
             ->login()
@@ -40,15 +43,17 @@ class CoordinatorPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->resources([
+                //
+            ])
             ->brandName(env('APP_NAME'))
             ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.jpg' : 'img/panel-logo.jpg'))
             ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
-            ->favicon(asset('img/favicon-32x32.png'))
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Coordinator/Resources'), for: 'App\\Filament\\Coordinator\\Resources')
             ->discoverPages(in: app_path('Filament/Coordinator/Pages'), for: 'App\\Filament\\Coordinator\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->plugins([
                 FilamentShieldPlugin::make(),
@@ -59,12 +64,16 @@ class CoordinatorPanelProvider extends PanelProvider
                 FilamentLanguageSwitchPlugin::make(),
                 SpotlightPlugin::make(),
                 ThemesPlugin::make(),
-                new Lockscreen(),
             ])
-            ->discoverWidgets(in: app_path('Filament/Coordinator/Widgets'), for: 'App\\Filament\\Coordinator\\Widgets')
+            //->discoverWidgets(in: app_path('Filament/Coordinator/Widgets'), for: 'App\\Filament\\Coordinator\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+                EventCalendarWidget::class,
+                GenderStatsOverview::class,
+                TodoCalendarWidget::class,
+                TodoChart::class,
+                TodoOverview::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -81,7 +90,6 @@ class CoordinatorPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
-                Locker::class,
             ])
             ->userMenuItems([
                 MenuItem::make()

@@ -3,20 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\CacheUpdateTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class RegistrationQuestionAnswer extends Model
 {
-    use HasFactory, SoftDeletes, CacheUpdateTrait;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = ['text', 'user_id', 'question_id'];
 
-    protected static function boot() {
-        parent::boot();
-        self::bootCacheUpdateTrait();
-    }
 
     public function user()
     {
