@@ -1,0 +1,80 @@
+{
+    "arimo-regular": {
+        "normal": "arimo_regular_normal_149952411e59cade50c3d0862e952b33"
+    },
+    "arimo-variablefont_wght": {
+        "normal": "arimo_variablefont_wght_normal_3cef3c4a85a6e598b40de9ff16aec7cd"
+    },
+    "arimo-medium": {
+        "normal": "arimo_medium_normal_1354906f40c9900f98ac5d4da3aac47a"
+    },
+    "arimo-mediumitalic": {
+        "normal": "arimo_mediumitalic_normal_7cc4c71d980ec08325f090e510d9c7d2"
+    },
+    "greatvibes-regular": {
+        "normal": "greatvibes_regular_normal_5730f123dbefe1e543f49ba1b82f2002"
+    },
+    "merriweather-black": {
+        "normal": "merriweather_black_normal_c4a6f03476a5938451dd078bf395e36d"
+    },
+    "merriweather-blackitalic": {
+        "normal": "merriweather_blackitalic_normal_8d5d820da7547e04d9cf39b9b4c96652"
+    },
+    "merriweather-bold": {
+        "normal": "merriweather_bold_normal_41a0d5a1589b96d6c0b6711edaa9eb66"
+    },
+    "merriweather-bolditalic": {
+        "normal": "merriweather_bolditalic_normal_22851da46b7bf2e963ae448d05ec38c5"
+    },
+    "merriweather-italic": {
+        "normal": "merriweather_italic_normal_0e26a020c040853bdb07ae813dda6731"
+    },
+    "merriweather-light": {
+        "normal": "merriweather_light_normal_fbe12dcfa199e3d673b0518c54e29729"
+    },
+    "merriweather-lightitalic": {
+        "normal": "merriweather_lightitalic_normal_dae6a616f9335a7ce1b9b8b31739d42d"
+    },
+    "merriweather-regular": {
+        "normal": "merriweather_regular_normal_0eaa21719eabe19828d12cce255506e9"
+    },
+    "roboto-black": {
+        "normal": "roboto_black_normal_792e3d65f481bf7ac7970c052f2ff37c"
+    },
+    "roboto-blackitalic": {
+        "normal": "roboto_blackitalic_normal_c0a5dd2b41e2fef1453f0e41beebc71e"
+    },
+    "roboto-bold": {
+        "normal": "roboto_bold_normal_8d74726571d382d9d549b3c589af0239"
+    },
+    "roboto-bolditalic": {
+        "normal": "roboto_bolditalic_normal_29f4463f1cdcb27042d2c7e4364327df"
+    },
+    "roboto-italic": {
+        "normal": "roboto_italic_normal_bf2ed79bc1c7884e7e1b8b109a2c6e3d"
+    },
+    "roboto-light": {
+        "normal": "roboto_light_normal_029c6f982093a283968fb71631eac1c3"
+    },
+    "roboto-lightitalic": {
+        "normal": "roboto_lightitalic_normal_17ff6575c2c7b148095471980467ba94"
+    },
+    "roboto-medium": {
+        "normal": "roboto_medium_normal_42fe5ce663369d111d6ec6a3482abc67"
+    },
+    "roboto-mediumitalic": {
+        "normal": "roboto_mediumitalic_normal_a4bcd301d30b1d700df0b0e530a66936"
+    },
+    "roboto-regular": {
+        "normal": "roboto_regular_normal_890980ac9de75ab2a50700d19b3e98e1"
+    },
+    "roboto-thin": {
+        "normal": "roboto_thin_normal_9fba1fb56057465d60cca489fab98d23"
+    },
+    "roboto-thinitalic": {
+        "normal": "roboto_thinitalic_normal_a2f150a20587a59dcad6644efe06f589"
+    },
+    "shaikh hamdullah mushaf": {
+        "normal": "shaikh_hamdullah_mushaf_normal_53053e495d288d290d1bcd2d1d16062f"
+    }
+}
