@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
+use App\Events\UserApplied;
 use App\Helpers\FilamentRequest;
-use App\Jobs\SendUserAppliedNotificationToCoordinators;
 use App\Models\Address;
 use App\Models\RegistrationQuestionAnswer;
 use App\Models\SocialAccount;
@@ -21,6 +21,22 @@ class UserObserver
         $randomString = Str::random(8);
         $user->password_temp = $randomString;
         $user->password = Hash::make($randomString);
+
+        $user->name = strtoupper($user->name);
+        $user->surname = strtoupper($user->surname);
+        $user->full_name = $user->name . ' ' . $user->surname;
+    }
+
+    /**
+     * Handle the User "updating" event.
+     */
+    public function updating(User $user): void
+    {
+        if ($user->isDirty('name') || $user->isDirty('surname'))  {
+            $user->name = strtoupper($user->name);
+            $user->surname = strtoupper($user->surname);
+            $user->full_name = $user->name . ' ' . $user->surname;
+        }
     }
 
     /**
@@ -28,8 +44,6 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        $user->assignRole('candidate');
-
         $request = FilamentRequest::get(request());
 
         if ($request)
@@ -75,7 +89,7 @@ class UserObserver
             }
         }
 
-        SendUserAppliedNotificationToCoordinators::dispatch($user);
+        UserApplied::dispatch($user);
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\CacheUpdateTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Visitor extends Model
 {
-    use HasFactory, SoftDeletes, CacheUpdateTrait;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -40,15 +39,16 @@ class Visitor extends Model
     protected static function boot()
     {
         parent::boot();
-        self::bootCacheUpdateTrait();
 
-        static::creating(function ($user) {
-            $user->full_name = $user->name . ' ' . $user->surname;
+        static::creating(function ($visitor) {
+            if ($visitor->full_name === null) {
+                $visitor->full_name = ($visitor->name ?? '') . ' ' . ($visitor->surname ?? '');
+            }
         });
 
-        static::updating(function ($user) {
-            if ($user->isDirty(['name', 'surname'])) {
-                $user->full_name = $user->name . ' ' . $user->surname;
+        static::updating(function ($visitor) {
+            if ($visitor->isDirty(['name', 'surname'])) {
+                $visitor->full_name = $visitor->name . ' ' . $visitor->surname;
             }
         });
     }
