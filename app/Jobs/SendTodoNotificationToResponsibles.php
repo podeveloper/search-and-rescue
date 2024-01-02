@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Todo;
 use App\Models\User;
+use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
