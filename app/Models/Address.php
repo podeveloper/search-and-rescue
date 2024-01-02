@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\CacheUpdateTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Address extends Model
 {
-    use HasFactory, SoftDeletes, CacheUpdateTrait;
+    use HasFactory, SoftDeletes;
 
     public $timestamps = false;
     protected $fillable = [
@@ -19,12 +18,9 @@ class Address extends Model
         'city_id',
         'district_id',
         'user_id',
+        'full_address',
     ];
 
-    protected static function boot() {
-        parent::boot();
-        self::bootCacheUpdateTrait();
-    }
 
     public function country(): BelongsTo
     {
