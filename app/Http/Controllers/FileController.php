@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
-    public function show($path)
+    public function show($folder,$filename)
     {
-        if (Auth::check()) {
-            $filePath = storage_path("app/{$path}");
+        $filePath = storage_path("app/{$folder}/{$filename}");
 
-            if (file_exists($filePath)) {
-                return response()->file($filePath);
-            }
+        if (!Storage::exists("{$folder}/{$filename}")) {
+            abort(404);
         }
 
-        abort(404);
+        // Get the file content
+        $fileContent = file_get_contents($filePath);
+
+        // Return the file content as response with appropriate headers
+        return (new Response($fileContent, 200))
+            ->header('Content-Type', 'application/pdf');
     }
 }

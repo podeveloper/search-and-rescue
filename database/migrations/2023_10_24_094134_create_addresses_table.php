@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('city_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('district_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->longText('full_address')->nullable();
             $table->softDeletes();
         });
     }

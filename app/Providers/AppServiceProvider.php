@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use BezhanSalleh\PanelSwitch\PanelSwitch;
 use Illuminate\Support\ServiceProvider;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Illuminate\Validation\ValidationException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,10 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        if ($this->app->environment('local')) {
-            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
-            $this->app->register(TelescopeServiceProvider::class);
-        }
+        //
     }
 
     /**
@@ -45,5 +45,12 @@ class AppServiceProvider extends ServiceProvider
                 //->excludes(['saas'])
                 ->canSwitchPanels(true);
         });
+
+        Page::$reportValidationErrorUsing = function (ValidationException $exception) {
+            Notification::make()
+                ->title($exception->getMessage())
+                ->danger()
+                ->send();
+        };
     }
 }
