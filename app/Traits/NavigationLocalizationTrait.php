@@ -9,18 +9,18 @@ trait NavigationLocalizationTrait
     public static function getNavigationLabel(): string
     {
         $snakeModelName = strtolower(Str::snake(class_basename(self::getModel())));
-        return __("$snakeModelName.plural");
+        return __('general.'.$snakeModelName.'_plural');
     }
 
     public static function getModelLabel(): string
     {
         $snakeModelName = strtolower(Str::snake(class_basename(self::getModel())));
-        return __("$snakeModelName.singular");
+        return __('general.'.$snakeModelName.'_singular');
     }
 
     public static function getPluralModelLabel(): string
     {
         $snakeModelName = strtolower(Str::snake(class_basename(self::getModel())));
-        return __("$snakeModelName.plural");
+        return __('general.'.$snakeModelName.'_plural');
     }
 }
