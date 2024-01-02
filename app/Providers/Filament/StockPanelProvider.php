@@ -22,8 +22,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use lockscreen\FilamentLockscreen\Http\Middleware\Locker;
-use lockscreen\FilamentLockscreen\Lockscreen;
 use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
@@ -45,7 +43,6 @@ class StockPanelProvider extends PanelProvider
             ->brandName(env('APP_NAME'))
             ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.jpg' : 'img/panel-logo.jpg'))
             ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
-            ->favicon(asset('img/favicon-32x32.png'))
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Stock/Resources'), for: 'App\\Filament\\Stock\\Resources')
             ->discoverPages(in: app_path('Filament/Stock/Pages'), for: 'App\\Filament\\Stock\\Pages')
@@ -57,7 +54,6 @@ class StockPanelProvider extends PanelProvider
                 FilamentLanguageSwitchPlugin::make(),
                 SpotlightPlugin::make(),
                 ThemesPlugin::make(),
-                new Lockscreen(),
             ])
             ->discoverWidgets(in: app_path('Filament/Stock/Widgets'), for: 'App\\Filament\\Stock\\Widgets')
             ->widgets([
@@ -79,7 +75,6 @@ class StockPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
-                Locker::class,
             ])
             ->userMenuItems([
                 MenuItem::make()

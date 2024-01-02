@@ -22,8 +22,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use lockscreen\FilamentLockscreen\Http\Middleware\Locker;
-use lockscreen\FilamentLockscreen\Lockscreen;
 use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
@@ -39,10 +37,12 @@ class ReferencePanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->resources([
+                //
+            ])
             ->brandName(env('APP_NAME'))
             ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.jpg' : 'img/panel-logo.jpg'))
             ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
-            ->favicon(asset('img/favicon-32x32.png'))
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Reference/Resources'), for: 'App\\Filament\\Reference\\Resources')
             ->discoverPages(in: app_path('Filament/Reference/Pages'), for: 'App\\Filament\\Reference\\Pages')
@@ -54,7 +54,6 @@ class ReferencePanelProvider extends PanelProvider
                 FilamentLanguageSwitchPlugin::make(),
                 SpotlightPlugin::make(),
                 ThemesPlugin::make(),
-                new Lockscreen(),
             ])
             ->discoverWidgets(in: app_path('Filament/Reference/Widgets'), for: 'App\\Filament\\Reference\\Widgets')
             ->widgets([
@@ -76,7 +75,6 @@ class ReferencePanelProvider extends PanelProvider
             ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
-                Locker::class,
             ])
             ->userMenuItems([
                 MenuItem::make()
