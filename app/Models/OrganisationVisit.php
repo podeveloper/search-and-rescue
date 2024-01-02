@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\CacheUpdateTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class OrganisationVisit extends Model
 {
-    use HasFactory, SoftDeletes, CacheUpdateTrait;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'date',
@@ -21,10 +20,6 @@ class OrganisationVisit extends Model
         'explanation',
     ];
 
-    protected static function boot() {
-        parent::boot();
-        self::bootCacheUpdateTrait();
-    }
     public function place(): BelongsTo
     {
         return $this->belongsTo(Place::class);

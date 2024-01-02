@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Enums\IsFinished;
-use App\Traits\CacheUpdateTrait;
 use Filament\Actions\Concerns\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Todo extends Model
 {
-    use HasFactory, SoftDeletes, CacheUpdateTrait;
+    use HasFactory, SoftDeletes;
     use HasLabel;
 
     protected $table = 'todos';
@@ -29,10 +28,6 @@ class Todo extends Model
         'deadline_at',
     ];
 
-    protected static function boot() {
-        parent::boot();
-        self::bootCacheUpdateTrait();
-    }
 
     public function scopeFinished(Builder $query)
     {
