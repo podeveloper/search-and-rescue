@@ -25,4 +25,35 @@ class FilamentRequest
             return null;
         }
     }
+
+    public static function getQueryParams()
+    {
+        $uri = request()->getRequestUri();
+        parse_str(parse_url($uri, PHP_URL_QUERY), $queryParams);
+        return $queryParams;
+    }
+
+    public static function getFilterValue(string $filterKey)
+    {
+        $queryParams = self::getQueryParams();
+
+        $value = null;
+
+        if (isset($queryParams['tableFilters'][$filterKey])) {
+            if (isset($queryParams['tableFilters'][$filterKey][$filterKey])) {
+                $value = $queryParams['tableFilters'][$filterKey][$filterKey];
+            }elseif (isset($queryParams['tableFilters'][$filterKey]["values"])) {
+                $value = $queryParams['tableFilters'][$filterKey]["values"][0];
+            }elseif (isset($queryParams['tableFilters'][$filterKey]["isActive"])) {
+                $value = $queryParams['tableFilters'][$filterKey]["isActive"];
+            }
+        }
+
+        return match ($value){
+            "null" => null,
+            "false" => false,
+            "true" => true,
+            default => $value,
+        };
+    }
 }
