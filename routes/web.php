@@ -1,7 +1,12 @@
 <?php
 
+use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\VolunteerTrainingController;
+use App\Http\Controllers\ScreenController;
+use App\Http\Controllers\ProfileCardController;
+use App\Http\Controllers\ShahadahCertificateController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,7 +17,7 @@ use App\Http\Controllers\FileController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::get('apply', fn () => redirect()->route('filament.candidate.auth.register'))->name('apply');
 Route::get('login', fn () => redirect()->route('filament.candidate.auth.login'))->name('login');
 
 Route::get('/', function () {
@@ -20,7 +25,18 @@ Route::get('/', function () {
     return auth()->check() ? redirect()->to($redirectUrl) : redirect()->to($redirectUrl.'/login');
 });
 
-Route::get('/files/{path}', [FileController::class, 'show'])
-    ->where('path', '.*')
-    ->middleware('auth')
+Route::get('/incoming-events/{date?}', [ScreenController::class,'events'])->name('incoming-events.show');
+Route::get('/volunteers/@{username}', [ProfileCardController::class,'show'])->name('volunteers.profile-card');
+
+
+Route::get('/files/{folder}/{filename}', [FileController::class, 'show'])
     ->name('files.show');
+
+Route::get('/trainings/{training}/enroll',[VolunteerTrainingController::class,'enroll'])->name('trainings.enroll');
+Route::post('/trainings/sections/{section}/storeTimeData', [VolunteerTrainingController::class, 'storeTimerData'])->name('sections.storeTimeData');
+Route::get('/trainings/sections/{section}',[VolunteerTrainingController::class,'show'])->name('sections.show');
+Route::post('/trainings/sections/{section}/previous',[VolunteerTrainingController::class,'previous'])->name('sections.previous');
+Route::post('/trainings/sections/{section}/next',[VolunteerTrainingController::class,'next'])->name('sections.next');
+Route::post('/trainings/sections/{section}/complete',[VolunteerTrainingController::class,'complete'])->name('sections.complete');
+
+Route::get('re-optimize', [\App\Http\Controllers\OptimizeController::class,'optimize'])->name('optimize.app');
