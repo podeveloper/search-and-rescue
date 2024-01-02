@@ -17,10 +17,12 @@ return new class extends Migration
             $table->string('surname')->nullable();
             $table->string('full_name')->nullable();
             $table->string('phone')->nullable();
+            $table->string('username')->unique()->nullable();
             $table->string('email')->unique();
             $table->timestamp('last_login_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('profile_photo')->nullable();
+            $table->string('resume')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('password');
             $table->string('password_temp')->nullable();
@@ -40,6 +42,8 @@ return new class extends Migration
             $table->boolean('is_admin')->default(false);
             $table->boolean('kvkk')->default(true);
             $table->longText('note')->nullable();
+            $table->boolean('is_active')->default(false);
+            $table->dateTime('official_membership_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

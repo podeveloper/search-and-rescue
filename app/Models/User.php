@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Traits\CacheUpdateTrait;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +22,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
 {
-    use HasApiTokens, HasFactory, SoftDeletes, Notifiable, HasRoles, CacheUpdateTrait;
+    use HasApiTokens, HasFactory, SoftDeletes, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -35,9 +35,11 @@ class User extends Authenticatable implements FilamentUser
         'full_name',
         'phone',
         'email',
+        'username',
         'last_login_at',
         'email_verified_at',
         'profile_photo',
+        'resume',
         'date_of_birth',
         'password',
         'password_temp',
@@ -55,8 +57,10 @@ class User extends Authenticatable implements FilamentUser
         'national_id_number',
         'passport_number',
         'is_admin',
+        'is_active',
         'kvkk',
         'note',
+        'official_membership_at',
     ];
 
     /**
@@ -110,7 +114,6 @@ class User extends Authenticatable implements FilamentUser
     protected static function boot()
     {
         parent::boot();
-        self::bootCacheUpdateTrait();
 
         static::creating(function ($user) {
             $user->full_name = $user->name . ' ' . $user->surname;
@@ -160,6 +163,58 @@ class User extends Authenticatable implements FilamentUser
         });
     }
 
+    public function scopeWhereRole(Builder $query,$roleName)
+    {
+        return $query->whereHas('roles', function ($query) use ($roleName) {
+            $query->where('name', $roleName);
+        })->whereDoesntHave('roles', function ($query) {
+            $query->where('name', 'expired');
+        });
+    }
+
+    public function scopeExpired(Builder $query)
+    {
+        return $query->whereHas('roles', function ($query) {
+            $query->where('name', 'expired');
+        });
+    }
+
+    public function scopeActive(Builder $query)
+    {
+        return $query
+            ->where('is_active',true);
+    }
+
+    public function scopeInactive(Builder $query)
+    {
+        return $query
+            ->where('is_active',false);
+    }
+
+    public function scopeDuplicates($query)
+    {
+        $phones = User::pluck('phone')->toArray();
+
+        // Remove null and empty values
+        $filteredArray = array_filter($phones, function ($value) {
+            return $value !== null && $value !== "";
+        });
+
+        // Count the occurrences of each phone number
+        $occurrences = array_count_values($filteredArray);
+
+        // Filter the array to include only phone numbers with more than one occurrence
+        $duplicates = array_filter($occurrences, function ($count) {
+            return $count > 1;
+        });
+
+        // Get the keys (phone numbers) of the filtered array
+        $duplicatePhones = array_keys($duplicates);
+
+        return $query
+            ->whereIn('phone',$duplicatePhones);
+    }
+
     public function canImpersonate()
     {
         return $this->is_admin;
@@ -205,6 +260,18 @@ class User extends Authenticatable implements FilamentUser
         return $this->morphToMany(Language::class, 'languageable');
     }
 
+    public function trainings(): BelongsToMany
+    {
+        return $this->belongsToMany(Training::class, 'training_user')
+            ->where('user_id',$this->id)
+            ->withPivot('registered_at', 'finished_at');
+    }
+
+    public function userProgresses(): HasMany
+    {
+        return $this->hasMany(UserProgress::class);
+    }
+
     public function tags(): MorphToMany
     {
         return $this->morphToMany(Tag::class, 'taggable');
@@ -247,32 +314,9 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(RegistrationQuestionAnswer::class);
     }
 
-    public function vehicles()
+    public function receivedEmails()
     {
-        return $this->hasMany(Vehicle::class);
-    }
-
-    public function driverLicences()
-    {
-        return $this->hasOne(DriverLicence::class, 'user_id');
-    }
-
-    public function healthProfile()
-    {
-        return $this->hasOne(HealthProfile::class);
-    }
-    public function firstAidCertificate()
-    {
-        return $this->hasOne(FirstAidCertificate::class, 'user_id');
-    }
-
-    public function radioCertificate()
-    {
-        return $this->hasOne(RadioCertificate::class, 'user_id');
-    }
-
-    public function forestFireFightingCertificate()
-    {
-        return $this->hasOne(ForestFireFightingCertificate::class, 'user_id');
+        return $this->belongsToMany(SentEmail::class, 'email_recipients', 'user_id', 'sent_email_id')
+            ->withTimestamps();
     }
 }

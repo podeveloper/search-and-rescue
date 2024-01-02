@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\CacheUpdateTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 
 class Event extends Model
 {
-    use HasFactory, SoftDeletes, CacheUpdateTrait;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -32,10 +31,6 @@ class Event extends Model
         'google_calendar_event_id',
     ];
 
-    protected static function boot() {
-        parent::boot();
-        self::bootCacheUpdateTrait();
-    }
 
     public function scopeToday(Builder $query)
     {
@@ -60,6 +55,31 @@ class Event extends Model
     public function visitors(): MorphToMany
     {
         return $this->morphToMany(Visitor::class, 'visitorable');
+    }
+
+    public function addVisitors($data)
+    {
+        $group_number = Visitor::max('group_number') + 1;
+        foreach ($data as $visitorData) {
+
+            $visitorData = (object) $visitorData;
+
+            $visitor = Visitor::create([
+                'full_name' => $visitorData->full_name ?? null,
+                'phone' => $visitorData->phone ?? null,
+                'email' => $visitorData->email ?? null,
+                'gender_id' => $visitorData->gender_id ?? null,
+                'nationality_id' => $visitorData->nationality_id ?? null,
+                'country_id' => $visitorData->country_id ?? null,
+                'language_id' => $visitorData->language_id ?? null,
+                'explanation' => $visitorData->explanation ?? null,
+                'companion_id' => auth()?->user()?->id ?? null,
+                'group_number' => $group_number,
+            ]);
+
+            $this->visitors()->attach($visitor);
+
+        }
     }
 
     public function eventCategory(): BelongsTo
