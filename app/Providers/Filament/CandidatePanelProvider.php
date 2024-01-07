@@ -44,7 +44,7 @@ class CandidatePanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Candidate/Resources'), for: 'App\\Filament\\Candidate\\Resources')
             ->discoverPages(in: app_path('Filament/Candidate/Pages'), for: 'App\\Filament\\Candidate\\Pages')
             ->pages([
-                //
+                Pages\Dashboard::class,
             ])
             //->discoverWidgets(in: app_path('Filament/Candidate/Widgets'), for: 'App\\Filament\\Candidate\\Widgets')
             ->widgets([
