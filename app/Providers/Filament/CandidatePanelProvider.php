@@ -3,9 +3,11 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Candidate\Pages\Auth\Apply;
+use App\Filament\Candidate\Pages\EditProfile;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
@@ -31,7 +33,6 @@ class CandidatePanelProvider extends PanelProvider
             ->login()
             ->registration(Apply::class)
             ->passwordReset()
-            ->profile()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -63,6 +64,17 @@ class CandidatePanelProvider extends PanelProvider
             ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Edit Profile')
+                    ->url(fn()=> EditProfile::getUrl())
+                    ->icon('heroicon-o-user'),
+                MenuItem::make()
+                    ->label('Re-optimize')
+                    ->url('/re-optimize')
+                    ->icon('heroicon-o-arrow-path')
+                    ->visible(fn (): bool => auth()->user()?->is_admin ? true : false)
             ])
             ->navigationItems([
                 NavigationItem::make('Incoming Events')
