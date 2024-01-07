@@ -58,8 +58,70 @@ class VolunteerCard extends Component implements HasForms, HasInfolists
                     ->extraAttributes([
                         'class' => 'p-2',
                     ]),
+                TextEntry::make('')
+                    ->weight(FontWeight::Bold)
+                    ->alignCenter()
+                    ->badge()
+                    ->color('info')
+                    ->default(function(User $record) {
+                        return VolunteerCardHelper::getLabel(
+                            'Download VCard',route('download.vcard',$record),
+                            '_blank',
+                            null,'center');
+                    }),
                 Tabs::make('Tabs')
                     ->tabs([
+                        Tabs\Tab::make('Personal Info')
+                            ->schema([
+                                TextEntry::make('phone')
+                                    ->weight(FontWeight::Bold)
+                                    ->alignCenter()
+                                    ->icon('heroicon-m-phone')
+                                    ->url(fn(User $record) => VolunteerCardHelper::getWhatsappUrl($record),fn(User $record) => VolunteerCardHelper::getWhatsappUrl($record) != '##')
+                                    ->extraAttributes(['class' => 'p-2 bg-gray-200 rounded'])
+                                    ->label(function(User $record) {
+                                        return VolunteerCardHelper::getLabel(
+                                            'Phone','https://api.whatsapp.com/send/?phone='.$record->phone,
+                                            '_blank',
+                                            'fa-brands fa-whatsapp','center');
+                                    }),
+                                TextEntry::make('email')
+                                    ->weight(FontWeight::Bold)
+                                    ->alignCenter()
+                                    ->url(fn(User $record) => VolunteerCardHelper::getEmailUrl($record),fn(User $record) => VolunteerCardHelper::getEmailUrl($record) != '##')
+                                    ->extraAttributes(['class' => 'p-2 bg-gray-200 rounded'])
+                                    ->label(function(User $record) {
+                                        return VolunteerCardHelper::getLabel(
+                                            'Email','mailto:'.$record->email,
+                                            null,
+                                            'fa-regular fa-envelope','center');
+                                    }),
+                                TextEntry::make('address')
+                                    ->visible(fn(User $record) => VolunteerCardHelper::getAddressString($record))
+                                    ->default(fn(User $record) => VolunteerCardHelper::getAddressString($record))
+                                    ->weight(FontWeight::Bold)
+                                    ->alignCenter()
+                                    ->url(fn(User $record) => VolunteerCardHelper::getAddressUrl($record),fn(User $record) => VolunteerCardHelper::getAddressUrl($record) != '##')
+                                    ->extraAttributes(['class' => 'p-2 bg-gray-200 rounded'])
+                                    ->label(function(User $record) {
+                                        $url = VolunteerCardHelper::getAddressUrl($record);
+
+                                        return VolunteerCardHelper::getLabel(
+                                            'Address',$url,
+                                            '_blank',
+                                            'fa-solid fa-map-pin','center');
+                                    }),
+                                TextEntry::make('social_accounts')
+                                    ->default(fn(User $record)=>VolunteerCardHelper::getOneLineSocialAccountsHtml($record))
+                                    ->alignCenter()
+                                    ->extraAttributes(['class' => 'p-2 bg-gray-200 rounded'])
+                                    ->label(function() {
+                                        return VolunteerCardHelper::getLabel(
+                                            'Social Accounts','',
+                                            '',
+                                            'fa-solid fa-globe','center');
+                                    }),
+                            ]),
                         Tabs\Tab::make('Center Info')
                             ->schema([
                                 TextEntry::make('center_phone')
@@ -101,60 +163,9 @@ class VolunteerCard extends Component implements HasForms, HasInfolists
                                             'Address',$url,
                                             '_blank',
                                             'fa-solid fa-map-pin','center');
-                                        }),
+                                    }),
                                 TextEntry::make('social_accounts')
                                     ->default(fn()=>VolunteerCardHelper::getOneLineSocialAccountsHtml(User::first()))
-                                    ->alignCenter()
-                                    ->extraAttributes(['class' => 'p-2 bg-gray-200 rounded'])
-                                    ->label(function() {
-                                        return VolunteerCardHelper::getLabel(
-                                            'Social Accounts','',
-                                            '',
-                                            'fa-solid fa-globe','center');
-                                    }),
-                            ]),
-                        Tabs\Tab::make('Personal Info')
-                            ->schema([
-                                TextEntry::make('phone')
-                                    ->weight(FontWeight::Bold)
-                                    ->alignCenter()
-                                    ->icon('heroicon-m-phone')
-                                    ->url(fn(User $record) => VolunteerCardHelper::getWhatsappUrl($record),fn(User $record) => VolunteerCardHelper::getWhatsappUrl($record) != '##')
-                                    ->extraAttributes(['class' => 'p-2 bg-gray-200 rounded'])
-                                    ->label(function(User $record) {
-                                        return VolunteerCardHelper::getLabel(
-                                            'Phone','https://api.whatsapp.com/send/?phone='.$record->phone,
-                                            '_blank',
-                                            'fa-brands fa-whatsapp','center');
-                                    }),
-                                TextEntry::make('email')
-                                    ->weight(FontWeight::Bold)
-                                    ->alignCenter()
-                                    ->url(fn(User $record) => VolunteerCardHelper::getEmailUrl($record),fn(User $record) => VolunteerCardHelper::getEmailUrl($record) != '##')
-                                    ->extraAttributes(['class' => 'p-2 bg-gray-200 rounded'])
-                                    ->label(function(User $record) {
-                                        return VolunteerCardHelper::getLabel(
-                                            'Email','mailto:'.$record->email,
-                                            null,
-                                            'fa-regular fa-envelope','center');
-                                    }),
-                                TextEntry::make('address')
-                                    ->visible(fn(User $record) => VolunteerCardHelper::getAddressString($record))
-                                    ->default(fn(User $record) => VolunteerCardHelper::getAddressString($record))
-                                    ->weight(FontWeight::Bold)
-                                    ->alignCenter()
-                                    ->url(fn(User $record) => VolunteerCardHelper::getAddressUrl($record),fn(User $record) => VolunteerCardHelper::getAddressUrl($record) != '##')
-                                    ->extraAttributes(['class' => 'p-2 bg-gray-200 rounded'])
-                                    ->label(function(User $record) {
-                                        $url = VolunteerCardHelper::getAddressUrl($record);
-
-                                        return VolunteerCardHelper::getLabel(
-                                            'Address',$url,
-                                            '_blank',
-                                            'fa-solid fa-map-pin','center');
-                                        }),
-                                TextEntry::make('social_accounts')
-                                    ->default(fn(User $record)=>VolunteerCardHelper::getOneLineSocialAccountsHtml($record))
                                     ->alignCenter()
                                     ->extraAttributes(['class' => 'p-2 bg-gray-200 rounded'])
                                     ->label(function() {

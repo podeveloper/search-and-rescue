@@ -19,6 +19,7 @@ use App\Http\Controllers\ShahadahCertificateController;
 */
 Route::get('apply', fn () => redirect()->route('filament.candidate.auth.register'))->name('apply');
 Route::get('login', fn () => redirect()->route('filament.candidate.auth.login'))->name('login');
+Route::get('/download-vcard/{id}', [\App\Http\Controllers\VcardController::class,'downloadVCard'])->name('download.vcard');
 
 Route::get('/', function () {
     $redirectUrl = request()->url().'/candidate';
