@@ -48,20 +48,19 @@ class ContactResource extends Resource
                     ->email()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('address')
-                    ->nullable()
-                    ->maxLength(300),
+                    ->nullable(),
                 Forms\Components\Select::make('gender_id')
                     ->relationship('gender', 'name')
                     ->nullable()
                     ->exists('genders','id')
-                    ->label(__('gender.singular')),
+                    ->label(__('general.gender_singular')),
                 Forms\Components\Select::make('nationality_id')
                     ->relationship('nationality', 'name')
                     ->searchable()
                     ->preload()
                     ->nullable()
                     ->exists('nationalities','id')
-                    ->label(__('nationality.singular')),
+                    ->label(__('general.nationality_singular')),
                 Forms\Components\Select::make('organisation_id')
                     ->relationship('organisation', 'name')
                     ->createOptionForm(fn(Form $form) => OrganisationResource::form($form))
@@ -70,7 +69,7 @@ class ContactResource extends Resource
                     ->preload()
                     ->nullable()
                     ->exists('organisations','id')
-                    ->label(__('organisation.singular')),
+                    ->label(__('general.organisation_singular')),
                 Forms\Components\TextInput::make('organisation_text')
                     ->nullable()
                     ->string(),
@@ -82,14 +81,13 @@ class ContactResource extends Resource
                     ->preload()
                     ->nullable()
                     ->exists('occupations','id')
-                    ->label(__('occupation.singular')),
+                    ->label(__('general.occupation_singular')),
                 Forms\Components\TextInput::make('occupation_text')
                     ->nullable()
                     ->string(),
                 Forms\Components\MarkdownEditor::make('explanation')
                     ->columnSpan('full')
-                    ->nullable()
-                    ->maxLength(300),
+                    ->nullable(),
                 Forms\Components\Select::make('tags')
                     ->relationship('tags', 'name')
                     ->multiple()
@@ -162,7 +160,7 @@ class ContactResource extends Resource
                     ->date('Y-m-d')
                     ->toggleable(),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('full_name','asc')
             ->filters([
                 //
@@ -174,7 +172,7 @@ class ContactResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

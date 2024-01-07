@@ -29,7 +29,7 @@ class EventResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
-    protected static ?int $navigationSort = 17;
+    protected static ?int $navigationSort = 12;
 
     public static function getGloballySearchableAttributes(): array
     {
@@ -48,12 +48,13 @@ class EventResource extends Resource
                 Forms\Components\RichEditor::make('description')
                     ->columnSpan('full')
                     ->nullable()
-                    ->maxLength(300)
                     ->label(__('general.description')),
                 Forms\Components\TextInput::make('location')
+                    ->placeholder('Paste here maps url.')
+                    ->rule('url')
                     ->nullable()
                     ->string()
-                    ->label(__('general.location')),
+                    ->label(__('general.location_map_link')),
                 Forms\Components\TextInput::make('capacity')
                     ->nullable()
                     ->numeric()
@@ -80,20 +81,20 @@ class EventResource extends Resource
                     ->editOptionForm(fn(Form $form) => EventCategoryResource::form($form))
                     ->nullable()
                     ->exists('event_categories','id')
-                    ->label(__('event_category.singular')),
+                    ->label(__('general.event_category_singular')),
                 Forms\Components\Select::make('event_place_id')
                     ->relationship('eventPlace', 'name')
                     ->createOptionForm(fn(Form $form) => EventPlaceResource::form($form))
                     ->editOptionForm(fn(Form $form) => EventPlaceResource::form($form))
                     ->nullable()
                     ->exists('event_places','id')
-                    ->label(__('event_place.singular')),
+                    ->label(__('general.event_place_singular')),
                 Forms\Components\Select::make('users')
                     ->relationship('users', 'full_name')
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('event.participants')),
+                    ->label(__('general.event_participants')),
                 Forms\Components\Toggle::make('is_published')
                     ->onIcon('heroicon-m-check')
                     ->offIcon('heroicon-m-x-mark')
@@ -147,12 +148,12 @@ class EventResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->label(__('event_category.singular')),
+                    ->label(__('general.event_category_singular')),
                 Tables\Columns\TextColumn::make('eventPlace.name')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->label(__('event_place.singular')),
+                    ->label(__('general.event_place_singular')),
                 ToggleIconColumn::make('is_published')
                     ->onIcon('heroicon-s-eye')
                     ->offIcon('heroicon-o-eye-slash')
@@ -165,15 +166,15 @@ class EventResource extends Resource
                     ->counts('users')
                     ->sortable()
                     ->toggleable()
-                    ->label(__('event.users_count')),
+                    ->label(__('general.event_volunteers_count')),
                 Tables\Columns\TextColumn::make('visitors_count')
                     ->counts('visitors')
                     ->toggleable()
                     ->label('Visitors Count')
                     ->sortable()
-                    ->label(__('event.visitors_count')),
+                    ->label(__('general.event_visitors_count')),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('date', 'desc')
             ->filters([
                 Tables\Filters\Filter::make('title')
@@ -199,7 +200,7 @@ class EventResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('event_category.singular')),
+                    ->label(__('general.event_category_singular')),
                 Tables\Filters\Filter::make('date')
                     ->form([
                         Forms\Components\DatePicker::make('date')
@@ -230,6 +231,7 @@ class EventResource extends Resource
                 Tables\Filters\Filter::make('location')
                     ->form([
                         Forms\Components\TextInput::make('location')
+                            ->placeholder('Paste here maps url.')
                             ->label(__('general.location')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -265,7 +267,7 @@ class EventResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Coordinator\Resources\RegistrationQuestionResource\Pages;
+namespace App\Filament\Reference\Resources\RegistrationQuestionResource\Pages;
 
-use App\Filament\Coordinator\Resources\RegistrationQuestionResource;
+use App\Filament\Reference\Resources\RegistrationQuestionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 

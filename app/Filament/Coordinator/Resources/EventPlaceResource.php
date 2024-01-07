@@ -25,7 +25,7 @@ class EventPlaceResource extends Resource
 
     protected static ?string $navigationGroup = 'Events';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 15;
 
     public static function form(Form $form): Form
     {
@@ -38,7 +38,6 @@ class EventPlaceResource extends Resource
                 Forms\Components\Select::make('type')
                     ->options([
                         'center' => 'Center',
-                        'mosque' => 'Mosque',
                         'other' => 'Other',
                     ])
                     ->required()
@@ -66,9 +65,9 @@ class EventPlaceResource extends Resource
                     ->label('Event Count')
                     ->sortable()
                     ->toggleable()
-                    ->label(__('event_place.count')),
+                    ->label(__('general.event_place_count')),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('type','asc')
             ->filters([
                 //
@@ -80,7 +79,7 @@ class EventPlaceResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

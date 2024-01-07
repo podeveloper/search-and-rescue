@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Coordinator\Resources;
+namespace App\Filament\Network\Resources;
 
 use App\Filament\Resources\VisitorResource\Pages;
 use App\Filament\Resources\VisitorResource\RelationManagers;
@@ -22,13 +22,13 @@ class VisitorResource extends Resource
 
     protected static ?string $model = Visitor::class;
 
-    protected static ?string $navigationGroup = 'Places';
+    protected static ?string $navigationGroup = 'Visitors';
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
-    protected static ?int $navigationSort = 14;
+    protected static ?int $navigationSort = 17;
 
     public static function getGloballySearchableAttributes(): array
     {
@@ -56,28 +56,28 @@ class VisitorResource extends Resource
                     ->relationship('gender', 'name')
                     ->nullable()
                     ->exists('genders','id')
-                    ->label(__('gender.singular')),
+                    ->label(__('general.gender_singular')),
                 Forms\Components\Select::make('nationality_id')
                     ->relationship('nationality', 'name')
                     ->searchable()
                     ->preload()
                     ->nullable()
                     ->exists('nationalities','id')
-                    ->label(__('nationality.singular')),
+                    ->label(__('general.nationality_singular')),
                 Forms\Components\Select::make('country_id')
                     ->relationship('country', 'name')
                     ->searchable()
                     ->preload()
                     ->required()
                     ->exists('countries','id')
-                    ->label(__('country.singular')),
+                    ->label(__('general.country_singular')),
                 Forms\Components\Select::make('language_id')
                     ->relationship('language', 'name')
                     ->searchable()
                     ->preload()
                     ->nullable()
                     ->exists('languages','id')
-                    ->label(__('language.singular')),
+                    ->label(__('general.language_singular')),
                 Forms\Components\Select::make('companion_id')
                     ->relationship('companion', 'full_name')
                     ->searchable()
@@ -113,7 +113,7 @@ class VisitorResource extends Resource
                     ->preload()
                     ->nullable()
                     ->exists('occupations','id')
-                    ->label(__('occupation.singular')),
+                    ->label(__('general.occupation_singular')),
                 Forms\Components\TextInput::make('occupation_text')
                     ->nullable()
                     ->string(),
@@ -123,7 +123,7 @@ class VisitorResource extends Resource
                     ->preload()
                     ->nullable()
                     ->exists('organisations','id')
-                    ->label(__('organisation.singular')),
+                    ->label(__('general.organisation_singular')),
                 Forms\Components\TextInput::make('organisation_text')
                     ->nullable()
                     ->string()
@@ -131,7 +131,6 @@ class VisitorResource extends Resource
                 Forms\Components\MarkdownEditor::make('explanation')
                     ->columnSpan('full')
                     ->nullable()
-                    ->maxLength(300)
                     ->label(__('general.explanation')),
             ]);
     }
@@ -143,17 +142,17 @@ class VisitorResource extends Resource
                 Tables\Columns\TextColumn::make('group_number')
                     ->sortable()
                     ->toggleable()
-                    ->label(__('visitor.group_number')),
+                    ->label(__('general.visitor_group_number')),
                 Tables\Columns\TextColumn::make('country.name')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->label(__('country.singular')),
+                    ->label(__('general.country_singular')),
                 Tables\Columns\TextColumn::make('language.name')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->label(__('language.singular')),
+                    ->label(__('general.language_singular')),
                 Tables\Columns\TextColumn::make('companion.full_name')
                     ->searchable()
                     ->sortable()
@@ -184,12 +183,12 @@ class VisitorResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->label(__('gender.singular')),
+                    ->label(__('general.gender_singular')),
                 Tables\Columns\TextColumn::make('nationality.name')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->label(__('nationality.singular')),
+                    ->label(__('general.nationality_singular')),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable()
                     ->copyable()
@@ -224,12 +223,12 @@ class VisitorResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->label(__('occupation.singular')),
+                    ->label(__('general.occupation_singular')),
                 Tables\Columns\TextColumn::make('organisation.name')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->label(__('organisation.singular')),
+                    ->label(__('general.organisation_singular')),
                 Tables\Columns\TextColumn::make('explanation')
                     ->words(5)
                     ->wrap()
@@ -238,13 +237,13 @@ class VisitorResource extends Resource
                     ->toggleable()
                     ->label(__('general.explanation')),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('group_number','desc')
             ->filters([
                 Tables\Filters\Filter::make('group_number')
                     ->form([
                         Forms\Components\TextInput::make('group_number')->numeric()
-                            ->label(__('visitor.group_number')),
+                            ->label(__('general.visitor_group_number')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $groupNumber = $data['group_number'];
@@ -255,13 +254,13 @@ class VisitorResource extends Resource
                     ->preload()
                     ->multiple()
                     ->searchable()
-                    ->label(__('country.singular')),
+                    ->label(__('general.country_singular')),
                 Tables\Filters\SelectFilter::make('language')
                     ->relationship('language', 'name')
                     ->preload()
                     ->multiple()
                     ->searchable()
-                    ->label(__('language.singular')),
+                    ->label(__('general.language_singular')),
                 Tables\Filters\Filter::make('name')
                     ->form([
                         Forms\Components\TextInput::make('name')
@@ -284,13 +283,13 @@ class VisitorResource extends Resource
                     ->relationship('gender', 'name')
                     ->multiple()
                     ->preload()
-                    ->label(__('gender.singular')),
+                    ->label(__('general.gender_singular')),
                 Tables\Filters\SelectFilter::make('nationality')
                     ->relationship('nationality', 'name')
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('nationality.singular')),
+                    ->label(__('general.nationality_singular')),
                 Tables\Filters\Filter::make('phone')
                     ->form([
                         Forms\Components\TextInput::make('phone')
@@ -313,12 +312,12 @@ class VisitorResource extends Resource
                     ->relationship('occupation', 'name')
                     ->multiple()
                     ->preload()
-                    ->label(__('occupation.singular')),
+                    ->label(__('general.occupation_singular')),
                 Tables\Filters\SelectFilter::make('organisation')
                     ->relationship('organisation', 'name')
                     ->multiple()
                     ->preload()
-                    ->label(__('organisation.singular')),
+                    ->label(__('general.organisation_singular')),
                 Tables\Filters\Filter::make('explanation')
                     ->form([
                         Forms\Components\TextInput::make('explanation')
@@ -337,7 +336,6 @@ class VisitorResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     ExportBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -352,9 +350,9 @@ class VisitorResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Coordinator\Resources\VisitorResource\Pages\ListVisitors::route('/'),
-            'create' => \App\Filament\Coordinator\Resources\VisitorResource\Pages\CreateVisitor::route('/create'),
-            'edit' => \App\Filament\Coordinator\Resources\VisitorResource\Pages\EditVisitor::route('/{record}/edit'),
+            'index' => \App\Filament\Network\Resources\VisitorResource\Pages\ListVisitors::route('/'),
+            'create' => \App\Filament\Network\Resources\VisitorResource\Pages\CreateVisitor::route('/create'),
+            'edit' => \App\Filament\Network\Resources\VisitorResource\Pages\EditVisitor::route('/{record}/edit'),
         ];
     }
 

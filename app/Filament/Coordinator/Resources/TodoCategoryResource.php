@@ -23,7 +23,7 @@ class TodoCategoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Todo';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 98;
 
     public static function form(Form $form): Form
     {
@@ -62,7 +62,7 @@ class TodoCategoryResource extends Resource
                     ->toggleable()
                     ->label(__('general.sort_order')),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('sort_order')
             ->filters([
                 //
@@ -74,7 +74,7 @@ class TodoCategoryResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }
@@ -106,16 +106,16 @@ class TodoCategoryResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('todo_category.plural');
+        return __('general.todo_category_plural');
     }
 
     public static function getModelLabel(): string
     {
-        return __('todo_category.singular');
+        return __('general.todo_category_singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('todo_category.plural');
+        return __('general.todo_category_plural');
     }
 }

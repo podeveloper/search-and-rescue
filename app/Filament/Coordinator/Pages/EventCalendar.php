@@ -17,7 +17,7 @@ class EventCalendar extends Page
 
     protected static ?string $navigationGroup = 'Events';
 
-    protected static ?int $navigationSort = 18;
+    protected static ?int $navigationSort = 13;
 
     protected function getHeaderWidgets(): array
     {
@@ -43,6 +43,6 @@ class EventCalendar extends Page
 
     public static function getNavigationLabel(): string
     {
-        return __('event.calendar');
+        return __('general.event_calendar');
     }
 }

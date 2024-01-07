@@ -122,7 +122,7 @@ class OrganisationResource extends Resource
                     ->date('Y-m-d')
                     ->toggleable(),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
             ->filters([
                 //
@@ -134,7 +134,7 @@ class OrganisationResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

@@ -12,6 +12,7 @@ use App\Models\Nationality;
 use App\Models\Occupation;
 use App\Models\ReferralSource;
 use App\Models\RegistrationQuestion;
+use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -27,18 +28,30 @@ class Apply extends BaseRegister
     {
         $fieldsArray = [
             FileUpload::make('profile_photo')
+                ->required()
                 ->columnSpanFull()
                 ->image()
                 ->openable()
                 ->previewable()
                 ->maxSize(10000)
-                ->label(__('general.profile_photo')),
+                ->label(__('general.profile_photo'))
+                ->saveUploadedFileUsing(function ($file, $get) {
+                    $fullName = strtolower(str_replace(' ','_',$get('name').' '.$get('surname')));
+                    return $file->storeAs('profile-photos',
+                        $fullName.'_'.now()->toDateString().'_profile_photo'.'.png',
+                        'public');
+                }),
             FileUpload::make('resume')
                 ->columnSpanFull()
+                ->acceptedFileTypes(['application/pdf'])
                 ->openable()
                 ->previewable()
                 ->maxSize(10000)
-                ->label(__('general.resume')),
+                ->label(__('general.resume'))
+                ->saveUploadedFileUsing(function ($file, $get) {
+                    $fullName = strtolower(str_replace(' ','_',$get('name').' '.$get('surname')));
+                    return $file->storeAs("resumes", $fullName.'_'.now()->toDateString().'_resume.pdf');
+                }),
             TextInput::make('name')
                 ->required()
                 ->string()
@@ -50,29 +63,29 @@ class Apply extends BaseRegister
             Select::make('gender_id')
                 ->preload()
                 ->options(Gender::all(['id','name'])->pluck('name','id'))
-                ->nullable()
+                ->required()
                 ->exists('genders','id')
-                ->label(__('gender.singular')),
+                ->label(__('general.gender_singular')),
             DatePicker::make('date_of_birth')
-                ->default(now())
-                    ->maxDate(now())
-                ->nullable()
+                ->maxDate(now()->subYears(10))
+                ->required()
                 ->label(__('general.date_of_birth')),
             Select::make('nationality_id')
                 ->searchable()
                 ->preload()
                 ->options(Nationality::all(['id','name'])->pluck('name','id'))
-                ->nullable()
+                ->required()
                 ->exists('nationalities','id')
-                ->label(__('nationality.singular')),
+                ->label(__('general.nationality_singular')),
             Select::make('country_id')
+                ->required()
                 ->options(Country::all(['id','name'])->pluck('name','id'))
                 ->searchable()
                 ->preload()
                 ->live()
                 ->required()
                 ->exists('countries','id')
-                ->label(__('country.singular')),
+                ->label(__('general.country_singular')),
             Select::make('city_id')
                 ->options(fn(Get $get): Collection => City::query()
                     ->where('country_id',$get('country_id'))
@@ -81,7 +94,7 @@ class Apply extends BaseRegister
                 ->preload()
                 ->nullable()
                 ->exists('cities','id')
-                ->label(__('city.singular')),
+                ->label(__('general.city_singular')),
             Select::make('district_id')
                 ->options(fn(Get $get): Collection => District::query()
                     ->where('city_id',$get('city_id'))
@@ -90,15 +103,15 @@ class Apply extends BaseRegister
                 ->preload()
                 ->nullable()
                 ->exists('districts','id')
-                ->label(__('district.singular')),
+                ->label(__('general.district_singular')),
             TextInput::make('email')
                 ->required()
                 ->email()
-                ->unique(ignoreRecord: true)
+                ->unique(table: User::class, column: 'email')
                 ->maxLength(255)
                 ->label(__('general.email')),
             TextInput::make('phone')
-                ->nullable()
+                ->required()
                 ->tel()
                 ->maxLength(255)
                 ->label(__('general.phone')),
@@ -106,43 +119,43 @@ class Apply extends BaseRegister
                 ->searchable()
                 ->preload()
                 ->options(Occupation::all(['id','name'])->pluck('name','id'))
-                ->nullable()
+                ->required()
                 ->exists('occupations','id')
-                ->label(__('occupation.singular')),
+                ->label(__('general.occupation_singular')),
             Select::make('education_level_id')
                 ->searchable()
                 ->preload()
                 ->options(EducationLevel::all(['id','name'])->pluck('name','id'))
-                ->nullable()
+                ->required()
                 ->exists('education_levels','id')
-                ->label(__('education_level.singular')),
+                ->label(__('general.education_level_singular')),
             Select::make('speaking_languages')
                 ->multiple()
                 ->searchable()
                 ->preload()
                 ->options(Language::all(['id','name'])->pluck('name','id'))
-                ->label(__('language.plural')),
+                ->label(__('general.language_plural')),
             Select::make('referral_source_id')
                 ->options(ReferralSource::all(['id','name'])->pluck('name','id'))
-                ->nullable()
+                ->required()
                 ->exists('referral_sources','id')
-                ->label(__('referral_source.question')),
+                ->label(__('general.referral_source_question')),
             TextInput::make('reference_name')
                 ->nullable()
                 ->string()
-                ->label(__('user.reference')),
+                ->label(__('general.user_reference')),
             TextInput::make('instagram')
                 ->nullable()
                 ->string()
-                ->placeholder('@username'),
+                ->placeholder('username'),
             TextInput::make('facebook')
                 ->nullable()
                 ->string()
-                ->placeholder('@username'),
+                ->placeholder('username'),
             TextInput::make('twitter')
                 ->nullable()
                 ->string()
-                ->placeholder('@username'),
+                ->placeholder('username'),
         ];
 
         $questions = RegistrationQuestion::where('is_published',true)->orderBy('sort_order','asc')->get();

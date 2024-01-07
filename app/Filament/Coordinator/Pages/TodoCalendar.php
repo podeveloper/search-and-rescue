@@ -17,7 +17,7 @@ class TodoCalendar extends Page
 
     protected static ?string $navigationGroup = 'Todo';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 97;
 
     protected function getHeaderWidgets(): array
     {
@@ -43,6 +43,6 @@ class TodoCalendar extends Page
 
     public static function getNavigationLabel(): string
     {
-        return __('todo.calendar');
+        return __('general.todo_calendar');
     }
 }

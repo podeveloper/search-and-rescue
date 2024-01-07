@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Coordinator\Resources\VisitorResource\Pages;
+namespace App\Filament\Network\Resources\VisitorResource\Pages;
 
-use App\Filament\Coordinator\Resources\VisitorResource;
+use App\Filament\Network\Resources\VisitorResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

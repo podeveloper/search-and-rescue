@@ -49,7 +49,7 @@ class ContactCategoryResource extends Resource
                     ->toggleable()
                     ->label('Contact Count'),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
             ->filters([
                 //
@@ -61,7 +61,7 @@ class ContactCategoryResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

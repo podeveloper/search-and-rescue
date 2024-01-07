@@ -43,6 +43,9 @@ class AddressesRelationManager extends RelationManager
                         ->pluck('name','id'))
                     ->searchable()
                     ->preload(),
+                Forms\Components\Textarea::make('full_address')
+                    ->nullable()
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('user_id')->hidden()
                     ->extraInputAttributes(['value' => request()->user()->id]),
             ]);
@@ -57,6 +60,7 @@ class AddressesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('country.name')->searchable(),
                 Tables\Columns\TextColumn::make('city.name')->searchable(),
                 Tables\Columns\TextColumn::make('district.name')->searchable(),
+                Tables\Columns\TextColumn::make('full_address')->searchable(),
                 Tables\Columns\TextColumn::make('user.full_name')->searchable(),
             ])
             ->filters([
@@ -72,7 +76,7 @@ class AddressesRelationManager extends RelationManager
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

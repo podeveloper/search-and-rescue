@@ -46,7 +46,7 @@ class CertificateResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('general.users')),
+                    ->label(__('general.volunteers')),
             ]);
     }
 
@@ -62,7 +62,7 @@ class CertificateResource extends Resource
                     ->counts('users')
                     ->sortable()
                     ->toggleable()
-                    ->label(__('event.users_count')),
+                    ->label(__('general.event_volunteers_count')),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -74,7 +74,6 @@ class CertificateResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),

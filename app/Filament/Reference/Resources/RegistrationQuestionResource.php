@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Coordinator\Resources;
+namespace App\Filament\Reference\Resources;
 
 use App\Filament\Coordinator\Resources\RegistrationQuestionResource\Pages;
 use App\Filament\Coordinator\Resources\RegistrationQuestionResource\RelationManagers;
@@ -11,8 +11,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 
@@ -87,7 +85,7 @@ class RegistrationQuestionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageRegistrationQuestions::route('/'),
+            'index' => \App\Filament\Reference\Resources\RegistrationQuestionResource\Pages\ManageRegistrationQuestions::route('/'),
         ];
     }
 }
