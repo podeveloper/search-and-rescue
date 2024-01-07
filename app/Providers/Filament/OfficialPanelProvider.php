@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use BezhanSalleh\FilamentLanguageSwitch\FilamentLanguageSwitchPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -39,6 +40,9 @@ class OfficialPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            ->plugins([
+                FilamentLanguageSwitchPlugin::make(),
+            ])
             ->discoverWidgets(in: app_path('Filament/Official/Widgets'), for: 'App\\Filament\\Official\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
@@ -57,6 +61,7 @@ class OfficialPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->spa();
     }
 }

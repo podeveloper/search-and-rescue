@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Candidate\Pages\Auth\Apply;
 use App\Filament\Candidate\Pages\EditProfile;
+use BezhanSalleh\FilamentLanguageSwitch\FilamentLanguageSwitchPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -45,6 +46,9 @@ class CandidatePanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Candidate/Pages'), for: 'App\\Filament\\Candidate\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+            ])
+            ->plugins([
+                FilamentLanguageSwitchPlugin::make(),
             ])
             //->discoverWidgets(in: app_path('Filament/Candidate/Widgets'), for: 'App\\Filament\\Candidate\\Widgets')
             ->widgets([
