@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Coordinator\Resources;
+namespace App\Filament\Network\Resources;
 
 use App\Filament\Resources\PlaceResource\Pages;
 use App\Filament\Resources\PlaceResource\RelationManagers;
@@ -25,7 +25,7 @@ class PlaceResource extends Resource
 
     protected static ?string $navigationGroup = 'Places';
 
-    protected static ?int $navigationSort = 13;
+    protected static ?int $navigationSort = 16;
 
     public static function form(Form $form): Form
     {
@@ -38,7 +38,6 @@ class PlaceResource extends Resource
                 Forms\Components\Select::make('type')
                     ->options([
                         'center' => 'Center',
-                        'mosque' => 'Mosque',
                         'other' => 'Other',
                     ])
                     ->required()
@@ -81,7 +80,7 @@ class PlaceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Coordinator\Resources\PlaceResource\Pages\ManagePlaces::route('/'),
+            'index' => \App\Filament\Network\Resources\PlaceResource\Pages\ManagePlaces::route('/'),
         ];
     }
 

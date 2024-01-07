@@ -34,14 +34,22 @@ class AppServiceProvider extends ServiceProvider
                 //], $asImage = false)
                 ->iconSize(16)
                 ->labels([
-                    'reference' => __('panel.reference'),
-                    'candidate' => __('panel.candidate'),
-                    'official' => __('panel.official'),
-                    'network' => __('panel.network'),
-                    'stock' => __('panel.stock'),
-                    'coordinator' => __('panel.coordinator'),
+                    'reference' => __('general.panel_reference'),
+                    'candidate' => __('general.panel_candidate'),
+                    'official' => __('general.panel_official'),
+                    'network' => __('general.panel_network'),
+                    'stock' => __('general.panel_stock'),
+                    'call_center' => __('general.panel_call_center'),
+                    'coordinator' => __('general.panel_coordinator'),
+                    'training' => __('general.panel_training'),
+                    'report' => __('general.panel_report'),
                 ])
-                ->visible(true)
+                ->visible(auth()->user() && auth()->user()?->hasRole([
+                        'coordinator',
+                        'network operator',
+                        'stock operator',
+                        'reference operator',
+                    ]))
                 //->excludes(['saas'])
                 ->canSwitchPanels(true);
         });

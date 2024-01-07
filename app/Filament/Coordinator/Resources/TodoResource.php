@@ -30,7 +30,7 @@ class TodoResource extends Resource
 
     protected static ?string $navigationGroup = 'Todo';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 99;
 
     public static function getGloballySearchableAttributes(): array
     {
@@ -45,8 +45,8 @@ class TodoResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('category')
                             ->relationship(name: 'category', titleAttribute: 'name')
-                            ->createOptionForm(fn(Form $form) => TodoResource::form($form))
-                            ->editOptionForm(fn(Form $form) => TodoResource::form($form))
+                            ->createOptionForm(fn(Form $form) => TodoCategoryResource::form($form))
+                            ->editOptionForm(fn(Form $form) => TodoCategoryResource::form($form))
                             ->columnSpan('full')
                             ->nullable()
                             ->exists('todo_categories','id')
@@ -57,13 +57,13 @@ class TodoResource extends Resource
                             ->searchable()
                             ->preload()
                             ->loadingMessage('Loading users...')
-                            ->label(__('todo.assignors')),
+                            ->label(__('general.todo_assignors')),
                         Forms\Components\Select::make('responsibles')
                             ->relationship('responsibles', 'full_name')
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->label(__('todo.responsibles')),
+                            ->label(__('general.todo_responsibles')),
                         Forms\Components\TextInput::make('title')
                             ->required()
                             ->columnSpan('full')
@@ -71,7 +71,6 @@ class TodoResource extends Resource
                         Forms\Components\RichEditor::make('content')
                             ->columnSpanFull()
                             ->nullable()
-                            ->maxLength(300)
                             ->label(__('general.content')),
                         Forms\Components\FileUpload::make('image')
                             ->columnSpanFull()
@@ -102,11 +101,11 @@ class TodoResource extends Resource
                                     ->format('Y/m/d')
                                     ->default(now()->toDateString())
                                     ->required()
-                                    ->label(__('todo.given_date')),
+                                    ->label(__('general.todo_given_date')),
                                 Forms\Components\DatePicker::make('deadline_at')
                                     ->format('Y/m/d')
                                     ->required()
-                                    ->label(__('todo.deadline_date')),
+                                    ->label(__('general.todo_deadline_date')),
                                 Forms\Components\Toggle::make('is_finished')
                                     ->label(__('general.finished')),
                             ]),
@@ -122,7 +121,7 @@ class TodoResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->label(__('todo_category.singular')),
+                    ->label(__('general.todo_category_singular')),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
                     ->sortable()
@@ -138,11 +137,11 @@ class TodoResource extends Resource
                 Tables\Columns\TextColumn::make('assignors.full_name')
                     ->badge()
                     ->toggleable()
-                    ->label(__('todo.assignors')),
+                    ->label(__('general.todo_assignors')),
                 Tables\Columns\TextColumn::make('responsibles.full_name')
                     ->badge()
                     ->toggleable()
-                    ->label(__('todo.responsibles')),
+                    ->label(__('general.todo_responsibles')),
                 Tables\Columns\ImageColumn::make('image')
                     ->toggleable()
                     ->label(__('general.image')),
@@ -151,18 +150,18 @@ class TodoResource extends Resource
                     ->date('Y-m-d')
                     ->sortable()
                     ->toggleable()
-                    ->label(__('todo.given_date')),
+                    ->label(__('general.todo_given_date')),
                 Tables\Columns\TextColumn::make('deadline_at')
                     ->sortable()
                     ->toggleable()
-                    ->label(__('todo.deadline_date')),
+                    ->label(__('general.todo_deadline_date')),
                 ToggleIconColumn::make('is_finished')
                     ->onIcon('heroicon-s-check')
                     ->offIcon('heroicon-o-x-mark')
                     ->toggleable()
                     ->label(__('general.finished'))
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('deadline_at','asc')
             ->filters([
                 Tables\Filters\Filter::make('title')
@@ -188,18 +187,18 @@ class TodoResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('todo.assignors')),
+                    ->label(__('general.todo_assignors')),
                 Tables\Filters\SelectFilter::make('responsibles')
                     ->relationship('responsibles', 'full_name')
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('todo.responsibles')),
+                    ->label(__('general.todo_responsibles')),
                 Tables\Filters\Filter::make('deadline_until')
                     ->form([
                         Forms\Components\DatePicker::make('deadline_until')
                             ->displayFormat('Y-m-d')
-                            ->label(__('todo.deadline_date'))
+                            ->label(__('general.todo_deadline_date'))
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $deadlineAt = $data['deadline_until'];
@@ -216,7 +215,7 @@ class TodoResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

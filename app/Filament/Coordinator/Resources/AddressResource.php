@@ -4,7 +4,7 @@ namespace App\Filament\Coordinator\Resources;
 
 use App\Filament\Resources\AddressResource\Pages;
 use App\Filament\Resources\AddressResource\RelationManagers;
-use App\Filament\Candidate\Resources;
+use App\Filament\Volunteer\Resources;
 use App\Models\Address;
 use App\Models\City;
 use App\Models\District;
@@ -63,6 +63,9 @@ class AddressResource extends Resource
                     ->preload()
                     ->required()
                     ->exists('users','id'),
+                Forms\Components\Textarea::make('full_address')
+                    ->nullable()
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -86,6 +89,10 @@ class AddressResource extends Resource
                     ->searchable(isIndividual: true)
                     ->sortable()
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('full_address')
+                    ->searchable(isIndividual: true)
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('type')
                     ->searchable(isIndividual: true)
                     ->sortable()
@@ -101,7 +108,7 @@ class AddressResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

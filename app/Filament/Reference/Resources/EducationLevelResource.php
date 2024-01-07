@@ -49,7 +49,7 @@ class EducationLevelResource extends Resource
                     ->toggleable()
                     ->label('User Count'),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
             ->filters([
                 //

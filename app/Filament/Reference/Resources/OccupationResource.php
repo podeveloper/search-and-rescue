@@ -44,7 +44,7 @@ class OccupationResource extends Resource
                     ->toggleable()
                     ->label(__('general.name')),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
             ->filters([
                 //

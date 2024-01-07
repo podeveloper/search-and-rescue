@@ -4,7 +4,7 @@ namespace App\Filament\Coordinator\Resources;
 
 use App\Filament\Resources\TagResource\Pages;
 use App\Filament\Resources\TagResource\RelationManagers;
-use App\Filament\Candidate\Resources;
+use App\Filament\Volunteer\Resources;
 use App\Models\Tag;
 use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
@@ -23,8 +23,8 @@ class TagResource extends Resource
     protected static ?string $model = Tag::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-hashtag';
-    protected static ?string $navigationGroup = 'Human Resources';
-    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationGroup = 'Members';
+    protected static ?int $navigationSort = 7;
 
     public static function form(Form $form): Form
     {
@@ -34,6 +34,12 @@ class TagResource extends Resource
                     ->required()
                     ->string()
                     ->label(__('general.name')),
+                Forms\Components\Select::make('volunteers')
+                    ->relationship('volunteers', 'full_name')
+                    ->multiple()
+                    ->searchable()
+                    ->preload()
+                    ->label(__('general.volunteers')),
             ]);
     }
 
@@ -52,7 +58,7 @@ class TagResource extends Resource
                     ->sortable()
                     ->label(__('tag.count')),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
             ->filters([
                 //
@@ -64,7 +70,7 @@ class TagResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

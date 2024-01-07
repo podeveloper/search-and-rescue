@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Coordinator\Resources\PlaceResource\Pages;
+namespace App\Filament\Network\Resources\PlaceResource\Pages;
 
-use App\Filament\Coordinator\Resources\PlaceResource;
+use App\Filament\Network\Resources\PlaceResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 

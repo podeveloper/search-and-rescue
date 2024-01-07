@@ -55,7 +55,7 @@ class DistrictResource extends Resource
                     ->sortable()
                     ->toggleable(),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name', 'asc')
             ->filters([
                 //

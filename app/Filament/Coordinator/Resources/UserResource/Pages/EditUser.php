@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rules\Password;
 use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
@@ -43,6 +44,11 @@ class EditUser extends EditRecord
                         ->body('User password has been successfully updated.')
                         ->send();
                 }),
+            Actions\DeleteAction::make(),
+            Impersonate::make()
+                ->label('Impersonate')
+                ->color('gray')
+                ->redirectTo(URL::to('/candidate'))
         ];
     }
 

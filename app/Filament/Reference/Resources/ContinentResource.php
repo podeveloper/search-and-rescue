@@ -49,7 +49,7 @@ class ContinentResource extends Resource
                     ->toggleable()
                     ->label('Countries Count')
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
             ->filters([
                 //

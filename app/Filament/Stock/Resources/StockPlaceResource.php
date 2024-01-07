@@ -33,7 +33,6 @@ class StockPlaceResource extends Resource
                 Forms\Components\Select::make('type')
                     ->options([
                         'center' => 'Center',
-                        'mosque' => 'Mosque',
                         'storage' => 'Storage',
                         'other' => 'Other',
                     ])

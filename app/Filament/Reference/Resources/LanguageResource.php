@@ -63,7 +63,7 @@ class LanguageResource extends Resource
                     ->toggleable()
                     ->label('User Speaks'),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
             ->filters([
                 //

@@ -25,7 +25,7 @@ class EventCategoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Events';
 
-    protected static ?int $navigationSort = 19;
+    protected static ?int $navigationSort = 14;
 
     public static function form(Form $form): Form
     {
@@ -53,9 +53,9 @@ class EventCategoryResource extends Resource
                     ->label('Event Count')
                     ->sortable()
                     ->toggleable()
-                    ->label(__('event_category.count')),
+                    ->label(__('general.event_category_count')),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
             ->filters([
                 //
@@ -67,7 +67,7 @@ class EventCategoryResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

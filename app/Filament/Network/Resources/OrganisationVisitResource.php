@@ -2,7 +2,6 @@
 
 namespace App\Filament\Network\Resources;
 
-use App\Filament\Coordinator\Resources\PlaceResource;
 use App\Filament\Network\Resources;
 use App\Filament\Resources\OrganisationVisitResource\Pages;
 use App\Filament\Resources\OrganisationVisitResource\RelationManagers;
@@ -37,6 +36,7 @@ class OrganisationVisitResource extends Resource
                     ->createOptionForm(fn(Form $form) => PlaceResource::form($form))
                     ->editOptionForm(fn(Form $form) => PlaceResource::form($form))
                     ->searchable()
+                    ->preload()
                     ->nullable()
                     ->exists('places','id'),
                 Forms\Components\Select::make('organisation_id')
@@ -55,8 +55,7 @@ class OrganisationVisitResource extends Resource
                     ->exists('users','id'),
                 Forms\Components\Textarea::make('explanation')
                     ->nullable()
-                    ->columnSpanFull()
-                    ->maxLength(300),
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -91,7 +90,7 @@ class OrganisationVisitResource extends Resource
                     ->searchable()
                     ->toggleable(),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('date','desc')
             ->filters([
                 //
@@ -103,7 +102,7 @@ class OrganisationVisitResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

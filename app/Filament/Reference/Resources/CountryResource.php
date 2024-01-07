@@ -78,7 +78,7 @@ class CountryResource extends Resource
                     ->searchable(isIndividual: true)
                     ->toggleable(),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
             ->filters([
                 //

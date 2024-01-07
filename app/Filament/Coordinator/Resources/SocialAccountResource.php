@@ -45,7 +45,7 @@ class SocialAccountResource extends Resource
                     ->preload()
                     ->required()
                     ->exists('users','id')
-                    ->label(__('general.user')),
+                    ->label(__('general.volunteer')),
             ]);
     }
 
@@ -67,7 +67,7 @@ class SocialAccountResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->label(__('general.user')),
+                    ->label(__('general.volunteer')),
             ])
             ->filters([
                 //
@@ -79,7 +79,7 @@ class SocialAccountResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

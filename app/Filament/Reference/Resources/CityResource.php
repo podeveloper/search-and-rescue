@@ -59,7 +59,7 @@ class CityResource extends Resource
                     ->toggleable()
                     ->sortable(),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
             ->filters([
                 //

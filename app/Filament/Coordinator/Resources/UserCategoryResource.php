@@ -24,8 +24,8 @@ class UserCategoryResource extends Resource
     protected static ?string $model = UserCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Human Resources';
-    protected static ?int $navigationSort = 5;
+    protected static ?string $navigationGroup = 'Members';
+    protected static ?int $navigationSort = 8;
 
     public static function form(Form $form): Form
     {
@@ -35,6 +35,12 @@ class UserCategoryResource extends Resource
                     ->required()
                     ->string()
                     ->label(__('general.name')),
+                Forms\Components\Select::make('volunteers')
+                    ->relationship('volunteers', 'full_name')
+                    ->multiple()
+                    ->searchable()
+                    ->preload()
+                    ->label(__('general.volunteers')),
             ]);
     }
 
@@ -51,9 +57,9 @@ class UserCategoryResource extends Resource
                     ->counts('users')
                     ->toggleable()
                     ->sortable()
-                    ->label(__('tag.count')),
+                    ->label(__('general.user_category_count')),
             ])
-            ->paginated([10, 25, 50, 100])
+            ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
             ->filters([
                 //
@@ -65,7 +71,7 @@ class UserCategoryResource extends Resource
             ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }

@@ -2,6 +2,17 @@
 
 namespace App\Filament\Coordinator\Resources;
 
+use App\Events\ApplicationApproved;
+use App\Events\ApplicationRejected;
+use App\Filament\Coordinator\Pages\Active;
+use App\Filament\Coordinator\Pages\Applicants;
+use App\Filament\Coordinator\Pages\Archived;
+use App\Filament\Coordinator\Pages\Duplicates;
+use App\Filament\Coordinator\Pages\Expired;
+use App\Filament\Coordinator\Pages\Inactive;
+use App\Filament\Coordinator\Pages\Rejecteds;
+use App\Filament\Coordinator\Pages\Trashed;
+use App\Filament\Coordinator\Pages\Volunteers;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\AddressesRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\DriverLicencesRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\FirstAidCertificateRelationManager;
@@ -14,14 +25,18 @@ use App\Filament\Coordinator\Resources\UserResource\RelationManagers\VehiclesRel
 use App\Filament\Reference\Resources\UserResource\RelationManagers\CertificatesRelationManager;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Candidate\Resources;
+use App\Helpers\ProfileQRDownloadHelper;
+use App\Helpers\RoleHelper;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\District;
 use App\Models\Todo;
 use App\Models\User;
 use App\Traits\NavigationLocalizationTrait;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
@@ -29,6 +44,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
@@ -41,7 +57,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'Human Resources';
     protected static ?string $navigationIcon = 'heroicon-o-users';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
@@ -63,12 +79,33 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\FileUpload::make('profile_photo')
-                    ->columnSpan(2)
+                    ->columnSpanFull()
                     ->image()
+                    ->openable()
+                    ->previewable()
                     ->maxSize(10000)
-                    ->label(__('general.profile_photo')),
+                    ->label(__('general.profile_photo'))
+                    ->saveUploadedFileUsing(function ($file, $get) {
+                        $fullName = strtolower(str_replace(' ', '_', $get('name') . ' ' . $get('surname')));
+                        return $file->storeAs('profile-photos',
+                            $fullName . '_' . now()->toDateString() . '_profile_photo' . '.png',
+                            'public');
+                    }),
+                Forms\Components\FileUpload::make('resume')
+                    ->columnSpanFull()
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->openable()
+                    ->previewable()
+                    ->maxSize(10000)
+                    ->label(__('general.resume'))
+                    ->saveUploadedFileUsing(function ($file, $get) {
+                        $fullName = strtolower(str_replace(' ', '_', $get('name') . ' ' . $get('surname')));
+                        return $file->storeAs("resumes", $fullName . '_' . now()->toDateString() . '_resume.pdf');
+                    }),
                 Forms\Components\Section::make('Personal Info')
                     ->schema([
+                        Forms\Components\TextInput::make('id')
+                            ->disabled(),
                         Forms\Components\TextInput::make('national_id_number')
                             ->required()
                             ->numeric(),
@@ -84,8 +121,14 @@ class UserResource extends Resource
                             ->string()
                             ->label(__('general.surname')),
                         Forms\Components\DatePicker::make('date_of_birth')
-                            ->default(now())
-                    ->maxDate(now())
+                            ->formatStateUsing(function (User $record) {
+                                $dateOfBirth = $record->date_of_birth;
+                                if (!$dateOfBirth) {return null;}
+                                $carbonInstance = Carbon::createFromFormat('Y-m-d', $dateOfBirth);
+                                if ($carbonInstance === false) {return null;}
+                                if ($carbonInstance->year < 1940) { return null; }
+                                return $dateOfBirth;
+                            })
                             ->nullable()
                             ->label(__('general.date_of_birth')),
                         Forms\Components\Select::make('marital_status')
@@ -98,17 +141,17 @@ class UserResource extends Resource
                         Forms\Components\Select::make('gender_id')
                             ->relationship('gender', 'name')
                             ->nullable()
-                            ->exists('genders','id')
-                            ->label(__('gender.singular')),
+                            ->exists('genders', 'id')
+                            ->label(__('general.gender_singular')),
                         Forms\Components\Select::make('nationality_id')
                             ->relationship('nationality', 'name')
                             ->searchable()
                             ->preload()
                             ->nullable()
-                            ->exists('nationalities','id')
-                            ->label(__('nationality.singular')),
+                            ->exists('nationalities', 'id')
+                            ->label(__('general.nationality_singular')),
                     ]),
-                Forms\Components\Section::make('Contact Info')
+                Forms\Components\Section::make('Contact & Account Info')
                     ->schema([
                         Forms\Components\TextInput::make('phone')
                             ->nullable()
@@ -121,20 +164,25 @@ class UserResource extends Resource
                             ->unique(ignoreRecord: true)
                             ->maxLength(255)
                             ->label(__('general.email')),
+                        Forms\Components\TextInput::make('username')
+                            ->nullable()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255)
+                            ->label(__('general.username')),
                     ]),
                 Forms\Components\Section::make('Educational Info')
                     ->schema([
                         Forms\Components\Select::make('education_level_id')
                             ->relationship('educationLevel', 'name')
                             ->nullable()
-                            ->exists('education_levels','id')
-                            ->label(__('education_level.singular')),
+                            ->exists('education_levels', 'id')
+                            ->label(__('general.education_level_singular')),
                         Forms\Components\Select::make('languages')
                             ->relationship('languages', 'name')
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->label(__('language.plural')),
+                            ->label(__('general.language_plural')),
                     ]),
                 Forms\Components\Section::make('Other Info')
                     ->schema([
@@ -143,8 +191,8 @@ class UserResource extends Resource
                             ->searchable()
                             ->preload()
                             ->nullable()
-                            ->exists('occupations','id')
-                            ->label(__('occupation.singular')),
+                            ->exists('occupations', 'id')
+                            ->label(__('general.occupation_singular')),
                         Forms\Components\TextInput::make('occupation_text')
                             ->nullable()
                             ->string()
@@ -154,8 +202,8 @@ class UserResource extends Resource
                             ->searchable()
                             ->preload()
                             ->nullable()
-                            ->exists('organisations','id')
-                            ->label(__('organisation.singular')),
+                            ->exists('organisations', 'id')
+                            ->label(__('general.organisation_singular')),
                         Forms\Components\TextInput::make('organisation_text')
                             ->nullable()
                             ->string()
@@ -169,13 +217,13 @@ class UserResource extends Resource
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->label(__('event.plural')),
+                            ->label(__('general.event_plural')),
                         Forms\Components\Select::make('tags')
                             ->relationship('tags', 'name')
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->label(__('tag.plural')),
+                            ->label(__('general.tag_plural')),
                         Forms\Components\Select::make('categories')
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('name')
@@ -187,32 +235,31 @@ class UserResource extends Resource
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->label(__('user_category.plural')),
+                            ->label(__('general.user_category_plural')),
                         Forms\Components\Select::make('certificates')
                             ->relationship('certificates', 'title')
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->label(__('certificate.plural')),
+                            ->label(__('general.certificate_plural')),
                         Forms\Components\TextInput::make('reference_name')
                             ->nullable()
                             ->string(),
                         Forms\Components\Select::make('reference_id')
                             ->label('Reference Person')
-                            ->relationship('reference', 'name')
+                            ->relationship('reference', 'full_name')
                             ->searchable()
                             ->preload()
                             ->nullable()
-                            ->exists('users','id')
-                            ->label(__('user.reference')),
+                            ->exists('users', 'id')
+                            ->label(__('general.user_reference')),
                         Forms\Components\Select::make('referral_source_id')
                             ->relationship('referralSource', 'name')
                             ->nullable()
-                            ->exists('referral_sources','id')
-                            ->label(__('referral_source.singular')),
+                            ->exists('referral_sources', 'id')
+                            ->label(__('general.referral_source_singular')),
                         Forms\Components\Textarea::make('note')
                             ->nullable()
-                            ->maxLength(300)
                             ->label(__('general.note'))
                             ->visible(auth()->user()?->is_admin || auth()->user()?->hasRole(['coordinator'])),
                         Forms\Components\Select::make('roles')
@@ -220,13 +267,19 @@ class UserResource extends Resource
                             ->multiple()
                             ->searchable()
                             ->preload()
-                            ->label(__('role.plural')),
+                            ->label(__('general.role_plural')),
                         Forms\Components\Toggle::make('is_admin')
                             ->onIcon('heroicon-m-bolt')
                             ->offIcon('heroicon-m-user')
                             ->inline(false)
-                            ->label(__('user.is_admin'))
+                            ->label(__('general.user_is_admin'))
                             ->visible(auth()->user()->is_admin),
+                        Forms\Components\Toggle::make('is_active')
+                            ->onIcon('heroicon-m-bolt')
+                            ->offIcon('heroicon-m-user')
+                            ->inline(false)
+                            ->label(__('general.user_is_active'))
+                            ->visible(auth()->user()->hasRole(['coordinator'])),
                     ]),
             ]);
     }
@@ -235,237 +288,230 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\Layout\Split::make([
-                    Tables\Columns\ImageColumn::make('profile_photo')
-                        ->defaultImageUrl(asset('img/avatar.png'))
-                        ->width(50)
-                        ->height(50)
-                        ->circular()
-                        ->toggleable()
-                        ->label(__('general.profile_photo')),
-                    Tables\Columns\TextColumn::make('national_id_number')
-                        ->weight(FontWeight::Bold)
-                        ->searchable()
-                        ->sortable()
-                        ->toggleable(),
-                    Tables\Columns\TextColumn::make('passport_number')
-                        ->weight(FontWeight::Bold)
-                        ->searchable()
-                        ->sortable()
-                        ->toggleable(),
-                    Tables\Columns\TextColumn::make('name')
-                        ->weight(FontWeight::Bold)
-                        ->searchable()
-                        ->sortable()
-                        ->toggleable()
-                        ->label(__('general.name')),
-                    Tables\Columns\TextColumn::make('surname')
-                        ->weight(FontWeight::Bold)
-                        ->searchable()
-                        ->sortable()
-                        ->toggleable()
-                        ->label(__('general.surname')),
-                    Tables\Columns\Layout\Stack::make([
-                        Tables\Columns\TextColumn::make('phone')
-                            ->icon('heroicon-m-phone')
-                            ->searchable()
-                            ->toggleable()
-                            ->copyable()
-                            ->copyMessage('Phone number copied')
-                            ->copyMessageDuration(1500)
-                            ->label(__('general.phone')),
-                        Tables\Columns\TextColumn::make('email')
-                            ->icon('heroicon-m-envelope')
-                            ->searchable()
-                            ->toggleable()
-                            ->copyable()
-                            ->copyMessage('Email address copied')
-                            ->copyMessageDuration(1500)
-                            ->label(__('general.email')),
-                    ])
-                ]),
-                Tables\Columns\Layout\Panel::make([
-                    Tables\Columns\Layout\Split::make([
-                        Tables\Columns\Layout\Stack::make([
-                            Tables\Columns\TextColumn::make('gender.name')
-                                ->icon('heroicon-m-finger-print')
-                                ->searchable()
-                                ->sortable()
-                                ->toggleable()
-                                ->label(__('gender.singular')),
-                            Tables\Columns\TextColumn::make('nationality.name')
-                                ->icon('heroicon-m-flag')
-                                ->searchable()
-                                ->sortable()
-                                ->toggleable()
-                                ->label(__('nationality.singular')),
-                        ]),
-                        Tables\Columns\Layout\Stack::make([
-                            Tables\Columns\TextColumn::make('date_of_birth')
-                                ->icon('heroicon-m-calendar-days')
-                                ->date('Y-m-d')
-                                ->sortable()
-                                ->toggleable()
-                                ->label(__('general.date_of_birth')),
-                            Tables\Columns\TextColumn::make('marital_status')
-                                ->icon('heroicon-m-puzzle-piece')
-                                ->searchable()
-                                ->sortable()
-                                ->toggleable()
-                                ->label(__('general.marital_status')),
-                        ]),
-                    ])
-                        ->extraAttributes(['style' => 'margin: 20px; !important;']),
-
-                    Tables\Columns\Layout\Split::make([
-                       Tables\Columns\Layout\Stack::make([
-                           Tables\Columns\TextColumn::make('educationLevel.name')
-                               ->icon('heroicon-m-academic-cap')
-                               ->searchable()
-                               ->sortable()
-                               ->toggleable()
-                               ->label(__('education_level.singular')),
-                           Tables\Columns\TextColumn::make('referralSource.name')
-                               ->icon('heroicon-m-megaphone')
-                               ->searchable()
-                               ->sortable()
-                               ->toggleable()
-                               ->label(__('referral_source.singular')),
-                           Tables\Columns\TextColumn::make('occupation.name')
-                               ->icon('heroicon-m-briefcase')
-                               ->searchable()
-                               ->sortable()
-                               ->toggleable()
-                               ->label(__('occupation.singular')),
-                           Tables\Columns\TextColumn::make('organisation.name')
-                               ->icon('heroicon-m-building-office-2')
-                               ->searchable()
-                               ->sortable()
-                               ->toggleable()
-                               ->label(__('organisation.singular')),
-                       ]),
-                        Tables\Columns\Layout\Stack::make([
-                            Tables\Columns\TextColumn::make('addresses.country_id')
-                                ->icon('heroicon-m-map')
-                                ->label('Country')
-                                ->getStateUsing( function (User $record){
-                                    return $record->addresses->first()?->country?->name;
-                                })
-                                ->toggleable()
-                                ->label(__('country.singular')),
-                            Tables\Columns\TextColumn::make('addresses.city_id')
-                                ->icon('heroicon-m-map-pin')
-                                ->label('City')
-                                ->getStateUsing( function (User $record){
-                                    return $record->addresses->first()?->city?->name;
-                                })
-                                ->toggleable()
-                                ->label(__('city.singular')),
-                            Tables\Columns\TextColumn::make('addresses.district')
-                                ->icon('heroicon-m-map-pin')
-                                ->label('District')
-                                ->getStateUsing( function (User $record){
-                                    return $record->addresses->first()?->district?->name;
-                                })
-                                ->toggleable()
-                                ->label(__('district.singular')),
-                       ]),
-                    ])
-                        ->extraAttributes(['style' => 'margin: 20px; !important;']),
-
-                    Tables\Columns\Layout\Split::make([
-                       Tables\Columns\Layout\Stack::make([
-                           Tables\Columns\TextColumn::make('languages.name')
-                               ->icon('heroicon-m-language')
-                               ->badge()
-                               ->toggleable()
-                               ->searchable()
-                               ->label(__('language.plural')),
-                       ]),
-                        Tables\Columns\Layout\Stack::make([
-                            Tables\Columns\TextColumn::make('roles.name')
-                                ->icon('heroicon-m-check')
-                                ->badge()
-                                ->toggleable()
-                                ->label(__('role.plural')),
-                       ]),
-                    ])
-                        ->extraAttributes(['style' => 'margin: 20px; !important;']),
-
-
-                    Tables\Columns\Layout\Split::make([
-                       Tables\Columns\Layout\Stack::make([
-                           Tables\Columns\TextColumn::make('events.title')
-                               ->icon('heroicon-m-swatch')
-                               ->badge()
-                               ->toggleable()
-                               ->label(__('event.plural')),
-                       ]),
-                        Tables\Columns\Layout\Stack::make([
-                            Tables\Columns\TextColumn::make('tags.name')
-                                ->icon('heroicon-m-hashtag')
-                                ->badge()
-                                ->toggleable()
-                                ->label(__('tag.plural')),
-                            Tables\Columns\TextColumn::make('categories.name')
-                                ->icon('heroicon-m-rectangle-stack')
-                                ->badge()
-                                ->toggleable()
-                                ->label(__('user_category.plural')),
-                       ]),
-                    ])
-                        ->extraAttributes(['style' => 'margin: 20px; !important;']),
-
-                    Tables\Columns\Layout\Split::make([
-                       Tables\Columns\Layout\Stack::make([
-                           Tables\Columns\TextColumn::make('certificates.title')
-                               ->icon('heroicon-m-sparkles')
-                               ->badge()
-                               ->toggleable()
-                               ->label(__('certificate.plural')),
-                       ]),
-                        Tables\Columns\Layout\Stack::make([
-                            //
-                       ]),
-                    ])
-                        ->extraAttributes(['style' => 'margin: 20px; !important;']),
-
-                    Tables\Columns\Layout\Split::make([
-                        Tables\Columns\Layout\Stack::make([
-                            Tables\Columns\Layout\Split::make([
-                                Tables\Columns\TextColumn::make('last_login_at')
-                                    ->date('Y-m-d')
-                                    ->sortable()
-                                    ->toggleable()
-                                    ->label(__('user.last_login_date')),
-                            ]),
-                            Tables\Columns\Layout\Split::make([
-                                Tables\Columns\TextColumn::make('created_at')
-                                    ->date('Y-m-d')
-                                    ->sortable()
-                                    ->toggleable()
-                                    ->label(__('general.created_date')),
-                            ]),
-                            Tables\Columns\Layout\Split::make([
-                                Tables\Columns\TextColumn::make('updated_at')
-                                    ->date('Y-m-d')
-                                    ->sortable()
-                                    ->toggleable()
-                                    ->label(__('general.updated_date')),
-                            ]),
-                       ]),
-                    ])
-                        ->extraAttributes(['style' => 'margin: 20px; !important;']),
-
-                    Tables\Columns\Layout\Stack::make([
-                        Tables\Columns\TextColumn::make('note')
-                            ->icon('heroicon-o-user')
-                            ->searchable()
-                            ->toggleable()
-                            ->label(__('general.note')),
-                    ])
-
-                ])->collapsible()
+                Tables\Columns\TextColumn::make('id')
+                    ->weight(FontWeight::Bold)
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\ImageColumn::make('profile_photo')
+                    ->disk('public')
+                    ->visibility('private')
+                    ->defaultImageUrl(asset('img/avatar.png'))
+                    ->width(50)
+                    ->height(50)
+                    ->url(fn(User $record): string => $record->profile_photo ? Storage::disk('public')->url($record->profile_photo) : asset('img/avatar.png'), true)
+                    ->circular()
+                    ->toggleable()
+                    ->label(__('general.profile_photo')),
+                Tables\Columns\IconColumn::make('resume')
+                    ->icon('heroicon-o-identification')
+                    ->url(function(User $record){
+                        if ($record->resume)
+                        {
+                            $pathParts = explode('/', $record->resume);
+                            $folder = $pathParts[0];
+                            $fileName = end($pathParts);
+                            return route('files.show',['folder' => $folder,'filename' => $fileName]);
+                        }
+                        return asset('img/none.png');
+                    }, true)
+                    ->toggleable()
+                    ->label(__('general.resume')),
+                Tables\Columns\TextColumn::make('national_id_number')
+                    ->weight(FontWeight::Bold)
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('passport_number')
+                    ->weight(FontWeight::Bold)
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->weight(FontWeight::Bold)
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->copyable()
+                    ->copyMessage('Name copied')
+                    ->copyMessageDuration(1500)
+                    ->label(__('general.name')),
+                Tables\Columns\TextColumn::make('surname')
+                    ->weight(FontWeight::Bold)
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->copyable()
+                    ->copyMessage('Surname copied')
+                    ->copyMessageDuration(1500)
+                    ->label(__('general.surname')),
+                Tables\Columns\TextColumn::make('full_name')
+                    ->weight(FontWeight::Bold)
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->copyable()
+                    ->copyMessage('Full name copied')
+                    ->copyMessageDuration(1500)
+                    ->label(__('general.full_name')),
+                Tables\Columns\TextColumn::make('phone')
+                    ->icon('heroicon-m-phone')
+                    ->searchable()
+                    ->toggleable()
+                    ->copyable()
+                    ->copyMessage('Phone number copied')
+                    ->copyMessageDuration(1500)
+                    ->label(__('general.phone')),
+                Tables\Columns\TextColumn::make('email')
+                    ->icon('heroicon-m-envelope')
+                    ->searchable()
+                    ->toggleable()
+                    ->copyable()
+                    ->copyMessage('Email address copied')
+                    ->copyMessageDuration(1500)
+                    ->label(__('general.email')),
+                Tables\Columns\TextColumn::make('username')
+                    ->icon('heroicon-m-envelope')
+                    ->searchable()
+                    ->toggleable()
+                    ->copyable()
+                    ->copyMessage('Username address copied')
+                    ->copyMessageDuration(1500)
+                    ->label(__('general.username')),
+                Tables\Columns\TextColumn::make('gender.name')
+                    ->icon('heroicon-m-finger-print')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.gender_singular')),
+                Tables\Columns\TextColumn::make('nationality.name')
+                    ->icon('heroicon-m-flag')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.nationality_singular')),
+                Tables\Columns\TextColumn::make('date_of_birth')
+                    ->icon('heroicon-m-calendar-days')
+                    ->date('Y-m-d')
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.date_of_birth')),
+                Tables\Columns\TextColumn::make('marital_status')
+                    ->icon('heroicon-m-puzzle-piece')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.marital_status')),
+                Tables\Columns\TextColumn::make('educationLevel.name')
+                    ->icon('heroicon-m-academic-cap')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.education_level_singular')),
+                Tables\Columns\TextColumn::make('referralSource.name')
+                    ->icon('heroicon-m-megaphone')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.referral_source_singular')),
+                Tables\Columns\TextColumn::make('occupation.name')
+                    ->icon('heroicon-m-briefcase')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.occupation_singular')),
+                Tables\Columns\TextColumn::make('organisation_text')
+                    ->icon('heroicon-m-building-office-2')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.organisation_singular')),
+                Tables\Columns\TextColumn::make('addresses.country_id')
+                    ->icon('heroicon-m-map')
+                    ->label('Country')
+                    ->getStateUsing(function (User $record) {
+                        return $record->addresses->first()?->country?->name;
+                    })
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.country_singular')),
+                Tables\Columns\TextColumn::make('addresses.city_id')
+                    ->icon('heroicon-m-map-pin')
+                    ->label('City')
+                    ->getStateUsing(function (User $record) {
+                        return $record->addresses->first()?->city?->name;
+                    })
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.city_singular')),
+                Tables\Columns\TextColumn::make('addresses.district')
+                    ->icon('heroicon-m-map-pin')
+                    ->label('District')
+                    ->getStateUsing(function (User $record) {
+                        return $record->addresses->first()?->district?->name;
+                    })
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.district_singular')),
+                Tables\Columns\TextColumn::make('is_active')
+                    ->formatStateUsing(fn(User $record) => $record->is_active ? 'Active' : 'Inactive')
+                    ->wrap()
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable()
+                    ->label(__('general.user_is_active')),
+                Tables\Columns\TextColumn::make('languages.name')
+                    ->icon('heroicon-m-language')
+                    ->badge()
+                    ->toggleable()
+                    ->searchable()
+                    ->label(__('general.language_plural')),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->icon('heroicon-m-check')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.role_plural')),
+                Tables\Columns\TextColumn::make('events.title')
+                    ->icon('heroicon-m-swatch')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.event_plural')),
+                Tables\Columns\TextColumn::make('tags.name')
+                    ->icon('heroicon-m-hashtag')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.tag_plural')),
+                Tables\Columns\TextColumn::make('categories.name')
+                    ->icon('heroicon-m-rectangle-stack')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.user_category_plural')),
+                Tables\Columns\TextColumn::make('certificates.title')
+                    ->icon('heroicon-m-sparkles')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.certificate_plural')),
+                Tables\Columns\TextColumn::make('last_login_at')
+                    ->date('Y-m-d')
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.user_last_login_date')),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->date('Y-m-d')
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.created_date')),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->date('Y-m-d')
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.updated_date')),
+                Tables\Columns\TextColumn::make('note')
+                    ->limit(20)
+                    ->wrap()
+                    ->icon('heroicon-o-user')
+                    ->searchable()
+                    ->toggleable()
+                    ->label(__('general.note')),
             ])
             ->filters([
                 Tables\Filters\Filter::make('national_id_number')
@@ -520,61 +566,70 @@ class UserResource extends Resource
                         $email = $data['email'];
                         return $email ? $query->where('email', 'like', '%' . $email . '%') : $query;
                     }),
+                Tables\Filters\Filter::make('username')
+                    ->form([
+                        Forms\Components\TextInput::make('username')
+                            ->label(__('general.username')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $username = $data['username'];
+                        return $username ? $query->where('username', 'like', '%' . $username . '%') : $query;
+                    }),
                 Tables\Filters\SelectFilter::make('gender')
                     ->relationship('gender', 'name')
                     ->multiple()
                     ->preload()
-                    ->label(__('gender.singular')),
+                    ->label(__('general.gender_singular')),
                 Tables\Filters\SelectFilter::make('nationality')
                     ->relationship('nationality', 'name')
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('nationality.singular')),
+                    ->label(__('general.nationality_singular')),
                 Tables\Filters\Filter::make('country_id')
                     ->form([
                         Forms\Components\Select::make('country_id')
                             ->label('Country')
-                            ->options(Country::all()->pluck('name','id'))
+                            ->options(Country::all()->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
                             ->live()
-                            ->label(__('country.singular')),
+                            ->label(__('general.country_singular')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $country_id = $data['country_id'];
-                        return $country_id ? $query->whereHas('addresses',function ($q) use($country_id) {
-                           $q->where('country_id','=',$country_id);
+                        return $country_id ? $query->whereHas('addresses', function ($q) use ($country_id) {
+                            $q->where('country_id', '=', $country_id);
                         }) : $query;
                     }),
                 Tables\Filters\SelectFilter::make('city_id')
                     ->relationship('addresses.city', 'name')
                     ->searchable()
-                    ->label(__('city.singular')),
+                    ->label(__('general.city_singular')),
                 Tables\Filters\SelectFilter::make('district')
                     ->relationship('addresses.district', 'name')
                     ->searchable()
-                    ->label(__('district.singular')),
+                    ->label(__('general.district_singular')),
                 Tables\Filters\SelectFilter::make('educationLevel')
                     ->relationship('educationLevel', 'name')
                     ->multiple()
                     ->preload()
-                    ->label(__('education_level.singular')),
+                    ->label(__('general.education_level_singular')),
                 Tables\Filters\SelectFilter::make('referralSource')
                     ->relationship('referralSource', 'name')
                     ->multiple()
                     ->preload()
-                    ->label(__('referral_source.singular')),
+                    ->label(__('general.referral_source_singular')),
                 Tables\Filters\SelectFilter::make('occupation')
                     ->relationship('occupation', 'name')
                     ->multiple()
                     ->preload()
-                    ->label(__('occupation.singular')),
+                    ->label(__('general.occupation_singular')),
                 Tables\Filters\SelectFilter::make('organisation')
                     ->relationship('organisation', 'name')
                     ->multiple()
                     ->preload()
-                    ->label(__('organisation.singular')),
+                    ->label(__('general.organisation_singular')),
                 Tables\Filters\SelectFilter::make('marital_status')
                     ->options([
                         'single' => 'Single',
@@ -587,35 +642,35 @@ class UserResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('language.plural')),
+                    ->label(__('general.language_plural')),
                 Tables\Filters\SelectFilter::make('roles')
                     ->relationship('roles', 'name')
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('role.plural')),
+                    ->label(__('general.role_plural')),
                 Tables\Filters\SelectFilter::make('events')
                     ->relationship('events', 'title')
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('event.plural')),
+                    ->label(__('general.event_plural')),
                 Tables\Filters\SelectFilter::make('tags')
                     ->relationship('tags', 'name')
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('tag.plural')),
+                    ->label(__('general.tag_plural')),
                 Tables\Filters\SelectFilter::make('categories')
                     ->relationship('categories', 'name')
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('user_category.plural')),
+                    ->label(__('general.user_category_plural')),
                 Tables\Filters\Filter::make('min_age')
                     ->form([
                         Forms\Components\TextInput::make('min_age')->numeric()
-                            ->label(__('user.min_age')),
+                            ->label(__('general.user_min_age')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $age = $data['min_age'];
@@ -624,7 +679,7 @@ class UserResource extends Resource
                 Tables\Filters\Filter::make('max_age')
                     ->form([
                         Forms\Components\TextInput::make('max_age')->numeric()
-                            ->label(__('user.max_age')),
+                            ->label(__('general.user_max_age')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $age = $data['max_age'];
@@ -634,7 +689,7 @@ class UserResource extends Resource
                     Forms\Components\TextInput::make('note')
                         ->label(__('general.note')),
                 ])->query(function (Builder $query, array $data): Builder {
-                    return $data['note'] ? $query->where('note', 'like', '%'.$data['note'].'%') : $query;
+                    return $data['note'] ? $query->where('note', 'like', '%' . $data['note'] . '%') : $query;
                 }),
                 Tables\Filters\Filter::make('created_at')
                     ->form([
@@ -646,7 +701,7 @@ class UserResource extends Resource
                         return $query
                             ->when(
                                 $data['created_after'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             );
 //                            ->when(
 //                                $data['created_until'],
@@ -656,27 +711,240 @@ class UserResource extends Resource
                 Tables\Filters\Filter::make('last_login_at')
                     ->form([
                         Forms\Components\DatePicker::make('last_login_after')
-                            ->label(__('user.last_login_date')),
+                            ->label(__('general.user_last_login_date')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $lastLoginAt = $data['last_login_after'];
                         return $lastLoginAt ? $query->whereDate('last_login_at', '>=', $lastLoginAt) : $query;
                     }),
             ], layout: Tables\Enums\FiltersLayout::AboveContentCollapsible)
-            ->paginated([
-                10, 25, 50, 100])
-            ->defaultSort('full_name','asc')
+            ->paginated([10, 25, 50])
+            ->defaultSort('full_name', 'asc')
             ->filtersFormColumns(4)
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Impersonate::make()->redirectTo(URL::to('/admin'))
-            ])
-            ->bulkActions([
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('download_svg')
+                        ->visible(fn(User $record) => $record->username)
+                        ->label('Download QR (Svg)')
+                        ->icon('heroicon-m-qr-code')
+                        ->action(function (User $record) {
+                            return ProfileQRDownloadHelper::svg($record);
+                        }),
+                    Tables\Actions\Action::make('download_png')
+                        ->visible(fn(User $record) => $record->username)
+                        ->label('Download QR (Png)')
+                        ->url(fn(User $record) => ProfileQRDownloadHelper::png($record),true)
+                        ->icon('heroicon-m-qr-code')
+                        ->action(function (User $record) {
+                            return ProfileQRDownloadHelper::png($record);
+                        }),
+                    Tables\Actions\Action::make('approve')
+                        ->icon('heroicon-m-check')
+                        ->visible(fn (User $user) => $user->hasRole('applicant'))
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(fn (User $user) => ApplicationApproved::dispatch($user)),
+                    Tables\Actions\Action::make('reject')
+                        ->icon('heroicon-o-x-mark')
+                        ->visible(fn (User $user) => $user->hasRole('applicant'))
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(fn (User $user) => ApplicationRejected::dispatch($user)),
+                    Tables\Actions\Action::make('make_volunteer')
+                        ->icon('heroicon-m-check')
+                        ->visible(fn (User $user) => $user->hasRole('field trainee'))
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(fn (User $user) => UserCompletedFieldTraining::dispatch($user)),
+                    Tables\Actions\EditAction::make()
+                        ->color('warning'),
+                    Tables\Actions\DeleteAction::make()
+                        ->color('danger'),
+                    Tables\Actions\Action::make('transfer_data')
+                        ->icon('heroicon-m-arrow-right')
+                        ->color('success')
+                        ->form(function (User $record){
+                            return [
+                                Forms\Components\Select::make('selected_user')
+                                    ->options(User::query()
+                                        ->where('id','!=',$record->id)
+                                        ->orderBy('name')
+                                        ->orderBy('surname')
+                                        ->get(['id','full_name'])
+                                        ->map(function($volunteer){
+                                            $volunteer->full_name .= ' ('.$volunteer->id.')';
+                                            return $volunteer;
+                                        })->pluck('full_name','id')
+                                    )
+                                    ->searchable()
+                                    ->preload()
+                                    ->required()
+                                    ->exists('users','id')
+                                    ->label('Select User'),
+                            ];
+                        })
+                        ->action(function (array $data, User $user){
+                            $transferredUser = User::find($data['selected_user']);
 
+                            foreach ($user->events as $event) {
+                                // Check if the event is not already associated with the second user
+                                if (!$transferredUser->events->contains($event->id)) {
+                                    // Attach the event to the second user
+                                    $transferredUser->events()->attach($event->id);
+                                }
+
+                                // Detach the event from the first user
+                                $user->events()->detach($event->id);
+                            }
+
+                            Notification::make()
+                                ->success()
+                                ->title('Event records are transferred!')
+                                ->send();
+                        })
+                        ->visible(fn(User $user) => auth()->user()->id == 1),
+                    Impersonate::make()
+                        ->label('Impersonate')
+                        ->color('gray')
+                        ->redirectTo(URL::to('/candidate')),
+                    Tables\Actions\ForceDeleteAction::make()
+                        ->requiresConfirmation()
+                        ->visible(fn(User $record) => $record->trashed() && auth()->user()->id == 1 && auth()->user()->is_admin)
+                ]),
+            ], position: Tables\Enums\ActionsPosition::BeforeColumns)
+            ->bulkActions([
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('move_to_rejected')
+                        ->label('Move To Rejecteds')
+                        ->color('danger')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                RoleHelper::moveTo($record,'rejected');
+                            });
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('make_expired')
+                        ->label('Move To Expired')
+                        ->color('danger')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                $record->assignRole('expired');
+                            });
 
-                    Tables\Actions\DeleteBulkAction::make(),
+                            Notification::make()
+                                ->success()
+                                ->title('Role Assigned')
+                                ->body('The "expired" role has been assigned to the users.')
+                                ->send();
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('move_to_trainee')
+                        ->label('Move To Trainee')
+                        ->color('warning')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                RoleHelper::moveTo($record,'trainee');
+                            });
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('move_to_interviewee')
+                        ->label('Move To Interviewee')
+                        ->color('info')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                RoleHelper::moveTo($record,'interviewee');
+                            });
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('move_to_field_trainee')
+                        ->label('Move To Field Trainee')
+                        ->color('primary')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                RoleHelper::moveTo($record,'field trainee');
+                            });
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('move_to_volunteer')
+                        ->label('Move To Volunteer')
+                        ->color('success')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                RoleHelper::moveTo($record,'volunteer');
+                            });
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('mark_as_active')
+                        ->label('Mark as Active')
+                        ->color('info')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['is_active' => true]);
+                            });
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('mark_as_inactive')
+                        ->label('Mark as Inactive')
+                        ->color('warning')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['is_active' => false]);
+                            });
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('attach_category')
+                        ->label('Attach Category')
+                        ->color('info')
+                        ->form(function (){
+                            return [
+                                Forms\Components\Select::make('selected_category')
+                                    ->options(
+                                        UserCategory::all()->pluck('name','id')
+                                    )
+                                    ->searchable()
+                                    ->preload()
+                                    ->required()
+                                    ->exists('user_categories','id')
+                                    ->label('Select Category'),
+                            ];
+                        })
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data) {
+                            $category = UserCategory::find($data['selected_category']);
+                            $records->each(function ($record) use ($category) {
+                                if (!$record->categories->contains($category->id)) {
+                                    $record->categories()->attach($category->id);
+                                }
+                            });
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('detach_category')
+                        ->label('Detach Category')
+                        ->color('info')
+                        ->form(function (){
+                            return [
+                                Forms\Components\Select::make('selected_category')
+                                    ->options(
+                                        UserCategory::all()->pluck('name','id')
+                                    )
+                                    ->searchable()
+                                    ->preload()
+                                    ->required()
+                                    ->exists('user_categories','id')
+                                    ->label('Select Category'),
+                            ];
+                        })
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data) {
+                            $category = UserCategory::find($data['selected_category']);
+                            $records->each(function ($record) use ($category) {
+                                if ($record->categories->contains($category->id)) {
+                                    $record->categories()->detach($category->id);
+                                }
+                            });
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\ForceDeleteBulkAction::make()
+                        ->visible(auth()->user()->id == 1),
                 ]),
             ]);
     }
@@ -703,6 +971,15 @@ class UserResource extends Resource
             'index' => \App\Filament\Coordinator\Resources\UserResource\Pages\ListUsers::route('/'),
             'create' => \App\Filament\Coordinator\Resources\UserResource\Pages\CreateUser::route('/create'),
             'edit' => \App\Filament\Coordinator\Resources\UserResource\Pages\EditUser::route('/{record}/edit'),
+            'rejecteds' => Rejecteds::route('/rejecteds'),
+            'applicants' => Applicants::route('/applicants'),
+            'expired' => Expired::route('/expired'),
+            'volunteers' => Volunteers::route('/volunteers'),
+            'active' => Active::route('/active'),
+            'inactive' => Inactive::route('/inactive'),
+            'archived' => Archived::route('/archived'),
+            'duplicates' => Duplicates::route('/duplicates'),
+            'trashed' => Trashed::route('/trashed'),
         ];
     }
 
