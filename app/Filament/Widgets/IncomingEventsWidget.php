@@ -98,29 +98,29 @@ class IncomingEventsWidget extends BaseWidget
                             ->default(function (Event $record) {
 
                                 if (auth()->check()) {
-                                        $result = "";
-                                        foreach ($record->visitors as $visitor)
-                                        {
-                                            // Code for authenticated users
-                                            $result .= "Fullname: {$visitor->full_name}<br>";
-                                            $result .= "Gender: {$visitor->gender?->name}<br>";
-                                            $result .= "Nationality: {$visitor->nationality?->name}<br>";
-                                            $result .= "Country: {$visitor->country?->name}<br>";
-                                            $result .= "Invited By: " . ($visitor->companion ? $visitor->companion?->full_name : 'Unknown') . "<br>";
-                                            $result .= "Explanation: {$visitor->explanation}<br>";
-                                            $result .= "<br>";
-                                        }
-
-                                        $result = new HtmlString($result);
-                                        return $result;
-                                    } else {
-                                        $result = "";
-                                        foreach ($record->visitors as $visitor)
-                                        {
-                                            $result .= "({$visitor->country->name}),";
-                                        }
-                                        return $result;
+                                    $result = "";
+                                    foreach ($record->visitors as $visitor)
+                                    {
+                                        // Code for authenticated users
+                                        $result .= "Fullname: {$visitor->full_name}<br>";
+                                        $result .= "Gender: {$visitor->gender?->name}<br>";
+                                        $result .= "Nationality: {$visitor->nationality?->name}<br>";
+                                        $result .= "Country: {$visitor->country?->name}<br>";
+                                        $result .= "Invited By: " . ($visitor->companion ? $visitor->companion?->full_name : 'Unknown') . "<br>";
+                                        $result .= "Explanation: {$visitor->explanation}<br>";
+                                        $result .= "<br>";
                                     }
+
+                                    $result = new HtmlString($result);
+                                    return $result;
+                                } else {
+                                    $result = "";
+                                    foreach ($record->visitors as $visitor)
+                                    {
+                                        $result .= "({$visitor->country->name}),";
+                                    }
+                                    return $result;
+                                }
                             })
                             ->label(__('general.volunteers')),
                         TextColumn::make('Empty')
