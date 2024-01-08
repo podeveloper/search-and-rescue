@@ -44,8 +44,10 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
@@ -286,6 +288,13 @@ class UserResource extends Resource
                             ->inline(false)
                             ->label(__('general.user_is_active'))
                             ->visible(auth()->user()->hasRole(['coordinator'])),
+                        Forms\Components\Hidden::make('password')
+                            ->default(function ($record) {
+                                return (!$record || !$record->password) ? Hash::make(Str::random(8)) : $record->password;
+                            })
+                            ->disabled(function ($record) {
+                                return ($record || $record?->password);
+                            })
                     ]),
             ]);
     }
