@@ -121,12 +121,18 @@ class UserResource extends Resource
                             ->string()
                             ->label(__('general.surname')),
                         Forms\Components\DatePicker::make('date_of_birth')
-                            ->formatStateUsing(function (User $record) {
+                            ->formatStateUsing(function ($record) {
+                                if (!$record || !$record->date_of_birth) {
+                                    return null;
+                                }
+
                                 $dateOfBirth = $record->date_of_birth;
-                                if (!$dateOfBirth) {return null;}
                                 $carbonInstance = Carbon::createFromFormat('Y-m-d', $dateOfBirth);
-                                if ($carbonInstance === false) {return null;}
-                                if ($carbonInstance->year < 1940) { return null; }
+
+                                if ($carbonInstance === false || $carbonInstance->year < 1940) {
+                                    return null;
+                                }
+
                                 return $dateOfBirth;
                             })
                             ->nullable()
