@@ -9,12 +9,12 @@ class ProfileCardController extends Controller
 {
     public function show($username)
     {
-        $volunteer = User::where('username', $username)->first();
+        $member = User::where('username', $username)->first();
 
-        if (!$volunteer) {
+        if (!$member) {
             abort(404);
         }
 
-        return view('volunteers.profile-card', compact('volunteer'));
+        return view('members.profile-card', compact('member'));
     }
 }
