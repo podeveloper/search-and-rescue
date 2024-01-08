@@ -66,8 +66,8 @@ class EditProfile extends Page
     {
         return $form
             ->schema([
-                Section::make('Personal Info')
-                    ->description("Please fill in the blank fields.")
+                Section::make(__('general.personal_info'))
+                    ->description(__('general.fill_in_the_blanks'))
                     ->schema([
                         TextInput::make('name')
                             ->required()
@@ -113,7 +113,7 @@ class EditProfile extends Page
                             ->exists('nationalities', 'id')
                             ->label(__('general.nationality_singular')),
                     ]),
-                Section::make('Contact & Account Info')
+                Section::make(__('general.contact_info'))
                     ->schema([
                         TextInput::make('phone')
                             ->required()
@@ -154,7 +154,7 @@ class EditProfile extends Page
                             ->exists('districts', 'id')
                             ->label(__('general.district_singular')),
                     ]),
-                Section::make('Educational Info')
+                Section::make(__('general.educational_info'))
                     ->schema([
                         Select::make('education_level_id')
                             ->relationship('educationLevel','name')
@@ -168,7 +168,7 @@ class EditProfile extends Page
                             ->preload()
                             ->label(__('general.language_plural')),
                     ]),
-                Section::make('Other Info')
+                Section::make(__('general.other_info'))
                     ->schema([
                         Select::make('occupation_id')
                             ->relationship('occupation','name')
