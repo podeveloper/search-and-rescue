@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,9 +15,24 @@ class Inactive extends ListRecords
 {
     protected static string $resource = UserResource::class;
 
-    public static ?string $title = 'Inactive';
-    public static ?string $label = 'Inactive';
-    public static ?string $navigationLabel = 'Inactive';
+    public function getTitle(): string|Htmlable
+    {
+        return __('general.inactive');
+    }
+
+    /**
+     * @return string|null
+     */
+    public static function getLabel(): ?string
+    {
+        return __('general.inactive');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('general.inactive');
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-ellipsis-vertical';
     public static ?string $navigationGroup = 'Members';
     public static ?int $navigationSort = 6;

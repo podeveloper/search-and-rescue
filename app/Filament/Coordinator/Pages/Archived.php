@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,9 +15,24 @@ class Archived extends ListRecords
 {
     protected static string $resource = UserResource::class;
 
-    public static ?string $title = 'Archived Members';
-    public static ?string $label = 'Archived Members';
-    public static ?string $navigationLabel = 'Archived';
+    public function getTitle(): string|Htmlable
+    {
+        return __('general.archived');
+    }
+
+    /**
+     * @return string|null
+     */
+    public static function getLabel(): ?string
+    {
+        return __('general.archived');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('general.archived');
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-ellipsis-vertical';
     public static ?string $navigationGroup = 'Archived Members';
     public static ?int $navigationSort = 100;

@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,9 +15,21 @@ class Duplicates extends ListRecords
 {
     protected static string $resource = UserResource::class;
 
-    public static ?string $title = 'Duplicates';
-    public static ?string $label = 'Duplicates';
-    public static ?string $navigationLabel = 'Duplicates';
+    public function getTitle(): string|Htmlable
+    {
+        return __('general.duplicates');
+    }
+
+    public static function getLabel(): ?string
+    {
+        return __('general.duplicates');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('general.duplicates');
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-ellipsis-vertical';
     public static ?string $navigationGroup = 'Human Resources';
     public static ?int $navigationSort = 2;

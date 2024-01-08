@@ -27,7 +27,7 @@ Route::get('/', function () {
 });
 
 Route::get('/incoming-events/{date?}', [ScreenController::class,'events'])->name('incoming-events.show');
-Route::get('/volunteers/@{username}', [ProfileCardController::class,'show'])->name('volunteers.profile-card');
+Route::get('/members/@{username}', [ProfileCardController::class,'show'])->name('members.profile-card');
 
 
 Route::get('/files/{folder}/{filename}', [FileController::class, 'show'])

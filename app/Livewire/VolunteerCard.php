@@ -18,20 +18,20 @@ use Livewire\Component;
 
 class VolunteerCard extends Component implements HasForms, HasInfolists
 {
-    public $volunteer;
+    public $member;
 
     use InteractsWithInfolists;
     use InteractsWithForms;
 
-    public function mount($volunteer)
+    public function mount($member)
     {
-        $this->volunteer = $volunteer;
+        $this->member = $member;
     }
 
-    public function volunteerInfolist(Infolist $infolist): Infolist
+    public function memberInfolist(Infolist $infolist): Infolist
     {
         return $infolist
-            ->record($this->volunteer)
+            ->record($this->member)
             ->schema([
                 ImageEntry::make('profile_photo')
                     ->defaultImageUrl(asset('img/avatar.png'))

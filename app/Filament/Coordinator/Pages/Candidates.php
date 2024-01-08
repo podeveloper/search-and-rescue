@@ -11,30 +11,28 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
-class Active extends ListRecords
+class Candidates extends ListRecords
 {
     protected static string $resource = UserResource::class;
 
     public function getTitle(): string|Htmlable
     {
-        return __('general.active');
+        return __('general.candidate_members');
     }
 
-    /**
-     * @return string|null
-     */
     public static function getLabel(): ?string
     {
-        return __('general.active');
+        return __('general.candidate_members');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('general.active');
+        return __('general.candidate_members');
     }
+
     protected static ?string $navigationIcon = 'heroicon-o-ellipsis-vertical';
     public static ?string $navigationGroup = 'Members';
-    public static ?int $navigationSort = 5;
+    public static ?int $navigationSort = 4;
 
     protected function getHeaderActions(): array
     {
@@ -45,7 +43,7 @@ class Active extends ListRecords
 
     public function getTableQuery(): ?Builder
     {
-        return User::query()->active();
+        return User::query()->whereRole('candidate');
     }
 
     public function getTabs(): array
@@ -58,17 +56,17 @@ class Active extends ListRecords
                 ->badge($this->getTableQuery()->male()->count())
                 ->badgeColor('success')
                 ->icon('heroicon-o-check')
-                ->modifyQueryUsing(fn (Builder $query) => $query->male()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->male()),
             'female' => Tab::make('Female')
                 ->badge($this->getTableQuery()->female()->count())
                 ->badgeColor('success')
                 ->icon('heroicon-o-check')
-                ->modifyQueryUsing(fn (Builder $query) => $query->female()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->female()),
             'gender_null' => Tab::make('Gender Null')
                 ->badge($this->getTableQuery()->genderNull()->count())
                 ->badgeColor('danger')
                 ->icon('heroicon-o-exclamation-circle')
-                ->modifyQueryUsing(fn (Builder $query) => $query->genderNull()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->genderNull()),
         ];
 
         return $tabs;
@@ -76,10 +74,10 @@ class Active extends ListRecords
 
     public static function getNavigationBadge(): ?string
     {
-        $cacheKey = 'active_count';
+        $cacheKey = 'candidates_count';
 
         return Cache::rememberForever($cacheKey, function () {
-            return User::query()->active()->count();
+            return User::query()->whereRole('candidate')->count();
         });
     }
 }

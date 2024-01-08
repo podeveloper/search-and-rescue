@@ -45,7 +45,7 @@ class ProfileQRDownloadHelper
             );
             $writer = new Writer($renderer);
 
-            return $writer->writeString(route('volunteers.profile-card',$username));
+            return $writer->writeString(route('members.profile-card',$username));
         }
 
         return null;
@@ -54,6 +54,6 @@ class ProfileQRDownloadHelper
     public static function png(User $record)
     {
         return 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl='
-            .route('volunteers.profile-card',$record->username);
+            .route('members.profile-card',$record->username);
     }
 }
