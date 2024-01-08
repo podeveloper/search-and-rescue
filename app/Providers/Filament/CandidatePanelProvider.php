@@ -71,22 +71,19 @@ class CandidatePanelProvider extends PanelProvider
             ])
             ->userMenuItems([
                 MenuItem::make()
-                    ->label('Edit Profile')
+                    ->label(function (){ return trans('general.edit_profile'); })
                     ->url(fn()=> EditProfile::getUrl())
                     ->icon('heroicon-o-user'),
-                MenuItem::make()
-                    ->label('Re-optimize')
-                    ->url('/re-optimize')
-                    ->icon('heroicon-o-arrow-path')
-                    ->visible(fn (): bool => auth()->user()?->is_admin ? true : false)
             ])
             ->navigationItems([
                 NavigationItem::make('Incoming Events')
+                    ->label(function (){ return trans('general.event_incoming_events'); })
                     ->icon('heroicon-o-star')
                     ->group('Events')
                     ->sort(96)
                     ->url(url('/incoming-events'),true),
                 NavigationItem::make('Help & Whatsapp Support')
+                    ->label(function (){ return trans('general.help_whatsapp_support'); })
                     ->icon('heroicon-o-question-mark-circle')
                     ->group('Help')
                     ->sort(99)

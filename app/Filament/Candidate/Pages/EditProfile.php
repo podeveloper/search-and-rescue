@@ -22,6 +22,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -32,8 +33,18 @@ class EditProfile extends Page
     protected static bool $shouldRegisterNavigation = false;
     protected static string $view = 'filament.candidate.pages.edit-profile';
 
-    public static ?string $title = 'Edit Profile';
-    public static ?string $label = 'Edit Profile';
+    public function getTitle(): string|Htmlable
+    {
+        return __('general.edit_profile');
+    }
+
+    /**
+     * @return string|null
+     */
+    public static function getLabel(): ?string
+    {
+        return __('general.edit_profile');
+    }
 
     public ?array $profileData = [];
     public ?array $addressData = [];
@@ -55,8 +66,8 @@ class EditProfile extends Page
     {
         return $form
             ->schema([
-                Section::make('Personal Info')
-                    ->description("Please fill in the blank fields.")
+                Section::make(__('general.personal_info'))
+                    ->description(__('general.fill_in_the_blanks'))
                     ->schema([
                         TextInput::make('name')
                             ->required()
@@ -102,7 +113,7 @@ class EditProfile extends Page
                             ->exists('nationalities', 'id')
                             ->label(__('general.nationality_singular')),
                     ]),
-                Section::make('Contact & Account Info')
+                Section::make(__('general.contact_info'))
                     ->schema([
                         TextInput::make('phone')
                             ->required()
@@ -143,7 +154,7 @@ class EditProfile extends Page
                             ->exists('districts', 'id')
                             ->label(__('general.district_singular')),
                     ]),
-                Section::make('Educational Info')
+                Section::make(__('general.educational_info'))
                     ->schema([
                         Select::make('education_level_id')
                             ->relationship('educationLevel','name')
@@ -157,17 +168,18 @@ class EditProfile extends Page
                             ->preload()
                             ->label(__('general.language_plural')),
                     ]),
-                Section::make('Other Info')
+                Section::make(__('general.other_info'))
                     ->schema([
                         Select::make('occupation_id')
                             ->relationship('occupation','name')
+                            //->getOptionLabelFromRecordUsing(fn($record, $livewire) => __('occupation.'.$record->name))
                             ->searchable()
                             ->preload()
                             ->required()
                             ->exists('occupations', 'id')
                             ->label(__('general.occupation_singular')),
                         TextInput::make('organisation_text')
-                            ->label('Institute & Organisation')
+                            ->label(__('general.organisation_singular'))
                             ->required(),
                     ]),
             ])
