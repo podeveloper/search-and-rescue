@@ -221,6 +221,11 @@ return [
     'volunteering_plan_calendar' => 'Planlama Takvimi',
     'warm_hearted_singular' => 'Müellefe',
     'warm_hearted_plural' => 'Müellefe-i Kulub',
+    'join' => 'Katıl',
+    'leave' => 'Ayrıl',
+    'user_is_active' => 'Aktiflik',
+    'date_from' => 'Şu Tarihten',
+    'date_until' => 'Şu Tarihe Kadar',
     'edit_profile' => 'Profili Düzenle',
     'sunday' => 'Pazar',
     'monday' => 'Pazartesi',
@@ -245,4 +250,6 @@ return [
     'applicants' => 'Başvurular',
     'official_members' => 'Resmi Üyeler',
     'candidate_members' => 'Aday Üyeler',
+    'national_id_number' => 'T.C. Kimlik No',
+    'passport_number' => 'Pasaport Numarası',
 ];

@@ -7,6 +7,7 @@ use App\Events\ApplicationRejected;
 use App\Filament\Coordinator\Pages\Active;
 use App\Filament\Coordinator\Pages\Applicants;
 use App\Filament\Coordinator\Pages\Archived;
+use App\Filament\Coordinator\Pages\Candidates;
 use App\Filament\Coordinator\Pages\Duplicates;
 use App\Filament\Coordinator\Pages\Expired;
 use App\Filament\Coordinator\Pages\Inactive;
@@ -335,12 +336,14 @@ class UserResource extends Resource
                     ->weight(FontWeight::Bold)
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.national_id_number')),
                 Tables\Columns\TextColumn::make('passport_number')
                     ->weight(FontWeight::Bold)
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.passport_number')),
                 Tables\Columns\TextColumn::make('name')
                     ->weight(FontWeight::Bold)
                     ->searchable()
@@ -385,7 +388,7 @@ class UserResource extends Resource
                     ->copyMessageDuration(1500)
                     ->label(__('general.email')),
                 Tables\Columns\TextColumn::make('username')
-                    ->icon('heroicon-m-envelope')
+                    ->icon('heroicon-m-user')
                     ->searchable()
                     ->toggleable()
                     ->copyable()
@@ -531,7 +534,8 @@ class UserResource extends Resource
             ->filters([
                 Tables\Filters\Filter::make('national_id_number')
                     ->form([
-                        Forms\Components\TextInput::make('national_id_number'),
+                        Forms\Components\TextInput::make('national_id_number')
+                            ->label(__('general.national_id_number')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $national_id_number = $data['national_id_number'];
@@ -539,7 +543,8 @@ class UserResource extends Resource
                     }),
                 Tables\Filters\Filter::make('passport_number')
                     ->form([
-                        Forms\Components\TextInput::make('passport_number'),
+                        Forms\Components\TextInput::make('passport_number')
+                            ->label(__('general.passport_number')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $passport_number = $data['passport_number'];
@@ -831,7 +836,7 @@ class UserResource extends Resource
                 ExportBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('move_to_rejected')
-                        ->label('Move To Rejecteds')
+                        ->label('Move To Rejected')
                         ->color('danger')
                         ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
                             $records->each(function ($record) {
@@ -854,39 +859,22 @@ class UserResource extends Resource
                                 ->send();
                         })
                         ->requiresConfirmation(),
-                    Tables\Actions\BulkAction::make('move_to_trainee')
-                        ->label('Move To Trainee')
-                        ->color('warning')
-                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
-                            $records->each(function ($record) {
-                                RoleHelper::moveTo($record,'trainee');
-                            });
-                        })
-                        ->requiresConfirmation(),
-                    Tables\Actions\BulkAction::make('move_to_interviewee')
-                        ->label('Move To Interviewee')
-                        ->color('info')
-                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
-                            $records->each(function ($record) {
-                                RoleHelper::moveTo($record,'interviewee');
-                            });
-                        })
-                        ->requiresConfirmation(),
-                    Tables\Actions\BulkAction::make('move_to_field_trainee')
-                        ->label('Move To Field Trainee')
-                        ->color('primary')
-                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
-                            $records->each(function ($record) {
-                                RoleHelper::moveTo($record,'field trainee');
-                            });
-                        })
-                        ->requiresConfirmation(),
-                    Tables\Actions\BulkAction::make('move_to_volunteer')
-                        ->label('Move To Volunteer')
+
+                    Tables\Actions\BulkAction::make('move_to_candidate')
+                        ->label('Move To Candidate')
                         ->color('success')
                         ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
                             $records->each(function ($record) {
-                                RoleHelper::moveTo($record,'volunteer');
+                                RoleHelper::moveTo($record,'candidate');
+                            });
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\BulkAction::make('move_to_official')
+                        ->label('Move To Official')
+                        ->color('success')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                RoleHelper::moveTo($record,'official');
                             });
                         })
                         ->requiresConfirmation(),
@@ -989,7 +977,8 @@ class UserResource extends Resource
             'rejecteds' => Rejecteds::route('/rejecteds'),
             'applicants' => Applicants::route('/applicants'),
             'expired' => Expired::route('/expired'),
-            'volunteers' => Volunteers::route('/volunteers'),
+            'officials' => Volunteers::route('/officials'),
+            'candidates' => Candidates::route('/candidates'),
             'active' => Active::route('/active'),
             'inactive' => Inactive::route('/inactive'),
             'archived' => Archived::route('/archived'),
