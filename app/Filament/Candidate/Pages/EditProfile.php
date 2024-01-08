@@ -22,6 +22,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -32,8 +33,18 @@ class EditProfile extends Page
     protected static bool $shouldRegisterNavigation = false;
     protected static string $view = 'filament.candidate.pages.edit-profile';
 
-    public static ?string $title = 'Edit Profile';
-    public static ?string $label = 'Edit Profile';
+    public function getTitle(): string|Htmlable
+    {
+        return __('general.edit_profile');
+    }
+
+    /**
+     * @return string|null
+     */
+    public static function getLabel(): ?string
+    {
+        return __('general.edit_profile');
+    }
 
     public ?array $profileData = [];
     public ?array $addressData = [];
@@ -161,13 +172,14 @@ class EditProfile extends Page
                     ->schema([
                         Select::make('occupation_id')
                             ->relationship('occupation','name')
+                            //->getOptionLabelFromRecordUsing(fn($record, $livewire) => __('occupation.'.$record->name))
                             ->searchable()
                             ->preload()
                             ->required()
                             ->exists('occupations', 'id')
                             ->label(__('general.occupation_singular')),
                         TextInput::make('organisation_text')
-                            ->label('Institute & Organisation')
+                            ->label(__('general.organisation_singular'))
                             ->required(),
                     ]),
             ])
