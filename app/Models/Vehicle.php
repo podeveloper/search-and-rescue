@@ -21,6 +21,12 @@ class Vehicle extends Model
         'user_id',
     ];
 
+    public function getCombinedAttribute()
+    {
+        $color = ucwords($this->color);
+        return "{$this->brand} {$this->model} ({$this->year} - $color) [{$this->licence_plate}]";
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
