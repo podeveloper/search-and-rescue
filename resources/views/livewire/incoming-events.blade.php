@@ -31,7 +31,13 @@
     <div class="px-2" style="margin-top: 10px">
 
         <div class="my-2">
-            <h2 class="font-bold text-center text-lg"> {{\Carbon\Carbon::parse(request('date') ?? now())->format('d-m-Y l')}} <br> Incoming Events</h2>
+            @php
+                app()->setLocale('tr');
+                $parsedDate = \Carbon\Carbon::parse(request('date') ?? now());
+                $dayName = __('general.'.strtolower($parsedDate->format('l')));
+                $header = __('general.event_incoming_events');
+            @endphp
+            <h2 class="font-bold text-center text-lg"> {{$parsedDate->format('d-m-Y') . ' ' . $dayName}} <br> {{$header}} </h2>
         </div>
 
         @livewire(\App\Filament\Widgets\IncomingEventsWidget::class)
