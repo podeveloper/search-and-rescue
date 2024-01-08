@@ -252,4 +252,6 @@ return [
     'applicants' => 'Applicants',
     'official_members' => 'Official Members',
     'candidate_members' => 'Candidate Members',
+    'national_id_number' => 'National ID Number',
+    'passport_number' => 'Passport Number',
 ];
