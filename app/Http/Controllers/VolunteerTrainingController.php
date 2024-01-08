@@ -39,7 +39,7 @@ class VolunteerTrainingController extends Controller
             ->body('You have successfully enrolled the training.')
             ->send();
 
-        return redirect()->route('filament.volunteer.pages.training-detail',['id' => $training->id]);
+        return redirect()->route('filament.candidate.pages.training-detail',['id' => $training->id]);
     }
 
     public function show(Section $section)
@@ -51,10 +51,10 @@ class VolunteerTrainingController extends Controller
                 ->body('Please complete the previous section.')
                 ->send();
 
-            return redirect()->route('filament.volunteer.pages.training-detail', ["id=" . $section->module->training->id]);
+            return redirect()->route('filament.candidate.pages.training-detail', ["id=" . $section->module->training->id]);
         }
 
-        return redirect()->route('filament.volunteer.pages.section-detail',['id'=>$section->id]);
+        return redirect()->route('filament.candidate.pages.section-detail',['id'=>$section->id]);
     }
 
     public function previous(Section $section)
@@ -91,7 +91,7 @@ class VolunteerTrainingController extends Controller
                     ->send();
 
                 UserFinishedFirstThreeModule::dispatch(auth()->user());
-                return redirect()->route('filament.volunteer.pages.dashboard');
+                return redirect()->route('filament.candidate.pages.dashboard');
             }
         }else
         {
@@ -118,7 +118,7 @@ class VolunteerTrainingController extends Controller
             UserFinishedTraining::dispatch($user,$training);
         }
 
-        return redirect()->to('/volunteer/trainings');
+        return redirect()->to('/candidate/trainings');
     }
 
     public function storeTimerData(Request $request, Section $section)
