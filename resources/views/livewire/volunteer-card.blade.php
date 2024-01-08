@@ -10,6 +10,6 @@
         }
     </style>
     <div style="margin-top: 3rem; width: 80%">
-        {{ $this->volunteerInfolist }}
+        {{ $this->memberInfolist }}
     </div>
 </div>
