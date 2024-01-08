@@ -319,4 +319,33 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(SentEmail::class, 'email_recipients', 'user_id', 'sent_email_id')
             ->withTimestamps();
     }
+
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class);
+    }
+
+    public function driverLicences()
+    {
+        return $this->hasOne(DriverLicence::class, 'user_id');
+    }
+
+    public function healthProfile()
+    {
+        return $this->hasOne(HealthProfile::class);
+    }
+    public function firstAidCertificate()
+    {
+        return $this->hasOne(FirstAidCertificate::class, 'user_id');
+    }
+
+    public function radioCertificate()
+    {
+        return $this->hasOne(RadioCertificate::class, 'user_id');
+    }
+
+    public function forestFireFightingCertificate()
+    {
+        return $this->hasOne(ForestFireFightingCertificate::class, 'user_id');
+    }
 }
