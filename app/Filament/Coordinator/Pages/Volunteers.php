@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,12 +15,27 @@ class Volunteers extends ListRecords
 {
     protected static string $resource = UserResource::class;
 
-    public static ?string $title = 'Official Members';
-    public static ?string $label = 'Official Members';
-    public static ?string $navigationLabel = 'Official Members';
+    public function getTitle(): string|Htmlable
+    {
+        return __('general.official_members');
+    }
+
+    /**
+     * @return string|null
+     */
+    public static function getLabel(): ?string
+    {
+        return __('general.official_members');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('general.official_members');
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-ellipsis-vertical';
     public static ?string $navigationGroup = 'Members';
-    public static ?int $navigationSort = 4;
+    public static ?int $navigationSort = 3;
 
     protected function getHeaderActions(): array
     {
@@ -30,7 +46,7 @@ class Volunteers extends ListRecords
 
     public function getTableQuery(): ?Builder
     {
-        return User::query()->whereRole('volunteer');
+        return User::query()->whereRole('official');
     }
 
     public function getTabs(): array
@@ -61,10 +77,10 @@ class Volunteers extends ListRecords
 
     public static function getNavigationBadge(): ?string
     {
-        $cacheKey = 'volunteers_count';
+        $cacheKey = 'officials_count';
 
         return Cache::rememberForever($cacheKey, function () {
-            return User::query()->whereRole('volunteer')->count();
+            return User::query()->whereRole('official')->count();
         });
     }
 }
