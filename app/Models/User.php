@@ -327,7 +327,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function driverLicences()
     {
-        return $this->hasOne(DriverLicence::class, 'user_id');
+        return $this->hasMany(DriverLicence::class, 'user_id');
     }
 
     public function healthProfile()

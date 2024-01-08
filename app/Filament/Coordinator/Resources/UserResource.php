@@ -31,8 +31,11 @@ use App\Helpers\RoleHelper;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\District;
+use App\Models\DriverLicence;
+use App\Models\RadioCertificate;
 use App\Models\Todo;
 use App\Models\User;
+use App\Models\Vehicle;
 use App\Traits\NavigationLocalizationTrait;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -48,6 +51,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
@@ -111,10 +115,12 @@ class UserResource extends Resource
                             ->disabled(),
                         Forms\Components\TextInput::make('national_id_number')
                             ->required()
-                            ->numeric(),
+                            ->numeric()
+                            ->label(__('general.national_id_number')),
                         Forms\Components\TextInput::make('passport_number')
                             ->nullable()
-                            ->string(),
+                            ->string()
+                            ->label(__('general.passport_number')),
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->string()
@@ -503,11 +509,35 @@ class UserResource extends Resource
                     ->badge()
                     ->toggleable()
                     ->label(__('general.user_category_plural')),
-                Tables\Columns\TextColumn::make('certificates.title')
-                    ->icon('heroicon-m-sparkles')
+                Tables\Columns\TextColumn::make('driverLicences.class')
                     ->badge()
                     ->toggleable()
-                    ->label(__('general.certificate_plural')),
+                    ->label(__('general.driver_licence_classes')),
+                Tables\Columns\TextColumn::make('vehicles')
+                    ->formatStateUsing(function (User $record){
+                        return new HtmlString($record->vehicles->map(fn($vehicle)=>$vehicle->combined)->implode('<br>'));
+                    })
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.vehicles')),
+                Tables\Columns\TextColumn::make('radioCertificate.call_sign')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.radio_certificate_call_sign')),
+                Tables\Columns\TextColumn::make('radioCertificate.licence_class')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.radio_certificate_licence_class')),
+                Tables\Columns\TextColumn::make('forest_fire_fighter')
+                    ->default(fn(User $record)=> $record->forestFireFightingCertificate ? __('general.exist') : __('general.not_exist'))
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.forest_fire_fighter')),
+                Tables\Columns\TextColumn::make('first_aid_certificate')
+                    ->default(fn(User $record)=> $record->firstAidCertificate ? __('general.exist') : __('general.not_exist'))
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.first_aid_certificate')),
                 Tables\Columns\TextColumn::make('last_login_at')
                     ->date('Y-m-d')
                     ->sortable()
@@ -704,6 +734,123 @@ class UserResource extends Resource
                     ->query(function (Builder $query, array $data): Builder {
                         $age = $data['max_age'];
                         return $age ? $query->where('date_of_birth', '>=', now()->subYears($age)) : $query;
+                    }),
+                Tables\Filters\Filter::make('vehicle_brand')
+                    ->form([
+                        Forms\Components\TextInput::make('vehicle_brand')
+                            ->label(__('general.vehicle_brand')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $vehicle_brand = $data['vehicle_brand'];
+                        return $vehicle_brand
+                            ? $query->whereHas('vehicles', function ($query) use ($vehicle_brand) {
+                                $query->where('brand', 'like', '%' . $vehicle_brand . '%');
+                            }) : $query;
+                    }),
+                Tables\Filters\Filter::make('vehicle_model')
+                    ->form([
+                        Forms\Components\TextInput::make('vehicle_model')
+                            ->label(__('general.vehicle_model')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $vehicle_model = $data['vehicle_model'];
+                        return $vehicle_model
+                            ? $query->whereHas('vehicles', function ($query) use ($vehicle_model) {
+                                $query->where('model', 'like', '%' . $vehicle_model . '%');
+                            }) : $query;
+                    }),
+                Tables\Filters\Filter::make('vehicle_color')
+                    ->form([
+                        Forms\Components\Select::make('vehicle_color')
+                            ->options(Vehicle::colors())
+                            ->label(__('general.vehicle_color')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $vehicle_color = $data['vehicle_color'];
+                        return $vehicle_color
+                            ? $query->whereHas('vehicles', function ($query) use ($vehicle_color) {
+                                $query->where('color', '=', $vehicle_color);
+                            }) : $query;
+                    }),
+                Tables\Filters\Filter::make('licence_plate')
+                    ->form([
+                        Forms\Components\TextInput::make('licence_plate')
+                            ->label(__('general.licence_plate')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $licence_plate = $data['licence_plate'];
+                        return $licence_plate
+                            ? $query->whereHas('vehicles', function ($query) use ($licence_plate) {
+                                $query->where('licence_plate', 'like', '%' . $licence_plate . '%');
+                            }) : $query;
+                    }),
+                Tables\Filters\Filter::make('driver_licence_class')
+                    ->form([
+                        Forms\Components\Select::make('driver_licence_class')
+                            ->options(DriverLicence::classifications())
+                            ->label(__('general.driver_licence_class')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $driver_licence_class = $data['driver_licence_class'];
+                        return $driver_licence_class
+                            ? $query->whereHas('driverLicences', function ($query) use ($driver_licence_class) {
+                                $query->where('class', '=', $driver_licence_class);
+                            }) : $query;
+                    }),
+                Tables\Filters\Filter::make('radio_call_sign')
+                    ->form([
+                        Forms\Components\TextInput::make('radio_call_sign')
+                            ->label(__('general.radio_call_sign')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $radio_call_sign = $data['radio_call_sign'];
+                        return $radio_call_sign
+                            ? $query->whereHas('radioCertificate', function ($query) use ($radio_call_sign) {
+                                $query->where('call_sign', 'like', '%' . $radio_call_sign . '%');
+                            }) : $query;
+                    }),
+                Tables\Filters\Filter::make('radio_licence_class')
+                    ->form([
+                        Forms\Components\Select::make('radio_licence_class')
+                            ->options(RadioCertificate::classifications())
+                            ->label(__('general.radio_licence_class')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $radio_licence_class = $data['radio_licence_class'];
+                        return $radio_licence_class
+                            ? $query->whereHas('radioCertificate', function ($query) use ($radio_licence_class) {
+                                $query->where('licence_class', '=', $radio_licence_class);
+                            }) : $query;
+                    }),
+                Tables\Filters\Filter::make('forest_fire_fighter')
+                    ->form([
+                        Forms\Components\Select::make('forest_fire_fighter')
+                            ->options(['yes' => __('general.exist'), 'no' => __('general.not_exist')])
+                            ->label(__('general.forest_fire_fighter')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $status = $data['forest_fire_fighter'];
+                        return match ($status)
+                        {
+                            'yes' => $query->whereHas('forestFireFightingCertificate'),
+                            'no' => $query->whereDoesntHave('forestFireFightingCertificate'),
+                            default => $query,
+                        };
+                    }),
+                Tables\Filters\Filter::make('first_aid_certificate')
+                    ->form([
+                        Forms\Components\Select::make('first_aid_certificate')
+                            ->options(['yes' => __('general.exist'), 'no' => __('general.not_exist')])
+                            ->label(__('general.first_aid_certificate')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $status = $data['first_aid_certificate'];
+                        return match ($status)
+                        {
+                            'yes' => $query->whereHas('firstAidCertificate'),
+                            'no' => $query->whereDoesntHave('firstAidCertificate'),
+                            default => $query,
+                        };
                     }),
                 Tables\Filters\Filter::make('note')->form([
                     Forms\Components\TextInput::make('note')
