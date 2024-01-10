@@ -1,0 +1,27 @@
+{
+"vehicle_categories": [
+	{
+		"id" : 1,
+		"name" : "SUV & Pickup"
+	},
+	{
+		"id" : 2,
+		"name" : "ATV"
+	},
+	{
+		"id" : 3,
+		"name" : "Minivan & Panelvan"
+	},
+	{
+		"id" : 4,
+		"name" : "Motosiklet"
+	},
+	{
+		"id" : 5,
+		"name" : "Otomobil"
+	},
+	{
+		"id" : 6,
+		"name" : "UTV"
+	}
+]}
