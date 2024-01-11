@@ -51,10 +51,6 @@ class ForestFireFightingCertificateResource extends Resource
                 Forms\Components\Select::make('duty')
                     ->required()
                     ->options(ForestFireFightingCertificate::duties()),
-                Forms\Components\DatePicker::make('date_of_issue')
-                    ->required(),
-                Forms\Components\DatePicker::make('expiration_date')
-                    ->required(),
                 Forms\Components\Select::make('user_id')
                     ->relationship('user', 'full_name')
                     ->searchable()
@@ -77,12 +73,6 @@ class ForestFireFightingCertificateResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('duty')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('date_of_issue')
-                    ->date('d-m-Y')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('expiration_date')
-                    ->date('d-m-Y')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
