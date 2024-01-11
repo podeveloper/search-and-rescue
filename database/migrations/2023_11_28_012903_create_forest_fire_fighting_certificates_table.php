@@ -17,8 +17,6 @@ return new class extends Migration
             $table->foreignId('work_area_city_id')->nullable();
             $table->string('directorate')->nullable();
             $table->string('duty')->nullable();
-            $table->date('date_of_issue')->nullable();
-            $table->date('expiration_date')->nullable();
             $table->string('pdf')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();

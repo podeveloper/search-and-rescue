@@ -268,4 +268,5 @@ return [
     'driver_licence_class' => 'Sürücü Belgesi',
     'radio_call_sign' => 'Telsiz Çağrı Kodu',
     'radio_licence_class' => 'Telsiz Lisans Sınıfı',
+    'blood_type' => 'Kan Grubu',
 ];

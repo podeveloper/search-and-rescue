@@ -14,13 +14,11 @@ class ForestFireFightingCertificate extends Model
         'work_area_city_id',
         'directorate',
         'duty',
-        'date_of_issue',
-        'expiration_date',
         'pdf',
         'user_id',
     ];
 
-    protected $dates = ['date_of_issue', 'expiration_date', 'deleted_at'];
+    protected $dates = ['deleted_at'];
 
     public function user()
     {

@@ -32,6 +32,7 @@ use App\Models\City;
 use App\Models\Country;
 use App\Models\District;
 use App\Models\DriverLicence;
+use App\Models\HealthProfile;
 use App\Models\RadioCertificate;
 use App\Models\Todo;
 use App\Models\User;
@@ -509,6 +510,10 @@ class UserResource extends Resource
                     ->badge()
                     ->toggleable()
                     ->label(__('general.user_category_plural')),
+                Tables\Columns\TextColumn::make('healthProfile.blood_type')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.blood_type')),
                 Tables\Columns\TextColumn::make('driverLicences.class')
                     ->badge()
                     ->toggleable()
@@ -734,6 +739,19 @@ class UserResource extends Resource
                     ->query(function (Builder $query, array $data): Builder {
                         $age = $data['max_age'];
                         return $age ? $query->where('date_of_birth', '>=', now()->subYears($age)) : $query;
+                    }),
+                Tables\Filters\Filter::make('blood_type')
+                    ->form([
+                        Forms\Components\Select::make('blood_type')
+                            ->options(Healthprofile::bloodTypes())
+                            ->label(__('general.blood_type')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $blood_type = $data['blood_type'];
+                        return $blood_type
+                            ? $query->whereHas('healthProfile', function ($query) use ($blood_type) {
+                                $query->where('blood_type', '=', $blood_type);
+                            }) : $query;
                     }),
                 Tables\Filters\Filter::make('vehicle_brand')
                     ->form([

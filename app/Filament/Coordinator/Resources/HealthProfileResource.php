@@ -26,7 +26,7 @@ class HealthProfileResource extends Resource
             ->schema([
                 Forms\Components\Select::make('blood_type')
                     ->columnSpanFull()
-                    ->options(HealthProfile::types()),
+                    ->options(Healthprofile::bloodTypes()),
                 Forms\Components\Textarea::make('medications')
                     ->maxLength(65535)
                     ->columnSpanFull(),

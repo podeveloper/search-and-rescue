@@ -28,7 +28,7 @@ class HealthProfile extends Model
         return $this->belongsTo(User::class);
     }
 
-    public static function types()
+    public static function bloodTypes()
     {
         return [
             "A+" => "A+",

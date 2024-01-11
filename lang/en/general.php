@@ -269,4 +269,5 @@ return [
     'driver_licence_class' => 'Driver Licence Class',
     'radio_call_sign' => 'Radio Call Sign',
     'radio_licence_class' => 'Radio Licence Class',
+    'blood_type' => 'Blood Type',
 ];
