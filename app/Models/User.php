@@ -128,17 +128,17 @@ class User extends Authenticatable implements FilamentUser
 
     public function setFullNameAttribute($value)
     {
-        $this->attributes['full_name'] = ucwords($value);
+        $this->attributes['full_name'] = strtoupper($value);
     }
 
     public function setNameAttribute($value)
     {
-        $this->attributes['name'] = ucwords($value);
+        $this->attributes['name'] = strtoupper($value);
     }
 
     public function setSurnameAttribute($value)
     {
-        $this->attributes['surname'] = ucwords($value);
+        $this->attributes['surname'] = strtoupper($value);
     }
 
     public function scopeMale(Builder $query)
