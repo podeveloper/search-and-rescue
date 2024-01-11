@@ -263,6 +263,7 @@ return [
     'exist' => 'Yes',
     'not_exist' => 'No',
     'licence_plate' => 'Licence Plate',
+    'vehicle_category' => 'Vehicle Category',
     'vehicle_brand' => 'Vehicle Brand',
     'vehicle_model' => 'Vehicle Model',
     'vehicle_color' => 'Vehicle Color',

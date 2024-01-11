@@ -37,6 +37,9 @@ use App\Models\RadioCertificate;
 use App\Models\Todo;
 use App\Models\User;
 use App\Models\Vehicle;
+use App\Models\VehicleBrand;
+use App\Models\VehicleCategory;
+use App\Models\VehicleModel;
 use App\Traits\NavigationLocalizationTrait;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -81,7 +84,7 @@ class UserResource extends Resource
             'healthProfile.medications','healthProfile.allergies','healthProfile.medical_conditions','healthProfile.vision_aids',
             'healthProfile.prosthetics','healthProfile.emergency_contact_name','healthProfile.emergency_contact_phone','healthProfile.blood_type',
             'radioCertificate.call_sign','radioCertificate.radio_net_sign','radioCertificate.licence_class',
-            'vehicles.brand','vehicles.model','vehicles.year','vehicles.color','vehicles.licence_plate',
+            'vehicles.category.name','vehicles.brand.name','vehicles.model.name','vehicles.color','vehicles.licence_plate',
         ];
     }
 
@@ -806,28 +809,46 @@ class UserResource extends Resource
                                 $query->where('blood_type', '=', $blood_type);
                             }) : $query;
                     }),
+                Tables\Filters\Filter::make('vehicle_category')
+                    ->form([
+                        Forms\Components\Select::make('vehicle_category')
+                            ->options(VehicleCategory::all()->pluck('name', 'id'))
+                            ->searchable()
+                            ->label(__('general.vehicle_category')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $vehicle_category = $data['vehicle_category'];
+                        return $vehicle_category
+                            ? $query->whereHas('vehicles', function ($query) use ($vehicle_category) {
+                                $query->where('category_id', '=', $vehicle_category);
+                            }) : $query;
+                    }),
                 Tables\Filters\Filter::make('vehicle_brand')
                     ->form([
-                        Forms\Components\TextInput::make('vehicle_brand')
+                        Forms\Components\Select::make('vehicle_brand')
+                            ->options(VehicleBrand::all()->pluck('name', 'id'))
+                            ->searchable()
                             ->label(__('general.vehicle_brand')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $vehicle_brand = $data['vehicle_brand'];
                         return $vehicle_brand
                             ? $query->whereHas('vehicles', function ($query) use ($vehicle_brand) {
-                                $query->where('brand', 'like', '%' . $vehicle_brand . '%');
+                                $query->where('brand_id', '=', $vehicle_brand);
                             }) : $query;
                     }),
                 Tables\Filters\Filter::make('vehicle_model')
                     ->form([
-                        Forms\Components\TextInput::make('vehicle_model')
+                        Forms\Components\Select::make('vehicle_model')
+                            ->options(VehicleModel::all()->pluck('name', 'id'))
+                            ->searchable()
                             ->label(__('general.vehicle_model')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $vehicle_model = $data['vehicle_model'];
                         return $vehicle_model
                             ? $query->whereHas('vehicles', function ($query) use ($vehicle_model) {
-                                $query->where('model', 'like', '%' . $vehicle_model . '%');
+                                $query->where('model_id', '=', $vehicle_model);
                             }) : $query;
                     }),
                 Tables\Filters\Filter::make('vehicle_color')

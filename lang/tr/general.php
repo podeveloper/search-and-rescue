@@ -261,6 +261,7 @@ return [
     'exist' => 'Var',
     'not_exist' => 'Yok',
     'licence_plate' => 'Licence Plate',
+    'vehicle_category' => 'Araç Kategorisi',
     'vehicle_brand' => 'Araç Markası',
     'vehicle_model' => 'Araç Modeli',
     'vehicle_color' => 'Araç Rengi',
