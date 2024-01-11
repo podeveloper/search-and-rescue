@@ -31,4 +31,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'distance_matrix' => [
+        'apiKey' =>  env('DISTANCE_MATRIX_API_KEY'),
+    ],
 ];

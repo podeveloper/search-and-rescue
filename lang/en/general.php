@@ -270,4 +270,9 @@ return [
     'radio_call_sign' => 'Radio Call Sign',
     'radio_licence_class' => 'Radio Licence Class',
     'blood_type' => 'Blood Type',
+    'distance_km' => 'Distance (KM)',
+    'estimated_time_min' => 'Estimated Time (Min)',
+    'full_address' => 'Full Address',
+    'min_distance' => 'Distance (Min)',
+    'max_distance' => 'Distance (Max)',
 ];

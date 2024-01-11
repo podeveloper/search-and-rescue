@@ -260,7 +260,6 @@ return [
     'first_aid_certificate' => 'İlk Yardım Sertifikası',
     'exist' => 'Var',
     'not_exist' => 'Yok',
-    'licence_plate' => 'Araç Plakası',
     'licence_plate' => 'Licence Plate',
     'vehicle_brand' => 'Araç Markası',
     'vehicle_model' => 'Araç Modeli',
@@ -269,4 +268,9 @@ return [
     'radio_call_sign' => 'Telsiz Çağrı Kodu',
     'radio_licence_class' => 'Telsiz Lisans Sınıfı',
     'blood_type' => 'Kan Grubu',
+    'distance_km' => 'Uzaklık (KM)',
+    'estimated_time_min' => 'Tahmini Varış (Dk)',
+    'full_address' => 'Açık Adres',
+    'min_distance' => 'Uzaklık (Min)',
+    'max_distance' => 'Uzaklık (Max)',
 ];

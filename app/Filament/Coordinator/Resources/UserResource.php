@@ -457,33 +457,53 @@ class UserResource extends Resource
                     ->sortable()
                     ->toggleable()
                     ->label(__('general.organisation_singular')),
-                Tables\Columns\TextColumn::make('addresses.country_id')
+                Tables\Columns\TextColumn::make('address_country')
                     ->icon('heroicon-m-map')
-                    ->label('Country')
                     ->getStateUsing(function (User $record) {
                         return $record->addresses->first()?->country?->name;
                     })
                     ->sortable()
                     ->toggleable()
                     ->label(__('general.country_singular')),
-                Tables\Columns\TextColumn::make('addresses.city_id')
+                Tables\Columns\TextColumn::make('address_city')
                     ->icon('heroicon-m-map-pin')
-                    ->label('City')
                     ->getStateUsing(function (User $record) {
                         return $record->addresses->first()?->city?->name;
                     })
                     ->sortable()
                     ->toggleable()
                     ->label(__('general.city_singular')),
-                Tables\Columns\TextColumn::make('addresses.district')
+                Tables\Columns\TextColumn::make('address_district')
                     ->icon('heroicon-m-map-pin')
-                    ->label('District')
                     ->getStateUsing(function (User $record) {
                         return $record->addresses->first()?->district?->name;
                     })
                     ->sortable()
                     ->toggleable()
                     ->label(__('general.district_singular')),
+                Tables\Columns\TextColumn::make('address_full')
+                    ->getStateUsing(function (User $record) {
+                        return $record->addresses->first()?->full_address;
+                    })
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.full_address')),
+                Tables\Columns\TextColumn::make('addresses.distance_from_center')
+                    ->getStateUsing(function (User $record) {
+                        $address = $record->addresses->first();
+                        return $address?->distance_from_center ?  number_format($address->distance_from_center / 1000,2) : 0;
+                    })
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.distance_km')),
+                Tables\Columns\TextColumn::make('estimated_time_of_arrival')
+                    ->getStateUsing(function (User $record) {
+                        $address = $record->addresses->first();
+                        return $address?->estimated_time_of_arrival ?  number_format($address->estimated_time_of_arrival / 60,2) : 0;
+                    })
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.estimated_time_min')),
                 Tables\Columns\TextColumn::make('is_active')
                     ->formatStateUsing(fn(User $record) => $record->is_active ? 'Active' : 'Inactive')
                     ->wrap()
@@ -672,6 +692,32 @@ class UserResource extends Resource
                     ->relationship('addresses.district', 'name')
                     ->searchable()
                     ->label(__('general.district_singular')),
+                Tables\Filters\Filter::make('max_distance')
+                    ->form([
+                        Forms\Components\TextInput::make('max_distance')
+                            ->numeric()
+                            ->label(__('general.max_distance')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $distance = (double) $data['max_distance'];
+                        $distance = $distance != null ? $distance * 1000 : null;
+                        return $distance != null ? $query->whereHas('addresses', function ($query) use ($distance) {
+                            $query->where('distance_from_center', '<=', $distance);
+                        }) : $query;
+                    }),
+                Tables\Filters\Filter::make('max_estimated_time')
+                    ->form([
+                        Forms\Components\TextInput::make('max_estimated_time')
+                            ->numeric()
+                            ->label(__('general.estimated_time_min')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $max_estimated_time = (double) $data['max_estimated_time'];
+                        $max_estimated_time = $max_estimated_time != null ? $max_estimated_time * 60 : null;
+                        return $max_estimated_time != null ? $query->whereHas('addresses', function ($query) use ($max_estimated_time) {
+                            $query->where('estimated_time_of_arrival', '<=', $max_estimated_time);
+                        }) : $query;
+                    }),
                 Tables\Filters\SelectFilter::make('educationLevel')
                     ->relationship('educationLevel', 'name')
                     ->multiple()
