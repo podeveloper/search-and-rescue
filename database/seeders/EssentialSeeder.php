@@ -31,7 +31,7 @@ class EssentialSeeder extends Seeder
             'password' => bcrypt(config('seed.admin.password')),
         ]);
 
-        $adminUser->addresses()->create([
+        $adminUser->addresses()->createQuietly([
             'country_id' => '225', // Turkey
             'city_id' => '2170', // Istanbul
             'district_id' => '107933', // Kartal

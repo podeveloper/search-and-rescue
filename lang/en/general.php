@@ -276,4 +276,11 @@ return [
     'full_address' => 'Full Address',
     'min_distance' => 'Distance (Min)',
     'max_distance' => 'Distance (Max)',
+    'is_wearable' => 'Is Wearable',
+    'equipments' => 'Equipments',
+    'driving_equipments' => 'Driving Equipments',
+    'has_equipments' => 'Has Equipments',
+    'has_driving_equipments' => 'Has Driving Equipments',
+    'has_no_equipments' => 'Hasn\'t Equipments',
+    'has_no_driving_equipments' => 'Hasn\'t Driving Equipments',
 ];

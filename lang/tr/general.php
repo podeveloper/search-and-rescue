@@ -274,4 +274,11 @@ return [
     'full_address' => 'Açık Adres',
     'min_distance' => 'Uzaklık (Min)',
     'max_distance' => 'Uzaklık (Max)',
+    'is_wearable' => 'Giyilebilir',
+    'equipments' => 'Kişisel Ekipmanlar',
+    'driving_equipments' => 'Sürüş Ekipmanları',
+    'has_equipments' => 'Şu Ekipmanları Olan',
+    'has_driving_equipments' => 'Şu Sürüş Ekipmanları Olan',
+    'has_no_equipments' => 'Şu Ekipmanları Olmayan',
+    'has_no_driving_equipments' => 'Şu Sürüş Ekipmanları Olmayan',
 ];

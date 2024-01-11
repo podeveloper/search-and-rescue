@@ -24,6 +24,8 @@ use App\Filament\Coordinator\Resources\UserResource\RelationManagers\Registratio
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\SocialAccountsRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\VehiclesRelationManager;
 use App\Filament\Reference\Resources\UserResource\RelationManagers\CertificatesRelationManager;
+use App\Filament\Reference\Resources\UserResource\RelationManagers\DrivingEquipmentsRelationManager;
+use App\Filament\Reference\Resources\UserResource\RelationManagers\EquipmentsRelationManager;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Candidate\Resources;
 use App\Helpers\ProfileQRDownloadHelper;
@@ -32,6 +34,8 @@ use App\Models\City;
 use App\Models\Country;
 use App\Models\District;
 use App\Models\DriverLicence;
+use App\Models\DrivingEquipment;
+use App\Models\Equipment;
 use App\Models\HealthProfile;
 use App\Models\RadioCertificate;
 use App\Models\Todo;
@@ -507,6 +511,14 @@ class UserResource extends Resource
                     ->sortable()
                     ->toggleable()
                     ->label(__('general.estimated_time_min')),
+                Tables\Columns\TextColumn::make('equipments.name')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.equipments')),
+                Tables\Columns\TextColumn::make('drivingEquipments.name')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.driving_equipments')),
                 Tables\Columns\TextColumn::make('is_active')
                     ->formatStateUsing(fn(User $record) => $record->is_active ? 'Active' : 'Inactive')
                     ->wrap()
@@ -778,6 +790,74 @@ class UserResource extends Resource
                     ->searchable()
                     ->preload()
                     ->label(__('general.user_category_plural')),
+                Tables\Filters\Filter::make('has_equipments')
+                    ->form([
+                        Forms\Components\Select::make('equipments')
+                            ->options(Equipment::all()->pluck('name','id'))
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->label(__('general.has_equipments')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $equipments = $data['equipments'];
+                        return $equipments
+                            ? $query
+                                ->whereHas('equipments', function ($query) use ($equipments) {
+                                    $query->whereIn('id', $equipments);
+                                }, '=', count($equipments))
+                            : $query;
+                    }),
+                Tables\Filters\Filter::make('has_no_equipments')
+                    ->form([
+                        Forms\Components\Select::make('missing_equipments')
+                            ->options(Equipment::all()->pluck('name','id'))
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->label(__('general.has_no_equipments')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $missing_equipments = $data['missing_equipments'];
+                        return $missing_equipments
+                            ? $query->whereDoesntHave('equipments', function ($query) use ($missing_equipments) {
+                                $query->whereIn('id', $missing_equipments);
+                            }) : $query;
+                    }),
+                Tables\Filters\Filter::make('has_driving_equipments')
+                    ->form([
+                        Forms\Components\Select::make('driving_equipments')
+                            ->options(DrivingEquipment::all()->pluck('name','id'))
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->label(__('general.has_driving_equipments')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $driving_equipments = $data['driving_equipments'];
+                        return $driving_equipments
+                            ? $query
+                                ->whereHas('drivingEquipments', function ($query) use ($driving_equipments) {
+                                    $query->whereIn('id', $driving_equipments);
+                                }, '=', count($driving_equipments))
+                            : $query;
+                    }),
+                Tables\Filters\Filter::make('has_no_driving_equipment')
+                    ->form([
+                        Forms\Components\Select::make('driving_equipment')
+                            ->options(DrivingEquipment::all()->pluck('name','id'))
+                            ->preload()
+                            ->multiple()
+                            ->searchable()
+                            ->label(__('general.has_no_driving_equipments')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $driving_equipment = $data['driving_equipment'];
+                        return $driving_equipment
+                            ? $query->whereDoesntHave('drivingEquipments', function ($query) use ($driving_equipment) {
+                                $query->whereIn('id', $driving_equipment);
+                            }) : $query;
+                    }),
                 Tables\Filters\Filter::make('min_age')
                     ->form([
                         Forms\Components\TextInput::make('min_age')->numeric()
@@ -1204,6 +1284,8 @@ class UserResource extends Resource
             HealthProfileRelationManager::class,
             VehiclesRelationManager::class,
             ForestFireFightingCertificateRelationManager::class,
+            EquipmentsRelationManager::class,
+            DrivingEquipmentsRelationManager::class,
         ];
     }
 
