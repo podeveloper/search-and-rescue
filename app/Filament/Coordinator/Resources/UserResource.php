@@ -54,9 +54,12 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use libphonenumber\PhoneNumberType;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
 class UserResource extends Resource
 {
@@ -169,11 +172,15 @@ class UserResource extends Resource
                     ]),
                 Forms\Components\Section::make('Contact & Account Info')
                     ->schema([
-                        Forms\Components\TextInput::make('phone')
-                            ->nullable()
-                            ->tel()
-                            ->maxLength(255)
-                            ->label(__('general.phone')),
+                        PhoneInput::make('phone')
+                            ->defaultCountry('tr')
+                            ->onlyCountries(['tr'])
+                            ->displayNumberFormat(PhoneInputNumberType::NATIONAL)
+                            ->validateFor(
+                                country: 'TR',
+                                type: PhoneNumberType::MOBILE | PhoneNumberType::FIXED_LINE, // default: null
+                                lenient: true
+                            ),
                         Forms\Components\TextInput::make('email')
                             ->required()
                             ->email()
