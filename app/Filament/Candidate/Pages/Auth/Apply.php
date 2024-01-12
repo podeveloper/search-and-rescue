@@ -28,7 +28,6 @@ class Apply extends BaseRegister
     {
         $fieldsArray = [
             FileUpload::make('profile_photo')
-                ->required()
                 ->columnSpanFull()
                 ->image()
                 ->openable()
