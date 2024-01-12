@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Candidate\Pages\Auth\Apply;
 use App\Filament\Candidate\Pages\EditProfile;
+use App\Filament\Widgets\MyVehiclesTableWidget;
 use BezhanSalleh\FilamentLanguageSwitch\FilamentLanguageSwitchPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -52,7 +53,7 @@ class CandidatePanelProvider extends PanelProvider
             ])
             //->discoverWidgets(in: app_path('Filament/Candidate/Widgets'), for: 'App\\Filament\\Candidate\\Widgets')
             ->widgets([
-                //
+                MyVehiclesTableWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -78,7 +79,7 @@ class CandidatePanelProvider extends PanelProvider
             ->navigationItems([
                 NavigationItem::make('Incoming Events')
                     ->label(function (){ return trans('general.event_incoming_events'); })
-                    ->icon('heroicon-o-star')
+                    ->icon('fas-calendar-day')
                     ->group('Events')
                     ->sort(96)
                     ->url(url('/incoming-events'),true),
