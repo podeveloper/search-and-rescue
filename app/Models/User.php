@@ -348,4 +348,22 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasOne(ForestFireFightingCertificate::class, 'user_id');
     }
+
+    public function equipments(): BelongsToMany
+    {
+        return $this->belongsToMany(Equipment::class)->withPivot([
+            'brand',
+            'color',
+            'size',
+        ]);
+    }
+
+    public function drivingEquipments(): BelongsToMany
+    {
+        return $this->belongsToMany(DrivingEquipment::class)->withPivot([
+            'brand',
+            'color',
+            'size',
+        ]);
+    }
 }

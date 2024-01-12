@@ -62,6 +62,21 @@ class AddressesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('district.name')->searchable(),
                 Tables\Columns\TextColumn::make('full_address')->searchable(),
                 Tables\Columns\TextColumn::make('user.full_name')->searchable(),
+                Tables\Columns\TextColumn::make('distance_from_center')
+                    ->label(__('general.distance_km'))
+                    ->formatStateUsing(fn($state)=> $state > 0 ? number_format($state / 1000,2) : $state)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('estimated_time_of_arrival')
+                    ->label(__('general.estimated_time_min'))
+                    ->formatStateUsing(function($state){
+                        if ($state > 0)
+                        {
+                            return number_format($state / 60,2);
+                        }
+
+                        return null;
+                    })
+                    ->sortable(),
             ])
             ->filters([
                 //

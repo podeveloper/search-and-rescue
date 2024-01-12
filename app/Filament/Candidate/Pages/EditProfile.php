@@ -25,12 +25,22 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use libphonenumber\PhoneNumberType;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
 class EditProfile extends Page
 {
     use InteractsWithForms, InteractsWithActions;
 
-    protected static bool $shouldRegisterNavigation = false;
+    public static function getNavigationLabel(): string
+    {
+        return __('general.my_profile_info');
+    }
+
+    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationGroup = 'My Profile';
+    protected static ?int $navigationSort = 1;
     protected static string $view = 'filament.candidate.pages.edit-profile';
 
     public function getTitle(): string|Htmlable
@@ -69,6 +79,14 @@ class EditProfile extends Page
                 Section::make(__('general.personal_info'))
                     ->description(__('general.fill_in_the_blanks'))
                     ->schema([
+                        TextInput::make('national_id_number')
+                            ->required()
+                            ->numeric()
+                            ->label(__('general.national_id_number')),
+                        TextInput::make('passport_number')
+                            ->nullable()
+                            ->string()
+                            ->label(__('general.passport_number')),
                         TextInput::make('name')
                             ->required()
                             ->string()
@@ -115,11 +133,15 @@ class EditProfile extends Page
                     ]),
                 Section::make(__('general.contact_info'))
                     ->schema([
-                        TextInput::make('phone')
-                            ->required()
-                            ->tel()
-                            ->maxLength(255)
-                            ->label(__('general.phone')),
+                        PhoneInput::make('phone')
+                            ->defaultCountry('tr')
+                            ->onlyCountries(['tr'])
+                            ->displayNumberFormat(PhoneInputNumberType::NATIONAL)
+                            ->validateFor(
+                                country: 'TR',
+                                type: PhoneNumberType::MOBILE | PhoneNumberType::FIXED_LINE, // default: null
+                                lenient: true
+                            ),
                         TextInput::make('email')
                             ->disabled()
                             ->required()
@@ -153,6 +175,9 @@ class EditProfile extends Page
                             ->required()
                             ->exists('districts', 'id')
                             ->label(__('general.district_singular')),
+                        TextInput::make('full_address')
+                            ->required()
+                            ->label(__('general.full_address')),
                     ]),
                 Section::make(__('general.educational_info'))
                     ->schema([
@@ -181,6 +206,11 @@ class EditProfile extends Page
                         TextInput::make('organisation_text')
                             ->label(__('general.organisation_singular'))
                             ->required(),
+                        Select::make('referral_source_id')
+                            ->relationship('referralSource', 'name')
+                            ->nullable()
+                            ->exists('referral_sources', 'id')
+                            ->label(__('general.referral_source_question')),
                     ]),
             ])
             ->model($this->getUser())

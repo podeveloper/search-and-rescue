@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\DistanceHelper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,8 +20,22 @@ class Address extends Model
         'district_id',
         'user_id',
         'full_address',
+        'distance_from_center',
+        'estimated_time_of_arrival',
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            DistanceHelper::updateDistanceAndDuration($model);
+        });
+
+        static::updating(function ($model) {
+            DistanceHelper::updateDistanceAndDuration($model);
+        });
+    }
 
     public function country(): BelongsTo
     {

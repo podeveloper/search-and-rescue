@@ -31,6 +31,15 @@ class EssentialSeeder extends Seeder
             'password' => bcrypt(config('seed.admin.password')),
         ]);
 
+        $adminUser->addresses()->createQuietly([
+            'country_id' => '225', // Turkey
+            'city_id' => '2170', // Istanbul
+            'district_id' => '107933', // Kartal
+            'full_address' => 'Esentepe, Füsun Sokağı No:4, 34870',
+            'distance_from_center' => 0,
+            'estimated_time_of_arrival' => 0,
+        ]);
+
         $adminUser->assignRole('coordinator');
     }
 }

@@ -24,6 +24,8 @@ use App\Filament\Coordinator\Resources\UserResource\RelationManagers\Registratio
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\SocialAccountsRelationManager;
 use App\Filament\Coordinator\Resources\UserResource\RelationManagers\VehiclesRelationManager;
 use App\Filament\Reference\Resources\UserResource\RelationManagers\CertificatesRelationManager;
+use App\Filament\Reference\Resources\UserResource\RelationManagers\DrivingEquipmentsRelationManager;
+use App\Filament\Reference\Resources\UserResource\RelationManagers\EquipmentsRelationManager;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Candidate\Resources;
 use App\Helpers\ProfileQRDownloadHelper;
@@ -32,11 +34,16 @@ use App\Models\City;
 use App\Models\Country;
 use App\Models\District;
 use App\Models\DriverLicence;
+use App\Models\DrivingEquipment;
+use App\Models\Equipment;
 use App\Models\HealthProfile;
 use App\Models\RadioCertificate;
 use App\Models\Todo;
 use App\Models\User;
 use App\Models\Vehicle;
+use App\Models\VehicleBrand;
+use App\Models\VehicleCategory;
+use App\Models\VehicleModel;
 use App\Traits\NavigationLocalizationTrait;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -54,9 +61,12 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use libphonenumber\PhoneNumberType;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
 class UserResource extends Resource
 {
@@ -78,7 +88,7 @@ class UserResource extends Resource
             'healthProfile.medications','healthProfile.allergies','healthProfile.medical_conditions','healthProfile.vision_aids',
             'healthProfile.prosthetics','healthProfile.emergency_contact_name','healthProfile.emergency_contact_phone','healthProfile.blood_type',
             'radioCertificate.call_sign','radioCertificate.radio_net_sign','radioCertificate.licence_class',
-            'vehicles.brand','vehicles.model','vehicles.year','vehicles.color','vehicles.licence_plate',
+            'vehicles.category.name','vehicles.brand.name','vehicles.model.name','vehicles.color','vehicles.licence_plate',
         ];
     }
 
@@ -169,11 +179,15 @@ class UserResource extends Resource
                     ]),
                 Forms\Components\Section::make('Contact & Account Info')
                     ->schema([
-                        Forms\Components\TextInput::make('phone')
-                            ->nullable()
-                            ->tel()
-                            ->maxLength(255)
-                            ->label(__('general.phone')),
+                        PhoneInput::make('phone')
+                            ->defaultCountry('tr')
+                            ->onlyCountries(['tr'])
+                            ->displayNumberFormat(PhoneInputNumberType::NATIONAL)
+                            ->validateFor(
+                                country: 'TR',
+                                type: PhoneNumberType::MOBILE | PhoneNumberType::FIXED_LINE, // default: null
+                                lenient: true
+                            ),
                         Forms\Components\TextInput::make('email')
                             ->required()
                             ->email()
@@ -450,33 +464,61 @@ class UserResource extends Resource
                     ->sortable()
                     ->toggleable()
                     ->label(__('general.organisation_singular')),
-                Tables\Columns\TextColumn::make('addresses.country_id')
+                Tables\Columns\TextColumn::make('address_country')
                     ->icon('heroicon-m-map')
-                    ->label('Country')
                     ->getStateUsing(function (User $record) {
                         return $record->addresses->first()?->country?->name;
                     })
                     ->sortable()
                     ->toggleable()
                     ->label(__('general.country_singular')),
-                Tables\Columns\TextColumn::make('addresses.city_id')
+                Tables\Columns\TextColumn::make('address_city')
                     ->icon('heroicon-m-map-pin')
-                    ->label('City')
                     ->getStateUsing(function (User $record) {
                         return $record->addresses->first()?->city?->name;
                     })
                     ->sortable()
                     ->toggleable()
                     ->label(__('general.city_singular')),
-                Tables\Columns\TextColumn::make('addresses.district')
+                Tables\Columns\TextColumn::make('address_district')
                     ->icon('heroicon-m-map-pin')
-                    ->label('District')
                     ->getStateUsing(function (User $record) {
                         return $record->addresses->first()?->district?->name;
                     })
                     ->sortable()
                     ->toggleable()
                     ->label(__('general.district_singular')),
+                Tables\Columns\TextColumn::make('address_full')
+                    ->getStateUsing(function (User $record) {
+                        return $record->addresses->first()?->full_address;
+                    })
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.full_address')),
+                Tables\Columns\TextColumn::make('addresses.distance_from_center')
+                    ->getStateUsing(function (User $record) {
+                        $address = $record->addresses->first();
+                        return $address?->distance_from_center ?  number_format($address->distance_from_center / 1000,2) : 0;
+                    })
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.distance_km')),
+                Tables\Columns\TextColumn::make('estimated_time_of_arrival')
+                    ->getStateUsing(function (User $record) {
+                        $address = $record->addresses->first();
+                        return $address?->estimated_time_of_arrival ?  number_format($address->estimated_time_of_arrival / 60,2) : 0;
+                    })
+                    ->sortable()
+                    ->toggleable()
+                    ->label(__('general.estimated_time_min')),
+                Tables\Columns\TextColumn::make('equipments.name')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.equipments')),
+                Tables\Columns\TextColumn::make('drivingEquipments.name')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.driving_equipments')),
                 Tables\Columns\TextColumn::make('is_active')
                     ->formatStateUsing(fn(User $record) => $record->is_active ? 'Active' : 'Inactive')
                     ->wrap()
@@ -665,6 +707,32 @@ class UserResource extends Resource
                     ->relationship('addresses.district', 'name')
                     ->searchable()
                     ->label(__('general.district_singular')),
+                Tables\Filters\Filter::make('max_distance')
+                    ->form([
+                        Forms\Components\TextInput::make('max_distance')
+                            ->numeric()
+                            ->label(__('general.max_distance')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $distance = (double) $data['max_distance'];
+                        $distance = $distance != null ? $distance * 1000 : null;
+                        return $distance != null ? $query->whereHas('addresses', function ($query) use ($distance) {
+                            $query->where('distance_from_center', '<=', $distance);
+                        }) : $query;
+                    }),
+                Tables\Filters\Filter::make('max_estimated_time')
+                    ->form([
+                        Forms\Components\TextInput::make('max_estimated_time')
+                            ->numeric()
+                            ->label(__('general.estimated_time_min')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $max_estimated_time = (double) $data['max_estimated_time'];
+                        $max_estimated_time = $max_estimated_time != null ? $max_estimated_time * 60 : null;
+                        return $max_estimated_time != null ? $query->whereHas('addresses', function ($query) use ($max_estimated_time) {
+                            $query->where('estimated_time_of_arrival', '<=', $max_estimated_time);
+                        }) : $query;
+                    }),
                 Tables\Filters\SelectFilter::make('educationLevel')
                     ->relationship('educationLevel', 'name')
                     ->multiple()
@@ -722,6 +790,74 @@ class UserResource extends Resource
                     ->searchable()
                     ->preload()
                     ->label(__('general.user_category_plural')),
+                Tables\Filters\Filter::make('has_equipments')
+                    ->form([
+                        Forms\Components\Select::make('equipments')
+                            ->options(Equipment::all()->pluck('name','id'))
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->label(__('general.has_equipments')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $equipments = $data['equipments'];
+                        return $equipments
+                            ? $query
+                                ->whereHas('equipments', function ($query) use ($equipments) {
+                                    $query->whereIn('id', $equipments);
+                                }, '=', count($equipments))
+                            : $query;
+                    }),
+                Tables\Filters\Filter::make('has_no_equipments')
+                    ->form([
+                        Forms\Components\Select::make('missing_equipments')
+                            ->options(Equipment::all()->pluck('name','id'))
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->label(__('general.has_no_equipments')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $missing_equipments = $data['missing_equipments'];
+                        return $missing_equipments
+                            ? $query->whereDoesntHave('equipments', function ($query) use ($missing_equipments) {
+                                $query->whereIn('id', $missing_equipments);
+                            }) : $query;
+                    }),
+                Tables\Filters\Filter::make('has_driving_equipments')
+                    ->form([
+                        Forms\Components\Select::make('driving_equipments')
+                            ->options(DrivingEquipment::all()->pluck('name','id'))
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->label(__('general.has_driving_equipments')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $driving_equipments = $data['driving_equipments'];
+                        return $driving_equipments
+                            ? $query
+                                ->whereHas('drivingEquipments', function ($query) use ($driving_equipments) {
+                                    $query->whereIn('id', $driving_equipments);
+                                }, '=', count($driving_equipments))
+                            : $query;
+                    }),
+                Tables\Filters\Filter::make('has_no_driving_equipment')
+                    ->form([
+                        Forms\Components\Select::make('driving_equipment')
+                            ->options(DrivingEquipment::all()->pluck('name','id'))
+                            ->preload()
+                            ->multiple()
+                            ->searchable()
+                            ->label(__('general.has_no_driving_equipments')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $driving_equipment = $data['driving_equipment'];
+                        return $driving_equipment
+                            ? $query->whereDoesntHave('drivingEquipments', function ($query) use ($driving_equipment) {
+                                $query->whereIn('id', $driving_equipment);
+                            }) : $query;
+                    }),
                 Tables\Filters\Filter::make('min_age')
                     ->form([
                         Forms\Components\TextInput::make('min_age')->numeric()
@@ -753,28 +889,46 @@ class UserResource extends Resource
                                 $query->where('blood_type', '=', $blood_type);
                             }) : $query;
                     }),
+                Tables\Filters\Filter::make('vehicle_category')
+                    ->form([
+                        Forms\Components\Select::make('vehicle_category')
+                            ->options(VehicleCategory::all()->pluck('name', 'id'))
+                            ->searchable()
+                            ->label(__('general.vehicle_category')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $vehicle_category = $data['vehicle_category'];
+                        return $vehicle_category
+                            ? $query->whereHas('vehicles', function ($query) use ($vehicle_category) {
+                                $query->where('category_id', '=', $vehicle_category);
+                            }) : $query;
+                    }),
                 Tables\Filters\Filter::make('vehicle_brand')
                     ->form([
-                        Forms\Components\TextInput::make('vehicle_brand')
+                        Forms\Components\Select::make('vehicle_brand')
+                            ->options(VehicleBrand::all()->pluck('name', 'id'))
+                            ->searchable()
                             ->label(__('general.vehicle_brand')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $vehicle_brand = $data['vehicle_brand'];
                         return $vehicle_brand
                             ? $query->whereHas('vehicles', function ($query) use ($vehicle_brand) {
-                                $query->where('brand', 'like', '%' . $vehicle_brand . '%');
+                                $query->where('brand_id', '=', $vehicle_brand);
                             }) : $query;
                     }),
                 Tables\Filters\Filter::make('vehicle_model')
                     ->form([
-                        Forms\Components\TextInput::make('vehicle_model')
+                        Forms\Components\Select::make('vehicle_model')
+                            ->options(VehicleModel::all()->pluck('name', 'id'))
+                            ->searchable()
                             ->label(__('general.vehicle_model')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         $vehicle_model = $data['vehicle_model'];
                         return $vehicle_model
                             ? $query->whereHas('vehicles', function ($query) use ($vehicle_model) {
-                                $query->where('model', 'like', '%' . $vehicle_model . '%');
+                                $query->where('model_id', '=', $vehicle_model);
                             }) : $query;
                     }),
                 Tables\Filters\Filter::make('vehicle_color')
@@ -1130,6 +1284,8 @@ class UserResource extends Resource
             HealthProfileRelationManager::class,
             VehiclesRelationManager::class,
             ForestFireFightingCertificateRelationManager::class,
+            EquipmentsRelationManager::class,
+            DrivingEquipmentsRelationManager::class,
         ];
     }
 
