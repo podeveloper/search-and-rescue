@@ -227,7 +227,7 @@ return [
     'date_from' => 'Şu Tarihten',
     'date_until' => 'Şu Tarihe Kadar',
     'edit_profile' => 'Profili Düzenle',
-    'edit_driver_profile' => 'Sürücü Profili',
+    'edit_driver_profile' => 'Sürücü Profilim',
     'sunday' => 'Pazar',
     'monday' => 'Pazartesi',
     'tuesday' => 'Salı',

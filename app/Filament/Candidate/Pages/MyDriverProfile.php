@@ -31,6 +31,11 @@ class MyDriverProfile extends Page implements HasForms
         $this->compositeImage = self::compositeImage();
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('general.edit_driver_profile');
+    }
+
     public function getTitle(): string|Htmlable
     {
         return __('general.edit_driver_profile');
