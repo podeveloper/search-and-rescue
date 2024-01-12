@@ -21,7 +21,13 @@ class MyDriverProfile extends Page implements HasForms
 {
     use InteractsWithForms;
 
+    public static function getNavigationIcon(): ?string
+    {
+        return 'fas-id-card';
+    }
+
     protected static ?string $navigationGroup = 'My Profile';
+
     protected static ?int $navigationSort = 2;
 
     public $compositeImage;

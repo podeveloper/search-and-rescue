@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class MyEquipments extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'fas-toolbox';
 
     protected static string $view = 'filament.candidate.pages.my-equipments';
 

@@ -38,9 +38,12 @@ class EditProfile extends Page
         return __('general.my_profile_info');
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationIcon = 'fas-user';
+
     protected static ?string $navigationGroup = 'My Profile';
+
     protected static ?int $navigationSort = 1;
+
     protected static string $view = 'filament.candidate.pages.edit-profile';
 
     public function getTitle(): string|Htmlable

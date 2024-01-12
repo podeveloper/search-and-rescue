@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class MyEvents extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'fas-calendar-check';
 
     protected static string $view = 'filament.candidate.pages.my-events';
 
