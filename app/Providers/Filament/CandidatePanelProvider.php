@@ -3,7 +3,13 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Candidate\Pages\Auth\Apply;
+use App\Filament\Candidate\Pages\Dashboard;
 use App\Filament\Candidate\Pages\EditProfile;
+use App\Filament\Candidate\Pages\MyCertificates;
+use App\Filament\Candidate\Pages\MyDriverProfile;
+use App\Filament\Candidate\Pages\MyEvents;
+use App\Filament\Candidate\Pages\MyHealthInfo;
+use App\Filament\Candidate\Pages\MyVehicles;
 use App\Filament\Widgets\MyVehiclesTableWidget;
 use BezhanSalleh\FilamentLanguageSwitch\FilamentLanguageSwitchPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -44,9 +50,15 @@ class CandidatePanelProvider extends PanelProvider
             ->maxContentWidth('full')
             ->favicon(asset('img/favicon-32x32.png'))
             ->discoverResources(in: app_path('Filament/Candidate/Resources'), for: 'App\\Filament\\Candidate\\Resources')
-            ->discoverPages(in: app_path('Filament/Candidate/Pages'), for: 'App\\Filament\\Candidate\\Pages')
+            //->discoverPages(in: app_path('Filament/Candidate/Pages'), for: 'App\\Filament\\Candidate\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
+                EditProfile::class,
+                MyDriverProfile::class,
+                MyVehicles::class,
+                MyCertificates::class,
+                MyHealthInfo::class,
+                MyEvents::class,
             ])
             ->plugins([
                 FilamentLanguageSwitchPlugin::make(),
