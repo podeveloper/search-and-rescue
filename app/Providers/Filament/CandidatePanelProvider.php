@@ -7,6 +7,7 @@ use App\Filament\Candidate\Pages\Dashboard;
 use App\Filament\Candidate\Pages\EditProfile;
 use App\Filament\Candidate\Pages\MyCertificates;
 use App\Filament\Candidate\Pages\MyDriverProfile;
+use App\Filament\Candidate\Pages\MyEquipments;
 use App\Filament\Candidate\Pages\MyEvents;
 use App\Filament\Candidate\Pages\MyHealthInfo;
 use App\Filament\Candidate\Pages\MyVehicles;
@@ -55,6 +56,7 @@ class CandidatePanelProvider extends PanelProvider
                 Dashboard::class,
                 EditProfile::class,
                 MyDriverProfile::class,
+                MyEquipments::class,
                 MyVehicles::class,
                 MyCertificates::class,
                 MyHealthInfo::class,
