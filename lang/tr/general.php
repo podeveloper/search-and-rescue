@@ -126,6 +126,7 @@ return [
     'event_volunteers_count' => 'Gönüllü Sayısı',
     'event_visitors_count' => 'Ziyaretçi Sayısı',
     'event_participants' => 'Katılımcılar',
+    'event_participants_count' => 'Katılımcı Sayısı',
     'event_category_singular' => 'Etkinlik Kategorisi',
     'event_category_plural' => 'Etkinlik Kategorileri',
     'event_category_count' => 'Etkinlik Sayısı',

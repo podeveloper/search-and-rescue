@@ -40,52 +40,97 @@ class IncomingEventsWidget extends BaseWidget
     {
         return $table
             ->query(
-                Event::where('date',request('date') ?? now()->toDateString())
-                    ->orderBy('date','desc')
-                    ->orderBy('starts_at','asc')
+                Event::where('date', '>=', now()->toDateString())
+                    ->orderBy('date', 'asc')
+                    ->orderBy('starts_at', 'asc')
             )
             ->columns([
+                TextColumn::make('title')
+                    ->extraAttributes(['class' => 'py-2'])
+                    ->weight(FontWeight::Bold)
+                    ->label(__('general.title')),
                 Split::make([
-                    TextColumn::make('title')
-                        ->extraAttributes(['style' => 'margin-bottom: 20px'])
-                        ->weight(FontWeight::Bold)
-                        ->label(__('general.title')),
-                ]),
-                Split::make([
-                    TextColumn::make('time')
-                        ->default(fn(Event $record) => new HtmlString(Carbon::parse($record->starts_at)->format('H:i') . ($record->ends_at ? ' - ' . Carbon::parse($record->ends_at)->format('H:i') : '')))
-                        ->badge()
-                        ->icon('heroicon-o-clock')
-                        ->weight(FontWeight::Bold)
-                        ->label(__('general.time')),
-                    TextColumn::make('location')
-                        ->icon('heroicon-o-map-pin')
-                        ->default(fn()=>__('general.place_singular'))
-                        ->url(fn(Event $record) => $record->location ? $record->location : 'https://maps.app.goo.gl/aQigLAEPpw8WdRe99',true)
+                    TextColumn::make('date_text')
+                        ->default(fn(Event $record) => $record->date ? $record->date . ' ' .  __('general.'.strtolower(Carbon::parse($record->date)->format('l'))) : '')
+                        ->extraAttributes(['class' => 'py-2'])
                         ->badge()
                         ->color('info')
+                        ->weight(FontWeight::Bold)
+                        ->label(__('general.date')),
+                    TextColumn::make('eventCategory.name')
+                        ->badge()
+                        ->icon('heroicon-o-rectangle-stack')
+                        ->alignCenter()
+                        ->extraAttributes(['class' => 'py-2'])
                         ->weight(FontWeight::Bold),
                 ]),
                 Panel::make([
-                    Stack::make([
-                        TextColumn::make('organizer')
+                    Split::make([
+                        TextColumn::make('start_time_label')
                             ->weight(FontWeight::Bold)
-                            ->visible(fn()=> auth()?->user() != null)
-                            ->formatStateUsing(fn(Event $record) => 'Organizer: ' . $record->organizer),
-                        TextColumn::make('Empty')
-                            ->visible(fn()=> auth()?->user() != null)
-                            ->default(new HtmlString('&nbsp;')),
+                            ->extraAttributes(['class' => 'py-2'])
+                            ->default(__('general.starts_at')),
+                        TextColumn::make('time')
+                            ->default(fn(Event $record) => new HtmlString(Carbon::parse($record->starts_at)->format('H:i') . ($record->ends_at ? ' - ' . Carbon::parse($record->ends_at)->format('H:i') : '')))
+                            ->badge()
+                            ->color('info')
+                            ->weight(FontWeight::Bold)
+                            ->label(__('general.time')),
+                    ]),
+                    Split::make([
+                        TextColumn::make('end_time_label')
+                            ->weight(FontWeight::Bold)
+                            ->extraAttributes(['class' => 'py-2'])
+                            ->default(__('general.ends_at')),
+                        TextColumn::make('time')
+                            ->default(fn(Event $record) => new HtmlString(Carbon::parse($record->ends_at)->format('H:i') . ($record->ends_at ? ' - ' . Carbon::parse($record->ends_at)->format('H:i') : '')))
+                            ->badge()
+                            ->color('info')
+                            ->weight(FontWeight::Bold)
+                            ->label(__('general.time')),
+                    ]),
+                    Split::make([
+                        TextColumn::make('location_label')
+                            ->weight(FontWeight::Bold)
+                            ->extraAttributes(['class' => 'py-2'])
+                            ->default(__('general.location')),
+                        TextColumn::make('location')
+                            ->default(fn(Event $record) => $record->eventPlace->name ?? 'MAKUD Merkez', true)
+                            ->url(fn(Event $record) => $record->location ?? 'https://maps.app.goo.gl/aQigLAEPpw8WdRe99', true)
+                            ->badge()
+                            ->color('success')
+                            ->weight(FontWeight::Bold),
+                    ]),
+                    Split::make([
+                        TextColumn::make('organizer_label')
+                            ->weight(FontWeight::Bold)
+                            ->extraAttributes(['class' => 'py-2'])
+                            ->default(__('general.organizer')),
+                        TextColumn::make('organizer')
+                            ->badge()
+                            ->color('success')
+                            ->default(fn(Event $record) => $record->organizer ?? 'MAKUD'),
+                    ]),
+                    Split::make([
+                        TextColumn::make('responsibles_label')
+                            ->weight(FontWeight::Bold)
+                            ->extraAttributes(['class' => 'py-2'])
+                            ->default(__('general.event_responsibles')),
+                        TextColumn::make('responsibles.full_name')
+                            ->badge()
+                            ->toggleable()
+                            ->label(__('general.event_responsibles')),
+                    ]),
+                    Split::make([
                         TextColumn::make('label')
-                            ->visible(fn()=> auth()?->user() != null)
                             ->weight(FontWeight::Bold)
                             ->extraAttributes(['class' => 'py-2'])
                             ->default(__('general.participants')),
                         TextColumn::make('users.full_name')
-                            ->visible(fn()=> auth()?->user() != null)
                             ->badge()
-                            ->label(__('general.volunteers')),
-                        TextColumn::make('Empty')
-                            ->default(new HtmlString('&nbsp;')),
+                            ->label(__('general.participants')),
+                    ]),
+                    Split::make([
                         TextColumn::make('label')
                             ->weight(FontWeight::Bold)
                             ->default('Description:'),
@@ -108,10 +153,10 @@ class IncomingEventsWidget extends BaseWidget
                     ->iconPosition(IconPosition::After)
                     ->button()
                     ->size(ActionSize::ExtraSmall)
-                    ->action(function (array $data, Event $record){
+                    ->action(function (array $data, Event $record) {
                         $record->users()->attach(auth()->user()->id);
                     })
-                    ->visible(fn(Event $record)=> auth()?->user() != null && !$record->users->contains(auth()?->user()?->id)),
+                    ->visible(fn(Event $record) => auth()?->user() != null && !$record->users->contains(auth()?->user()?->id)),
                 Action::make('Leave')
                     ->requiresConfirmation()
                     ->label(__('general.leave'))
@@ -120,10 +165,10 @@ class IncomingEventsWidget extends BaseWidget
                     ->iconPosition(IconPosition::After)
                     ->button()
                     ->size(ActionSize::ExtraSmall)
-                    ->action(function (array $data, Event $record){
+                    ->action(function (array $data, Event $record) {
                         $record->users()->detach(auth()->user()->id);
                     })
-                    ->visible(fn(Event $record)=> auth()?->user() != null && $record->users->contains(auth()?->user()?->id)),
+                    ->visible(fn(Event $record) => auth()?->user() != null && $record->users->contains(auth()?->user()?->id)),
             ], position: ActionsPosition::BeforeColumns)
             ->paginated(false)
             ->defaultGroup('eventPlace.name')

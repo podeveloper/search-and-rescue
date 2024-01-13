@@ -126,6 +126,7 @@ return [
     'event_volunteers_count' => 'Volunteers Count',
     'event_visitors_count' => 'Visitors Count',
     'event_participants' => 'Participants',
+    'event_participants_count' => 'Participant Count',
     'event_category_singular' => 'Event Category',
     'event_category_plural' => 'Event Categories',
     'event_category_count' => 'Event Count',
