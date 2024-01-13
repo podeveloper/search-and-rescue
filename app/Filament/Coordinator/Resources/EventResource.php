@@ -11,6 +11,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -177,17 +178,18 @@ class EventResource extends Resource
                 Tables\Columns\TextColumn::make('capacity')->sortable()
                     ->toggleable()
                     ->label(__('general.capacity')),
+                Tables\Columns\TextColumn::make('responsibles.full_name')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.event_responsibles')),
+                TextColumn::make('users.full_name')
+                    ->badge()
+                    ->label(__('general.participants')),
                 Tables\Columns\TextColumn::make('users_count')
                     ->counts('users')
                     ->sortable()
                     ->toggleable()
-                    ->label(__('general.event_volunteers_count')),
-                Tables\Columns\TextColumn::make('visitors_count')
-                    ->counts('visitors')
-                    ->toggleable()
-                    ->label('Visitors Count')
-                    ->sortable()
-                    ->label(__('general.event_visitors_count')),
+                    ->label(__('general.event_participants_count')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('date', 'desc')
