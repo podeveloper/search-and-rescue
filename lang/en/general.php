@@ -317,5 +317,16 @@ return [
     "riding_gloves" => "Riding Gloves",
     "riding_pants" => "Riding Pants",
     "riding_knee_guard" => "Riding Knee Guard",
-    "riding_boot" => "Riding Boot"
+    "riding_boot" => "Riding Boot",
+    "red" => "Red",
+    "green" => "Green",
+    "blue" => "Blue",
+    "yellow" => "Yellow",
+    "orange" => "Orange",
+    "purple" => "Purple",
+    "pink" => "Pink",
+    "brown" => "Brown",
+    "gray" => "Gray",
+    "black" => "Black",
+    "white" => "White"
 ];

@@ -316,5 +316,16 @@ return [
     'riding_gloves' => 'Sürüş Eldivenleri',
     'riding_pants' => 'Sürüş Pantolonu',
     'riding_knee_guard' => 'Diz Koruyucu',
-    'riding_boot' => 'Sürüş Çizmesi'
+    'riding_boot' => 'Sürüş Çizmesi',
+    "red" => "Kırmızı",
+    "green" => "Yeşil",
+    "blue" => "Mavi",
+    "yellow" => "Sarı",
+    "orange" => "Turuncu",
+    "purple" => "Mor",
+    "pink" => "Pembe",
+    "brown" => "Kahverengi",
+    "gray" => "Gri",
+    "black" => "Siyah",
+    "white" => "Beyaz"
 ];
