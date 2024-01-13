@@ -51,6 +51,7 @@ class CandidatePanelProvider extends PanelProvider
             ])
             ->brandName(env('APP_NAME'))
             ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.png' : 'img/panel-logo.png'))
+            ->darkModeBrandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo-dark-mode.png' : 'img/panel-logo-dark-mode.png'))
             ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
             ->maxContentWidth('full')
             ->favicon(asset('img/favicon-32x32.png'))
