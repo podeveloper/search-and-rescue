@@ -60,7 +60,7 @@ class IncomingEventsWidget extends BaseWidget
                         ->label(__('general.time')),
                     TextColumn::make('location')
                         ->icon('heroicon-o-map-pin')
-                        ->formatStateUsing(fn()=>__('general.place_singular'))
+                        ->default(fn()=>__('general.place_singular'))
                         ->url(fn(Event $record) => $record->location ? $record->location : 'https://maps.app.goo.gl/aQigLAEPpw8WdRe99',true)
                         ->badge()
                         ->color('info')
@@ -79,7 +79,7 @@ class IncomingEventsWidget extends BaseWidget
                             ->visible(fn()=> auth()?->user() != null)
                             ->weight(FontWeight::Bold)
                             ->extraAttributes(['class' => 'py-2'])
-                            ->default('Volunteers:'),
+                            ->default(__('general.participants')),
                         TextColumn::make('users.full_name')
                             ->visible(fn()=> auth()?->user() != null)
                             ->badge()
@@ -87,42 +87,6 @@ class IncomingEventsWidget extends BaseWidget
                         TextColumn::make('Empty')
                             ->visible(fn()=> auth()?->user() != null)
                             ->default(new HtmlString('&nbsp;')),
-                        TextColumn::make('label')
-                            ->weight(FontWeight::Bold)
-                            ->extraAttributes(['class' => 'py-2'])
-                            ->default('Visitors:'),
-                        TextColumn::make('label')
-                            ->badge()
-                            ->color('success')
-                            ->separator(',')
-                            ->default(function (Event $record) {
-
-                                if (auth()->check()) {
-                                    $result = "";
-                                    foreach ($record->visitors as $visitor)
-                                    {
-                                        // Code for authenticated users
-                                        $result .= "Fullname: {$visitor->full_name}<br>";
-                                        $result .= "Gender: {$visitor->gender?->name}<br>";
-                                        $result .= "Nationality: {$visitor->nationality?->name}<br>";
-                                        $result .= "Country: {$visitor->country?->name}<br>";
-                                        $result .= "Invited By: " . ($visitor->companion ? $visitor->companion?->full_name : 'Unknown') . "<br>";
-                                        $result .= "Explanation: {$visitor->explanation}<br>";
-                                        $result .= "<br>";
-                                    }
-
-                                    $result = new HtmlString($result);
-                                    return $result;
-                                } else {
-                                    $result = "";
-                                    foreach ($record->visitors as $visitor)
-                                    {
-                                        $result .= "({$visitor->country->name}),";
-                                    }
-                                    return $result;
-                                }
-                            })
-                            ->label(__('general.volunteers')),
                         TextColumn::make('Empty')
                             ->default(new HtmlString('&nbsp;')),
                         TextColumn::make('label')
@@ -139,55 +103,6 @@ class IncomingEventsWidget extends BaseWidget
                 //
             ])
             ->actions([
-                Action::make('add_visitor')
-                    ->label(fn()=> auth()?->user() != null ? __('general.add_visitor') : __('general.join'))
-                    ->button()
-                    ->size(ActionSize::ExtraSmall)
-                    ->icon('heroicon-m-user-plus')
-                    ->color('info')
-                    ->form([
-                        Repeater::make('visitors')
-                            ->label(__('general.visitor_plural'))
-                            ->schema([
-                                TextInput::make('full_name')
-                                    ->label(__('general.full_name'))
-                                    ->required(),
-                                TextInput::make('phone')
-                                    ->label(__('general.phone'))
-                                    ->numeric()
-                                    ->requiredIf('email', null),
-                                TextInput::make('email')
-                                    ->label(__('general.email'))
-                                    ->requiredIf('phone', null),
-                                Select::make('gender_id')
-                                    ->label(__('general.gender_singular'))
-                                    ->required()
-                                    ->options(Gender::get(['name', 'id'])->pluck('name','id')),
-                                Select::make('nationality')
-                                    ->searchable()
-                                    ->label(__('general.nationality_singular'))
-                                    ->required()
-                                    ->options(Nationality::get(['name', 'id'])->pluck('name','id')),
-                                Select::make('country_id')
-                                    ->searchable()
-                                    ->label(__('general.country_singular'))
-                                    ->required()
-                                    ->options(Country::get(['name', 'id'])->pluck('name','id'))
-                                    ->searchable(),
-                                Select::make('language_id')
-                                    ->options(Language::pluck('name','id'))
-                                    ->required()
-                                    ->searchable()
-                                    ->exists('languages','id')
-                                    ->label(__('general.language_singular')),
-                                Textarea::make('explanation')
-                                    ->label(__('general.explanation'))
-                                    ->visible(auth()?->user() != null)
-                            ])->addActionLabel(__('general.add_one_more'))
-                    ])
-                    ->action(function (array $data, Event $record){
-                        $record->addVisitors($data['visitors']);
-                    }),
                 Action::make('Join')
                     ->requiresConfirmation()
                     ->label(__('general.join'))
