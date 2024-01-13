@@ -11,6 +11,7 @@ use App\Filament\Candidate\Pages\MyEquipments;
 use App\Filament\Candidate\Pages\MyEvents;
 use App\Filament\Candidate\Pages\MyHealthInfo;
 use App\Filament\Candidate\Pages\MyVehicles;
+use App\Filament\Widgets\IncomingEventsWidget;
 use App\Filament\Widgets\MyDrivingEquipmentsTableWidget;
 use App\Filament\Widgets\MyEquipmentsTableWidget;
 use App\Filament\Widgets\MyEventsTableWidget;
@@ -74,6 +75,7 @@ class CandidatePanelProvider extends PanelProvider
                 MyEquipmentsTableWidget::class,
                 MyDrivingEquipmentsTableWidget::class,
                 MyEventsTableWidget::class,
+                IncomingEventsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
