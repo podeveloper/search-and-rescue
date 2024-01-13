@@ -327,7 +327,6 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->weight(FontWeight::Bold)
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ImageColumn::make('profile_photo')
                     ->disk('public')
@@ -356,19 +355,16 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('national_id_number')
                     ->weight(FontWeight::Bold)
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.national_id_number')),
                 Tables\Columns\TextColumn::make('passport_number')
                     ->weight(FontWeight::Bold)
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.passport_number')),
                 Tables\Columns\TextColumn::make('name')
                     ->weight(FontWeight::Bold)
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->copyable()
                     ->copyMessage('Name copied')
@@ -377,7 +373,6 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('surname')
                     ->weight(FontWeight::Bold)
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->copyable()
                     ->copyMessage('Surname copied')
@@ -386,7 +381,6 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('full_name')
                     ->weight(FontWeight::Bold)
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->copyable()
                     ->copyMessage('Full name copied')
@@ -419,49 +413,41 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('gender.name')
                     ->icon('heroicon-m-finger-print')
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.gender_singular')),
                 Tables\Columns\TextColumn::make('nationality.name')
                     ->icon('heroicon-m-flag')
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.nationality_singular')),
                 Tables\Columns\TextColumn::make('date_of_birth')
                     ->icon('heroicon-m-calendar-days')
                     ->date('Y-m-d')
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.date_of_birth')),
                 Tables\Columns\TextColumn::make('marital_status')
                     ->icon('heroicon-m-puzzle-piece')
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.marital_status')),
                 Tables\Columns\TextColumn::make('educationLevel.name')
                     ->icon('heroicon-m-academic-cap')
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.education_level_singular')),
                 Tables\Columns\TextColumn::make('referralSource.name')
                     ->icon('heroicon-m-megaphone')
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.referral_source_singular')),
                 Tables\Columns\TextColumn::make('occupation.name')
                     ->icon('heroicon-m-briefcase')
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.occupation_singular')),
                 Tables\Columns\TextColumn::make('organisation_text')
                     ->icon('heroicon-m-building-office-2')
                     ->searchable()
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.organisation_singular')),
                 Tables\Columns\TextColumn::make('address_country')
@@ -469,7 +455,6 @@ class UserResource extends Resource
                     ->getStateUsing(function (User $record) {
                         return $record->addresses->first()?->country?->name;
                     })
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.country_singular')),
                 Tables\Columns\TextColumn::make('address_city')
@@ -477,7 +462,6 @@ class UserResource extends Resource
                     ->getStateUsing(function (User $record) {
                         return $record->addresses->first()?->city?->name;
                     })
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.city_singular')),
                 Tables\Columns\TextColumn::make('address_district')
@@ -485,14 +469,12 @@ class UserResource extends Resource
                     ->getStateUsing(function (User $record) {
                         return $record->addresses->first()?->district?->name;
                     })
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.district_singular')),
                 Tables\Columns\TextColumn::make('address_full')
                     ->getStateUsing(function (User $record) {
                         return $record->addresses->first()?->full_address;
                     })
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.full_address')),
                 Tables\Columns\TextColumn::make('addresses.distance_from_center')
@@ -500,7 +482,6 @@ class UserResource extends Resource
                         $address = $record->addresses->first();
                         return $address?->distance_from_center ?  number_format($address->distance_from_center / 1000,2) : 0;
                     })
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.distance_km')),
                 Tables\Columns\TextColumn::make('estimated_time_of_arrival')
@@ -508,7 +489,6 @@ class UserResource extends Resource
                         $address = $record->addresses->first();
                         return $address?->estimated_time_of_arrival ?  number_format($address->estimated_time_of_arrival / 60,2) : 0;
                     })
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.estimated_time_min')),
                 Tables\Columns\TextColumn::make('equipments.name')
@@ -522,7 +502,6 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('is_active')
                     ->formatStateUsing(fn(User $record) => $record->is_active ? 'Active' : 'Inactive')
                     ->wrap()
-                    ->sortable()
                     ->searchable()
                     ->toggleable()
                     ->label(__('general.user_is_active')),
@@ -587,17 +566,14 @@ class UserResource extends Resource
                     ->label(__('general.first_aid_certificate')),
                 Tables\Columns\TextColumn::make('last_login_at')
                     ->date('Y-m-d')
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.user_last_login_date')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->date('Y-m-d')
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.created_date')),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->date('Y-m-d')
-                    ->sortable()
                     ->toggleable()
                     ->label(__('general.updated_date')),
                 Tables\Columns\TextColumn::make('note')
