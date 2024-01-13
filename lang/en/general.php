@@ -45,6 +45,7 @@ return [
     'age' => 'Age',
     'location' => 'Location',
     'locations' => 'Locations',
+    'location_map_link' => 'Map Link',
     'organizer' => 'Organizer',
     'organizers' => 'Organizers',
     'published' => 'Published',

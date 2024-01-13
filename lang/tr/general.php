@@ -45,6 +45,7 @@ return [
     'age' => 'Yaş',
     'location' => 'Yer',
     'locations' => 'Yerler',
+    'location_map_link' => 'Harita Linki',
     'organizer' => 'Düzenleyen',
     'organizers' => 'Düzenleyenler',
     'published' => 'Yayınlandı',
