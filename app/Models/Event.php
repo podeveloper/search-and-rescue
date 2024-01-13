@@ -52,6 +52,11 @@ class Event extends Model
         return $this->belongsToMany(User::class, 'event_user');
     }
 
+    public function responsibles(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'responsible_event','event_id','responsible_id');
+    }
+
     public function visitors(): MorphToMany
     {
         return $this->morphToMany(Visitor::class, 'visitorable');

@@ -64,6 +64,12 @@ class EventResource extends Resource
                     ->nullable()
                     ->string()
                     ->label(__('general.organizer')),
+                Forms\Components\Select::make('responsibles')
+                    ->relationship('responsibles', 'full_name')
+                    ->multiple()
+                    ->searchable()
+                    ->preload()
+                    ->label(__('general.event_responsibles')),
                 Forms\Components\DatePicker::make('date')
                     ->nullable()
                     ->label(__('general.date')),
@@ -149,6 +155,10 @@ class EventResource extends Resource
                     ->sortable()
                     ->toggleable()
                     ->label(__('general.organizer')),
+                Tables\Columns\TextColumn::make('responsibles.full_name')
+                    ->badge()
+                    ->toggleable()
+                    ->label(__('general.event_responsibles')),
                 Tables\Columns\TextColumn::make('eventCategory.name')
                     ->searchable()
                     ->sortable()
@@ -252,6 +262,12 @@ class EventResource extends Resource
                         $organizer = $data['organizer'];
                         return $organizer ? $query->where('organizer', 'like', '%' . $organizer . '%') : $query;
                     }),
+                Tables\Filters\SelectFilter::make('responsibles')
+                    ->relationship('responsibles', 'full_name')
+                    ->multiple()
+                    ->searchable()
+                    ->preload()
+                    ->label(__('general.event_responsibles')),
                 Tables\Filters\Filter::make('capacity')
                     ->form([
                         Forms\Components\TextInput::make('capacity')->numeric()
