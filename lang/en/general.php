@@ -133,6 +133,7 @@ return [
     'event_place_plural' => 'Event Places',
     'event_place_count' => 'Event Count',
     'event_incoming_events' => 'Incoming Events',
+    'event_responsibles' => 'Responsibles',
     'field_training_singular' => 'Field Training',
     'field_training_plural' => 'Field Trainings',
     'field_training_listened_trainers' => 'Listened Trainers',

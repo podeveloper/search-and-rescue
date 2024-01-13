@@ -133,6 +133,7 @@ return [
     'event_place_plural' => 'Etkinlik Yerleri',
     'event_place_count' => 'Etkinlik Sayısı',
     'event_incoming_events' => 'Yaklaşan Etkinlikler',
+    'event_responsibles' => 'Sorumlular',
     'field_training_singular' => 'Saha Eğitimi',
     'field_training_plural' => 'Saha Eğitimleri',
     'field_training_listened_trainers' => 'Dinlenen Eğitmenler',
