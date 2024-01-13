@@ -113,7 +113,11 @@ class EventResource extends Resource
                     ->toggleable()
                     ->label(__('general.title')),
                 Tables\Columns\TextColumn::make('description')
-                    ->formatStateUsing(fn($state) => strip_tags($state))
+                    ->formatStateUsing(function($state){
+
+                        $state = str_replace('</p><p>', ' ', $state);
+                        return strip_tags($state);
+                    })
                     ->words(5)
                     ->wrap()
                     ->searchable()
