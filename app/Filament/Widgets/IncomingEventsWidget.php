@@ -60,8 +60,8 @@ class IncomingEventsWidget extends BaseWidget
                         ->label(__('general.time')),
                     TextColumn::make('location')
                         ->icon('heroicon-o-map-pin')
-                        ->default('Location')
-                        ->url(fn(Event $record) => $record->location ? $record->location : 'https://maps.app.goo.gl/uSHFkVEHniiGuhVq8',true)
+                        ->formatStateUsing(fn()=>__('general.place_singular'))
+                        ->url(fn(Event $record) => $record->location ? $record->location : 'https://maps.app.goo.gl/aQigLAEPpw8WdRe99',true)
                         ->badge()
                         ->color('info')
                         ->weight(FontWeight::Bold),
