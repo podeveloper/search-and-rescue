@@ -38,7 +38,7 @@ class NetworkPanelProvider extends PanelProvider
                 //
             ])
             ->brandName(env('APP_NAME'))
-            ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.jpg' : 'img/panel-logo.jpg'))
+            ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.png' : 'img/panel-logo.png'))
             ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Network/Resources'), for: 'App\\Filament\\Network\\Resources')

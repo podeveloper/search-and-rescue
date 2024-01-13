@@ -32,7 +32,7 @@ class OfficialPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->brandName(env('APP_NAME'))
-            ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.jpg' : 'img/panel-logo.jpg'))
+            ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.png' : 'img/panel-logo.png'))
             ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
             ->favicon(asset('img/favicon-32x32.png'))
             ->discoverResources(in: app_path('Filament/Official/Resources'), for: 'App\\Filament\\Official\\Resources')
