@@ -21,7 +21,7 @@
 
         /* Responsive styles */
         @media (max-width: 768px) {
-            img {
+            #compositeImage {
                 display: inline-block;
                 width: 50% !important;
             }
@@ -33,9 +33,14 @@
                 min-width: 50% !important;
             }
 
-            img {
+            #compositeImage {
                 width: 20% !important;
             }
+        }
+
+        .fi-ta-content > .items-center
+        {
+            display: none;
         }
     </style>
 
@@ -47,7 +52,10 @@
             </x-filament-panels::form>
         </div>
         <div class="centered-child">
-            <img src="{{ $this->compositeImage }}" alt="Composite Image">
+            <img id="compositeImage" src="{{ $this->compositeImage }}" alt="Composite Image">
         </div>
+    </div>
+    <div>
+        @livewire(\App\Filament\Widgets\MyDrivingEquipmentsTableWidget::class)
     </div>
 </x-filament-panels::page>

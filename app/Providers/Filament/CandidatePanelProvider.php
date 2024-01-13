@@ -11,6 +11,9 @@ use App\Filament\Candidate\Pages\MyEquipments;
 use App\Filament\Candidate\Pages\MyEvents;
 use App\Filament\Candidate\Pages\MyHealthInfo;
 use App\Filament\Candidate\Pages\MyVehicles;
+use App\Filament\Widgets\MyDrivingEquipmentsTableWidget;
+use App\Filament\Widgets\MyEquipmentsTableWidget;
+use App\Filament\Widgets\MyEventsTableWidget;
 use App\Filament\Widgets\MyVehiclesTableWidget;
 use BezhanSalleh\FilamentLanguageSwitch\FilamentLanguageSwitchPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -68,6 +71,9 @@ class CandidatePanelProvider extends PanelProvider
             //->discoverWidgets(in: app_path('Filament/Candidate/Widgets'), for: 'App\\Filament\\Candidate\\Widgets')
             ->widgets([
                 MyVehiclesTableWidget::class,
+                MyEquipmentsTableWidget::class,
+                MyDrivingEquipmentsTableWidget::class,
+                MyEventsTableWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
