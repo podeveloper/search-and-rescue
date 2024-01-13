@@ -85,9 +85,6 @@ class IncomingEventsWidget extends BaseWidget
                             ->badge()
                             ->label(__('general.volunteers')),
                         TextColumn::make('Empty')
-                            ->visible(fn()=> auth()?->user() != null)
-                            ->default(new HtmlString('&nbsp;')),
-                        TextColumn::make('Empty')
                             ->default(new HtmlString('&nbsp;')),
                         TextColumn::make('label')
                             ->weight(FontWeight::Bold)
