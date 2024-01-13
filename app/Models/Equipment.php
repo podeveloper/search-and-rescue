@@ -58,15 +58,19 @@ class Equipment extends Model
 
     public static function sizes(): array
     {
+        $numericSizes = range(35, 60);
+
         $sizes = [
-            'xs'    => 'XS',
-            's'  => 'S',
-            'm'   => 'M',
-            'l' => 'L',
-            'xl' => 'XL',
-            'xxl' => 'XXL',
-            'xxxl'   => 'XXXL',
+            'xs'   => 'XS',
+            's'    => 'S',
+            'm'    => 'M',
+            'l'    => 'L',
+            'xl'   => 'XL',
+            'xxl'  => 'XXL',
+            'xxxl' => 'XXXL',
         ];
+
+        $sizes += array_combine(array_map('strval', $numericSizes), $numericSizes);
 
         return $sizes;
     }
