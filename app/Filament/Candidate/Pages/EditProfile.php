@@ -33,11 +33,6 @@ class EditProfile extends Page
 {
     use InteractsWithForms, InteractsWithActions;
 
-    public static function getNavigationLabel(): string
-    {
-        return __('general.my_profile_info');
-    }
-
     protected static ?string $navigationIcon = 'fas-user';
 
     protected static ?string $navigationGroup = 'My Profile';
@@ -49,6 +44,11 @@ class EditProfile extends Page
     public function getTitle(): string|Htmlable
     {
         return __('general.edit_profile');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('general.my_profile_info');
     }
 
     /**
