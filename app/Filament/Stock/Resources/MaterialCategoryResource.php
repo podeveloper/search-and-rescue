@@ -6,6 +6,7 @@ use App\Filament\Resources\MaterialCategoryResource\Pages;
 use App\Filament\Resources\MaterialCategoryResource\RelationManagers;
 use App\Filament\Stock\Resources;
 use App\Models\MaterialCategory;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class MaterialCategoryResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = MaterialCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -30,7 +33,8 @@ class MaterialCategoryResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->string()
-                    ->maxLength(250),
+                    ->maxLength(250)
+                    ->label(__('general.name')),
             ]);
     }
 
@@ -47,7 +51,7 @@ class MaterialCategoryResource extends Resource
                     ->counts('materials')
                     ->toggleable()
                     ->sortable()
-                    ->label('Material Count'),
+                    ->label(__('general.material_plural')),
             ])
             ->paginated([10, 25, 50, 100])
             ->defaultSort('name','asc')
