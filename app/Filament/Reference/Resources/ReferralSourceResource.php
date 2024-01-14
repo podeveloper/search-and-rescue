@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Resources\ReferralSourceResource\Pages;
 use App\Filament\Resources\ReferralSourceResource\RelationManagers;
 use App\Models\ReferralSource;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class ReferralSourceResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = ReferralSource::class;
 
     protected static ?string $navigationGroup = 'Reference Models';
@@ -47,7 +50,7 @@ class ReferralSourceResource extends Resource
                     ->counts('users')
                     ->sortable()
                     ->toggleable()
-                    ->label('User Count'),
+                    ->label(__('general.user_count')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('name','asc')

@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Resources\EducationLevelResource\Pages;
 use App\Filament\Resources\EducationLevelResource\RelationManagers;
 use App\Models\EducationLevel;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class EducationLevelResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = EducationLevel::class;
 
     protected static ?string $navigationGroup = 'Reference Models';
@@ -47,7 +50,7 @@ class EducationLevelResource extends Resource
                     ->counts('users')
                     ->sortable()
                     ->toggleable()
-                    ->label('User Count'),
+                    ->label(__('general.user_count')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
@@ -89,5 +92,10 @@ class EducationLevelResource extends Resource
     public static function canDeleteAny() : bool
     {
         return auth()->user()->is_admin;
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

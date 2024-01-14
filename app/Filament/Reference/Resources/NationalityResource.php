@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Resources\NationalityResource\Pages;
 use App\Filament\Resources\NationalityResource\RelationManagers;
 use App\Models\Nationality;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class NationalityResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = Nationality::class;
 
     protected static ?string $navigationGroup = 'Reference Models';

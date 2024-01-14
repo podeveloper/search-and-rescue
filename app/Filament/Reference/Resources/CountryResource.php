@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Resources\CountryResource\Pages;
 use App\Filament\Resources\CountryResource\RelationManagers;
 use App\Models\Country;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class CountryResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = Country::class;
 
     protected static ?string $navigationGroup = 'Reference Models';
@@ -36,11 +39,13 @@ class CountryResource extends Resource
                 Forms\Components\Select::make('continent_id')
                     ->relationship('continent', 'name')
                     ->nullable()
-                    ->exists('continents','id'),
+                    ->exists('continents', 'id')
+                    ->label(__('general.continent')),
                 Forms\Components\Select::make('region_id')
                     ->relationship('region', 'name')
                     ->nullable()
-                    ->exists('regions','id'),
+                    ->exists('regions', 'id')
+                    ->label(__('general.region')),
             ]);
     }
 
@@ -48,35 +53,39 @@ class CountryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->sortable()
-                    ->searchable(isIndividual: true)
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('cities_count')
                     ->counts('cities')
-                    ->sortable()
                     ->toggleable()
-                    ->label('Cities Count'),
+                    ->label(__('general.city_count')),
                 Tables\Columns\TextColumn::make('continent.name')
-                    ->searchable(isIndividual: true)
-                    ->toggleable(),
+                    ->searchable()
+                    ->toggleable()
+                    ->label(__('general.continent')),
                 Tables\Columns\TextColumn::make('region.name')
-                    ->searchable(isIndividual: true)
-                    ->toggleable(),
+                    ->searchable()
+                    ->toggleable()
+                    ->label(__('general.region')),
                 Tables\Columns\TextColumn::make('capital')
-                    ->searchable(isIndividual: true)
-                    ->toggleable(),
+                    ->searchable()
+                    ->toggleable()
+                    ->label(__('general.capital')),
                 Tables\Columns\TextColumn::make('native')
-                    ->searchable(isIndividual: true)
-                    ->toggleable(),
+                    ->searchable()
+                    ->toggleable()
+                    ->label(__('general.native')),
                 Tables\Columns\TextColumn::make('iso2')
-                    ->searchable(isIndividual: true)
+                    ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('iso3')
-                    ->searchable(isIndividual: true)
+                    ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('phone_code')
-                    ->searchable(isIndividual: true)
-                    ->toggleable(),
+                    ->searchable()
+                    ->toggleable()
+                    ->label(__('general.phone_code')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
@@ -127,5 +136,10 @@ class CountryResource extends Resource
     public static function canDeleteAny() : bool
     {
         return auth()->user()->is_admin;
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Resources\DistrictResource\Pages;
 use App\Filament\Resources\DistrictResource\RelationManagers;
 use App\Models\District;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class DistrictResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = District::class;
 
     protected static ?string $navigationGroup = 'Reference Models';
@@ -53,7 +56,8 @@ class DistrictResource extends Resource
                 Tables\Columns\TextColumn::make('city.name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.city_singular')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('name', 'asc')
@@ -95,5 +99,10 @@ class DistrictResource extends Resource
     public static function canDeleteAny() : bool
     {
         return auth()->user()->is_admin;
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

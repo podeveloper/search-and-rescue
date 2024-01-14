@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Reference\Resources\DrivingEquipmentResource\Pages;
 use App\Filament\Reference\Resources\DrivingEquipmentResource\RelationManagers;
 use App\Models\DrivingEquipment;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Cache;
 
 class DrivingEquipmentResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = DrivingEquipment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-sparkles';

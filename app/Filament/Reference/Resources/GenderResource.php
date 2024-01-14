@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Resources\GenderResource\Pages;
 use App\Filament\Resources\GenderResource\RelationManagers;
 use App\Models\Gender;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class GenderResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = Gender::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-finger-print';
@@ -43,7 +46,7 @@ class GenderResource extends Resource
                     ->counts('users')
                     ->toggleable()
                     ->sortable()
-                    ->label('User Count'),
+                    ->label(__('general.user_count')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
