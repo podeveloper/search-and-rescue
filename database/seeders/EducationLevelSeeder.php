@@ -14,11 +14,11 @@ class EducationLevelSeeder extends Seeder
     public function run(): void
     {
         $educationLevels = [
-            ['name' => 'Middle School'],
-            ['name' => 'High School'],
-            ['name' => 'Bachelor'],
-            ['name' => 'Master'],
-            ['name' => 'Phd'],
+            ['name' => 'Ortaokul'],
+            ['name' => 'Lise'],
+            ['name' => 'Lisans'],
+            ['name' => 'Yüksek Lisans'],
+            ['name' => 'Doktora'],
         ];
 
         DB::table('education_levels')->insert($educationLevels);

@@ -159,8 +159,8 @@ class UserResource extends Resource
                             ->label(__('general.date_of_birth')),
                         Forms\Components\Select::make('marital_status')
                             ->options([
-                                'single' => 'Single',
-                                'married' => 'Married',
+                                'single' => __('general.single'),
+                                'married' => __('general.married'),
                             ])
                             ->nullable()
                             ->label(__('general.marital_status')),
@@ -731,8 +731,8 @@ class UserResource extends Resource
                     ->label(__('general.organisation_singular')),
                 Tables\Filters\SelectFilter::make('marital_status')
                     ->options([
-                        'single' => 'Single',
-                        'married' => 'Married',
+                        'single' => __('general.single'),
+                        'married' => __('general.married'),
                     ])
                     ->multiple()
                     ->label(__('general.marital_status')),

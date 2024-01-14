@@ -14,11 +14,11 @@ class ReferralSourceSeeder extends Seeder
     public function run(): void
     {
         $sources = [
-            ['name' => 'From A Friend'],
-            ['name' => 'Social Media'],
-            ['name' => 'While Visiting The Foundation'],
-            ['name' => 'From A Training Program'],
-            ['name' => 'Seminar At School'],
+            ['name' => 'Arkadaş'],
+            ['name' => 'Sosyal Medya'],
+            ['name' => 'Saha Eğitimi'],
+            ['name' => 'Seminer'],
+            ['name' => 'Etkinlik'],
         ];
 
         DB::table('referral_sources')->insert($sources);
