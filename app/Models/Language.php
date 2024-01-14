@@ -15,7 +15,7 @@ class Language extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['name','code','native_name'];
+    protected $fillable = ['name','name_en','code','native_name'];
 
 
     public function users(): MorphToMany

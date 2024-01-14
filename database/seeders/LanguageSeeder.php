@@ -14,14 +14,18 @@ class LanguageSeeder extends Seeder
     public function run()
     {
         // Load the JSON data
-        $json = file_get_contents(database_path('jsons/languages_tr.json'));
-        $data = json_decode($json, true);
+        $englishJson = file_get_contents(database_path('jsons/languages.json'));
+        $englishData = json_decode($englishJson, true);
 
-        DB::transaction(function () use ($data) {
-            foreach ($data as $languageData) {
+        $turkishJson = file_get_contents(database_path('jsons/languages_tr.json'));
+        $turkishData = json_decode($turkishJson, true);
+
+        DB::transaction(function () use ($turkishData, $englishData) {
+            foreach ($turkishData as $key => $languageData) {
 
                 $language = [
                     'name' => $languageData['name'],
+                    'name_en' => $englishData[$key]['name'],
                     'code' => strtoupper($languageData['code']),
                     'native_name' => $languageData['nativeName'],
                 ];
