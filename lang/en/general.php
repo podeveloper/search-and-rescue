@@ -377,4 +377,6 @@ return [
     'organisation_visit_plural' => 'Organisation Visits',
     'industry' => 'Industry',
     'host' => 'Hosted By',
+    'all' => 'All',
+    'gender_null' => 'Gender Null',
 ];

@@ -34,9 +34,4 @@ class OrganisationVisit extends Model
     {
         return $this->belongsTo(User::class, 'host_id');
     }
-
-    public function visitors(): MorphToMany
-    {
-        return $this->morphToMany(Visitor::class, 'visitorable');
-    }
 }

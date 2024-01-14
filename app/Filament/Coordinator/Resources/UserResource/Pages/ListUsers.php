@@ -25,19 +25,23 @@ class ListUsers extends ListRecords
     {
         $tabs = [
             'all' => Tab::make('All')
+                ->label(__('general.all'))
                 ->badge(User::query()->count())
                 ->icon('heroicon-o-list-bullet'),
             'male' => Tab::make('Male')
+                ->label(__('general.male'))
                 ->badge(User::query()->male()->count())
                 ->badgeColor('success')
                 ->icon('heroicon-o-check')
                 ->modifyQueryUsing(fn (Builder $query) => $query->male()),
             'female' => Tab::make('Female')
+                ->label(__('general.female'))
                 ->badge(User::query()->female()->count())
                 ->badgeColor('success')
                 ->icon('heroicon-o-check')
                 ->modifyQueryUsing(fn (Builder $query) => $query->female()),
             'gender_null' => Tab::make('Gender Null')
+                ->label(__('general.gender_null'))
                 ->badge(User::query()->genderNull()->count())
                 ->badgeColor('danger')
                 ->icon('heroicon-o-exclamation-circle')

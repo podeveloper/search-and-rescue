@@ -374,4 +374,6 @@ return [
     'organisation_visit_plural' => 'Kurum Ziyaretleri',
     'industry' => 'Endüstri',
     'host' => 'İlgilenen',
+    'all' => 'Hepsi',
+    'gender_null' => 'Cinsiyet Boş',
 ];

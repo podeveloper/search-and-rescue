@@ -24,6 +24,7 @@ class ListEvents extends ListRecords
     {
         return [
             'all' => Tab::make('All')
+                ->label(__('general.all'))
                 ->badge(Event::query()->count())
                 ->icon('heroicon-o-list-bullet')
                 ->badgeColor('success'),

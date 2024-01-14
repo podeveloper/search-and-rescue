@@ -31,7 +31,7 @@ class ContactResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['full_name', 'email', 'phone','address','gender.name','nationality.name','organisation.name','organisation_text','occupation.name','occupation_text','contactCategory.name'];
+        return ['full_name', 'email', 'phone','address','gender.name','nationality.name','organisation.name','occupation.name','contactCategory.name'];
     }
 
     public static function form(Form $form): Form

@@ -82,7 +82,7 @@ class UserResource extends Resource
     public static function getGloballySearchableAttributes(): array
     {
         return [
-            'name', 'surname', 'full_name', 'email', 'phone','nationality.name','educationLevel.name','occupation.name','occupation_text','organisation.name','organisation_text','languages.name','tags.name','categories.name','addresses.country.name','addresses.city.name','addresses.district.name',
+            'name', 'surname', 'full_name', 'email', 'phone','nationality.name','educationLevel.name','occupation.name','organisation.name','organisation_text','languages.name','tags.name','categories.name','addresses.country.name','addresses.city.name','addresses.district.name',
             'driverLicences.class',
             'firstAidCertificate.training_institution',
             'healthProfile.medications','healthProfile.allergies','healthProfile.medical_conditions','healthProfile.vision_aids',
@@ -223,10 +223,6 @@ class UserResource extends Resource
                             ->nullable()
                             ->exists('occupations', 'id')
                             ->label(__('general.occupation_singular')),
-                        Forms\Components\TextInput::make('occupation_text')
-                            ->nullable()
-                            ->string()
-                            ->visible(auth()->user()?->is_admin || auth()->user()?->hasRole(['coordinator'])),
                         Forms\Components\Select::make('organisation_id')
                             ->relationship('organisation', 'name')
                             ->searchable()

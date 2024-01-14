@@ -24,6 +24,7 @@ class ListTodos extends ListRecords
     {
         return [
             'all' => Tab::make('All')
+                ->label(__('general.all'))
                 ->badge(Todo::query()->count())
                 ->icon('heroicon-o-list-bullet'),
             'finished' => Tab::make('Finished')
