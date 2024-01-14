@@ -33,7 +33,6 @@ class DemoDataSeeder extends Seeder
         Address::factory(10)->create();
         Material::factory(10)->create();
         MaterialStock::factory(10)->create();
-        Visitor::factory(50)->create();
 
         $country = Country::where('name', 'Turkey')->first();
         $city = $country?->cities?->first();
@@ -78,7 +77,5 @@ class DemoDataSeeder extends Seeder
 
         // Organisation Visits
         OrganisationVisit::factory(10)->create();
-
-        Visitor::factory(20)->create();
     }
 }

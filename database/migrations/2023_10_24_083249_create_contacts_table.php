@@ -22,7 +22,6 @@ return new class extends Migration
             $table->foreignId('organisation_id')->nullable()->constrained()->nullOnDelete();
             $table->string('organisation_text')->nullable();
             $table->foreignId('occupation_id')->nullable()->constrained();
-            $table->string('occupation_text')->nullable();
             $table->longText('explanation')->nullable();
             $table->foreignId('contact_category_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();

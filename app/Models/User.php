@@ -50,7 +50,6 @@ class User extends Authenticatable implements FilamentUser
         'reference_id',
         'referral_source_id',
         'occupation_id',
-        'occupation_text',
         'organisation_id',
         'organisation_text',
         'marital_status',

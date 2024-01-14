@@ -20,9 +20,7 @@ class Contact extends Model
         'gender_id',
         'nationality_id',
         'organisation_id',
-        'organisation_text',
         'occupation_id',
-        'occupation_text',
         'explanation',
         'contact_category_id',
     ];

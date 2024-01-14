@@ -57,36 +57,6 @@ class Event extends Model
         return $this->belongsToMany(User::class, 'responsible_event','event_id','responsible_id');
     }
 
-    public function visitors(): MorphToMany
-    {
-        return $this->morphToMany(Visitor::class, 'visitorable');
-    }
-
-    public function addVisitors($data)
-    {
-        $group_number = Visitor::max('group_number') + 1;
-        foreach ($data as $visitorData) {
-
-            $visitorData = (object) $visitorData;
-
-            $visitor = Visitor::create([
-                'full_name' => $visitorData->full_name ?? null,
-                'phone' => $visitorData->phone ?? null,
-                'email' => $visitorData->email ?? null,
-                'gender_id' => $visitorData->gender_id ?? null,
-                'nationality_id' => $visitorData->nationality_id ?? null,
-                'country_id' => $visitorData->country_id ?? null,
-                'language_id' => $visitorData->language_id ?? null,
-                'explanation' => $visitorData->explanation ?? null,
-                'companion_id' => auth()?->user()?->id ?? null,
-                'group_number' => $group_number,
-            ]);
-
-            $this->visitors()->attach($visitor);
-
-        }
-    }
-
     public function eventCategory(): BelongsTo
     {
         return $this->belongsTo(EventCategory::class);
