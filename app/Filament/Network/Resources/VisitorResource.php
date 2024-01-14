@@ -20,6 +20,8 @@ class VisitorResource extends Resource
 {
     use NavigationLocalizationTrait;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = Visitor::class;
 
     protected static ?string $navigationGroup = 'Visitors';

@@ -6,6 +6,7 @@ use App\Filament\Network\Resources;
 use App\Filament\Resources\OrganisationVisitResource\Pages;
 use App\Filament\Resources\OrganisationVisitResource\RelationManagers;
 use App\Models\OrganisationVisit;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class OrganisationVisitResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = OrganisationVisit::class;
 
     protected static ?string $navigationGroup = 'Network';
@@ -30,7 +33,8 @@ class OrganisationVisitResource extends Resource
                 Forms\Components\DatePicker::make('date')
                     ->default(now())
                     ->maxDate(now())
-                    ->required(),
+                    ->required()
+                    ->label(__('general.date')),
                 Forms\Components\Select::make('place_id')
                     ->relationship('place', 'name')
                     ->createOptionForm(fn(Form $form) => PlaceResource::form($form))
@@ -38,6 +42,7 @@ class OrganisationVisitResource extends Resource
                     ->searchable()
                     ->preload()
                     ->nullable()
+                    ->label(__('general.place_singular'))
                     ->exists('places','id'),
                 Forms\Components\Select::make('organisation_id')
                     ->relationship('organisation', 'name')
@@ -46,16 +51,19 @@ class OrganisationVisitResource extends Resource
                     ->searchable()
                     ->preload()
                     ->required()
+                    ->label(__('general.organisation_singular'))
                     ->exists('organisations','id'),
                 Forms\Components\Select::make('host_id')
                     ->relationship('host', 'full_name')
                     ->searchable()
                     ->preload()
                     ->required()
+                    ->label(__('general.host'))
                     ->exists('users','id'),
                 Forms\Components\Textarea::make('explanation')
                     ->nullable()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->label(__('general.explanation')),
             ]);
     }
 
@@ -70,25 +78,24 @@ class OrganisationVisitResource extends Resource
                 Tables\Columns\TextColumn::make('place.name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.place_singular')),
                 Tables\Columns\TextColumn::make('organisation.name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.organisation_singular')),
                 Tables\Columns\TextColumn::make('host.full_name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('visitors_count')
-                    ->counts('visitors')
-                    ->label('Visitors Count')
-                    ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.host')),
                 Tables\Columns\TextColumn::make('explanation')
                     ->words(5)
                     ->wrap()
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.explanation')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('date','desc')

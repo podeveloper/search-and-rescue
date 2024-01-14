@@ -6,6 +6,7 @@ use App\Filament\Network\Resources;
 use App\Filament\Resources\ContactCategoryResource\Pages;
 use App\Filament\Resources\ContactCategoryResource\RelationManagers;
 use App\Models\ContactCategory;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class ContactCategoryResource extends Resource
 {
+    use NavigationLocalizationTrait;
+    
     protected static ?string $model = ContactCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -47,7 +50,7 @@ class ContactCategoryResource extends Resource
                     ->counts('contacts')
                     ->sortable()
                     ->toggleable()
-                    ->label('Contact Count'),
+                    ->label(__('general.contact_count')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('name','asc')

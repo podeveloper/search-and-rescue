@@ -2,6 +2,7 @@
 
 return [
     'category' => 'Category',
+    'categories' => 'Categories',
     'brand' => 'Brand',
     'model' => 'Model',
     'title' => 'Title',
@@ -367,4 +368,13 @@ return [
     'from_where' => 'From Where',
     'to_where' => 'To Where',
     'operator' => 'Operator',
+    'contact_singular' => 'Contact',
+    'contact_plural' => 'Contacts',
+    'contact_count' => 'Contacts Count',
+    'contact_category_singular' => 'Contact Category',
+    'contact_category_plural' => 'Contact Categories',
+    'organisation_visit_singular' => 'Organisation Visit',
+    'organisation_visit_plural' => 'Organisation Visits',
+    'industry' => 'Industry',
+    'host' => 'Hosted By',
 ];

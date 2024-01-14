@@ -2,6 +2,7 @@
 
 return [
     'category' => 'Kategori',
+    'categories' => 'Kategoriler',
     'brand' => 'Marka',
     'model' => 'Model',
     'title' => 'Başlık',
@@ -364,4 +365,13 @@ return [
     'from_where' => 'Nereden',
     'to_where' => 'Nereye',
     'operator' => 'İşlemi Yapan',
+    'contact_singular' => 'Kartvizit',
+    'contact_plural' => 'Kartvizitler',
+    'contact_count' => 'Kartvizit Sayısı',
+    'contact_category_singular' => 'Kartvizit Kategorisi',
+    'contact_category_plural' => 'Kartvizit Kategorileri',
+    'organisation_visit_singular' => 'Kurum Ziyareti',
+    'organisation_visit_plural' => 'Kurum Ziyaretleri',
+    'industry' => 'Endüstri',
+    'host' => 'İlgilenen',
 ];
