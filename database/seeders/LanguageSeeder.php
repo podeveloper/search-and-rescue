@@ -14,7 +14,7 @@ class LanguageSeeder extends Seeder
     public function run()
     {
         // Load the JSON data
-        $json = file_get_contents(database_path('jsons/languages.json'));
+        $json = file_get_contents(database_path('jsons/languages_tr.json'));
         $data = json_decode($json, true);
 
         DB::transaction(function () use ($data) {
