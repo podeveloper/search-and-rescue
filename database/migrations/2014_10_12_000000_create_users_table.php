@@ -33,7 +33,6 @@ return new class extends Migration
             $table->foreignId('reference_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('referral_source_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('occupation_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('organisation_id')->nullable()->constrained()->nullOnDelete();
             $table->string('organisation_text')->nullable();
             $table->string('marital_status')->nullable();
             $table->string('national_id_number')->nullable();

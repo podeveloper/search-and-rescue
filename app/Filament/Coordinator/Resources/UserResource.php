@@ -223,18 +223,11 @@ class UserResource extends Resource
                             ->nullable()
                             ->exists('occupations', 'id')
                             ->label(__('general.occupation_singular')),
-                        Forms\Components\Select::make('organisation_id')
-                            ->relationship('organisation', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->nullable()
-                            ->exists('organisations', 'id')
-                            ->label(__('general.organisation_singular')),
                         Forms\Components\TextInput::make('organisation_text')
                             ->nullable()
                             ->string()
+                            ->label(__('general.organisation_singular'))
                             ->visible(auth()->user()?->is_admin || auth()->user()?->hasRole(['coordinator'])),
-
                     ]),
                 Forms\Components\Section::make('Panel Info')
                     ->schema([
@@ -714,11 +707,15 @@ class UserResource extends Resource
                     ->multiple()
                     ->preload()
                     ->label(__('general.occupation_singular')),
-                Tables\Filters\SelectFilter::make('organisation')
-                    ->relationship('organisation', 'name')
-                    ->multiple()
-                    ->preload()
-                    ->label(__('general.organisation_singular')),
+                Tables\Filters\Filter::make('organisation')
+                    ->form([
+                        Forms\Components\TextInput::make('organisation')
+                            ->label(__('general.organisation_singular')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $organisation = $data['organisation'];
+                        return $organisation ? $query->where('organisation_text', 'like', '%' . $organisation . '%') : $query;
+                    }),
                 Tables\Filters\SelectFilter::make('marital_status')
                     ->options([
                         'single' => __('general.single'),

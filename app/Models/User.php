@@ -50,7 +50,6 @@ class User extends Authenticatable implements FilamentUser
         'reference_id',
         'referral_source_id',
         'occupation_id',
-        'organisation_id',
         'organisation_text',
         'marital_status',
         'national_id_number',
@@ -247,11 +246,6 @@ class User extends Authenticatable implements FilamentUser
     public function occupation(): BelongsTo
     {
         return $this->belongsTo(Occupation::class);
-    }
-
-    public function organisation(): BelongsTo
-    {
-        return $this->belongsTo(Organisation::class);
     }
 
     public function languages(): MorphToMany
