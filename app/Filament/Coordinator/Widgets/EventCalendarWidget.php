@@ -60,6 +60,7 @@ class EventCalendarWidget extends FullCalendarWidget
     {
         return [
             CreateAction::make()
+                ->label(__('general.create_event'))
                 ->mountUsing(
                     function (Form $form, array $arguments) {
                         $date = array_key_exists('start', $arguments) && $arguments['start'] ? Carbon::parse($arguments['start'])->toDateString() : Carbon::now()->toDateString();

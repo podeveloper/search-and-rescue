@@ -5,6 +5,7 @@ namespace App\Filament\Coordinator\Pages;
 use App\Filament\Coordinator\Widgets\EventCalendarWidget;
 use App\Models\Event;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Cache;
 
 class EventCalendar extends Page
@@ -18,6 +19,11 @@ class EventCalendar extends Page
     protected static ?string $navigationGroup = 'Events';
 
     protected static ?int $navigationSort = 13;
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('general.event_calendar');
+    }
 
     protected function getHeaderWidgets(): array
     {

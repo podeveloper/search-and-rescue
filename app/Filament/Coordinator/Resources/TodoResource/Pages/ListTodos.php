@@ -28,54 +28,59 @@ class ListTodos extends ListRecords
                 ->badge(Todo::query()->count())
                 ->icon('heroicon-o-list-bullet'),
             'finished' => Tab::make('Finished')
+                ->label(__('general.finished'))
                 ->badge(Todo::query()->finished()->count())
                 ->badgeColor('success')
                 ->icon('heroicon-o-check')
-                ->modifyQueryUsing(fn (Builder $query) => $query->finished()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->finished()),
             'in_progress' => Tab::make('In Progress')
+                ->label(__('general.in_progress'))
                 ->badge(Todo::query()
                     ->unfinished()
                     ->inProgress()
                     ->count())
                 ->badgeColor('warning')
                 ->icon('heroicon-o-clock')
-                ->modifyQueryUsing(fn (Builder $query) => $query
+                ->modifyQueryUsing(fn(Builder $query) => $query
                     ->unfinished()
                     ->inProgress()
                 ),
-            'deadline_passed' => Tab::make('Deadline Has Passed')
+            'deadline_passed' => Tab::make('Deadline Passed')
+                ->label(__('general.deadline_passed'))
                 ->badge(Todo::query()
                     ->unfinished()
                     ->deadlinePassed()
                     ->count())
                 ->badgeColor('danger')
                 ->icon('heroicon-o-clock')
-                ->modifyQueryUsing(fn (Builder $query) => $query
+                ->modifyQueryUsing(fn(Builder $query) => $query
                     ->unfinished()
                     ->deadlinePassed()
                 ),
             'assigned_to_me' => Tab::make('Assigned To Me')
+                ->label(__('general.assigned_to_me'))
                 ->badge(Todo::query()
                     ->assignedToMe()
                     ->count())
                 ->badgeColor('primary')
                 ->icon('heroicon-o-clock')
-                ->modifyQueryUsing(fn (Builder $query) => $query
+                ->modifyQueryUsing(fn(Builder $query) => $query
                     ->assignedToMe()
                 ),
             'assigned_by_me' => Tab::make('Assigned By Me')
+                ->label(__('general.assigned_by_me'))
                 ->badge(Todo::query()
                     ->assignedByMe()
                     ->count())
                 ->badgeColor('primary')
                 ->icon('heroicon-o-clock')
-                ->modifyQueryUsing(fn (Builder $query) => $query
+                ->modifyQueryUsing(fn(Builder $query) => $query
                     ->assignedByMe()
                 ),
         ];
     }
 
-    public function getDefaultActiveTab(): string | int | null
+    public function getDefaultActiveTab(): string|int|null
     {
         return 'all';
     }

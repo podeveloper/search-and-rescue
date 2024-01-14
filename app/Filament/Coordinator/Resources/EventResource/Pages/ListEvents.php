@@ -29,26 +29,31 @@ class ListEvents extends ListRecords
                 ->icon('heroicon-o-list-bullet')
                 ->badgeColor('success'),
             'today' => Tab::make('Today')
+                ->label(__('general.today'))
                 ->badge(Event::query()->today()->count())
                 ->icon('heroicon-o-list-bullet')
                 ->badgeColor('success')
                 ->modifyQueryUsing(fn (Builder $query) => $query->today()),
             'tomorrow' => Tab::make('Tomorrow')
+                ->label(__('general.tomorrow'))
                 ->badge(Event::query()->tomorrow()->count())
                 ->icon('heroicon-o-list-bullet')
                 ->badgeColor('success')
                 ->modifyQueryUsing(fn (Builder $query) => $query->tomorrow()),
             'this_week' => Tab::make('This Week')
+                ->label(__('general.this_week'))
                 ->badge(Event::query()->thisWeek()->count())
                 ->icon('heroicon-o-list-bullet')
                 ->badgeColor('success')
                 ->modifyQueryUsing(fn (Builder $query) => $query->thisWeek()),
             'published' => Tab::make('Published')
+                ->label(__('general.published'))
                 ->badge(Event::query()->published()->count())
                 ->badgeColor('success')
                 ->icon('heroicon-o-check')
                 ->modifyQueryUsing(fn (Builder $query) => $query->published()),
             'not_published' => Tab::make('Not Published')
+                ->label(__('general.unpublished'))
                 ->badge(Event::query()->notPublished()->count())
                 ->badgeColor('success')
                 ->icon('heroicon-o-check')

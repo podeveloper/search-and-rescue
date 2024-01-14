@@ -59,6 +59,7 @@ class TodoCalendarWidget extends FullCalendarWidget
     {
         return [
             CreateAction::make()
+                ->label(__('general.create_todo'))
                 ->mountUsing(
                     function (Form $form, array $arguments) {
                         $form->fill([
