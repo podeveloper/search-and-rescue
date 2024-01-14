@@ -50,19 +50,23 @@ class Candidates extends ListRecords
     {
         $tabs = [
             'all' => Tab::make('All')
+                ->label(__('general.all'))
                 ->badge($this->getTableQuery()->count())
                 ->icon('heroicon-o-list-bullet'),
             'male' => Tab::make('Male')
+                ->label(__('general.male'))
                 ->badge($this->getTableQuery()->male()->count())
                 ->badgeColor('success')
                 ->icon('heroicon-o-check')
                 ->modifyQueryUsing(fn(Builder $query) => $query->male()),
             'female' => Tab::make('Female')
+                ->label(__('general.female'))
                 ->badge($this->getTableQuery()->female()->count())
                 ->badgeColor('success')
                 ->icon('heroicon-o-check')
                 ->modifyQueryUsing(fn(Builder $query) => $query->female()),
             'gender_null' => Tab::make('Gender Null')
+                ->label(__('general.gender_null'))
                 ->badge($this->getTableQuery()->genderNull()->count())
                 ->badgeColor('danger')
                 ->icon('heroicon-o-exclamation-circle')
