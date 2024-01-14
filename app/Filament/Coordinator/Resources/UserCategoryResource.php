@@ -35,12 +35,12 @@ class UserCategoryResource extends Resource
                     ->required()
                     ->string()
                     ->label(__('general.name')),
-                Forms\Components\Select::make('volunteers')
-                    ->relationship('volunteers', 'full_name')
+                Forms\Components\Select::make('users')
+                    ->relationship('users', 'full_name')
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('general.volunteers')),
+                    ->label(__('general.people')),
             ]);
     }
 

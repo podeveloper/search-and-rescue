@@ -56,6 +56,7 @@ class EventPlaceResource extends Resource
                     ->toggleable()
                     ->label(__('general.name')),
                 Tables\Columns\TextColumn::make('type')
+                    ->formatStateUsing(fn($state)=>__('general.'.$state))
                     ->searchable()
                     ->sortable()
                     ->toggleable()

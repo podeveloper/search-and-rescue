@@ -51,7 +51,7 @@ class EventResource extends Resource
                     ->nullable()
                     ->label(__('general.description')),
                 Forms\Components\TextInput::make('location')
-                    ->placeholder('Paste here maps url.')
+                    ->placeholder(__('general.paste_map_url_here'))
                     ->rule('url')
                     ->nullable()
                     ->string()

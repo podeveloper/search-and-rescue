@@ -34,12 +34,12 @@ class TagResource extends Resource
                     ->required()
                     ->string()
                     ->label(__('general.name')),
-                Forms\Components\Select::make('volunteers')
-                    ->relationship('volunteers', 'full_name')
+                Forms\Components\Select::make('users')
+                    ->relationship('users', 'full_name')
                     ->multiple()
                     ->searchable()
                     ->preload()
-                    ->label(__('general.volunteers')),
+                    ->label(__('general.people')),
             ]);
     }
 
@@ -56,7 +56,7 @@ class TagResource extends Resource
                     ->counts('users')
                     ->toggleable()
                     ->sortable()
-                    ->label(__('tag.count')),
+                    ->label(__('general.people_count')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('name','asc')

@@ -5,6 +5,7 @@ namespace App\Filament\Coordinator\Pages;
 use App\Filament\Coordinator\Widgets\TodoCalendarWidget;
 use App\Models\Todo;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Cache;
 
 class TodoCalendar extends Page
@@ -18,6 +19,11 @@ class TodoCalendar extends Page
     protected static ?string $navigationGroup = 'Todo';
 
     protected static ?int $navigationSort = 97;
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('general.todo_calendar');
+    }
 
     protected function getHeaderWidgets(): array
     {
