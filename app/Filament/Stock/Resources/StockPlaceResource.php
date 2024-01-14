@@ -6,6 +6,7 @@ use App\Filament\Resources\StockPlaceResource\Pages;
 use App\Filament\Resources\StockPlaceResource\RelationManagers;
 use App\Filament\Stock\Resources;
 use App\Models\StockPlace;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class StockPlaceResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = StockPlace::class;
     protected static ?string $navigationIcon = 'heroicon-o-home-modern';
 
@@ -32,12 +35,13 @@ class StockPlaceResource extends Resource
                     ->label(__('general.name')),
                 Forms\Components\Select::make('type')
                     ->options([
-                        'center' => 'Center',
-                        'storage' => 'Storage',
-                        'other' => 'Other',
+                        'center' => __('general.center'),
+                        'storage' => __('general.storage'),
+                        'other' => __('general.other'),
                     ])
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->label(__('general.type')),
             ]);
     }
 
@@ -53,7 +57,8 @@ class StockPlaceResource extends Resource
                 Tables\Columns\TextColumn::make('type')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.type')),
             ])
             ->paginated([10, 25, 50, 100])
             ->defaultSort('type','asc')

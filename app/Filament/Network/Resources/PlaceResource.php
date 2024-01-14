@@ -37,8 +37,8 @@ class PlaceResource extends Resource
                     ->label(__('general.name')),
                 Forms\Components\Select::make('type')
                     ->options([
-                        'center' => 'Center',
-                        'other' => 'Other',
+                        'center' => __('general.center'),
+                        'other' => __('general.other'),
                     ])
                     ->required()
                     ->label(__('general.type')),
@@ -55,6 +55,7 @@ class PlaceResource extends Resource
                     ->toggleable()
                     ->label(__('general.name')),
                 Tables\Columns\TextColumn::make('type')
+                    ->formatStateUsing(fn($state)=>__('general.'.$state))
                     ->searchable()
                     ->sortable()
                     ->toggleable()

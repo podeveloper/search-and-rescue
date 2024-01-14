@@ -7,6 +7,7 @@ use App\Filament\Reference\Resources\OccupationResource;
 use App\Filament\Resources\ContactResource\Pages;
 use App\Filament\Resources\ContactResource\RelationManagers;
 use App\Models\Contact;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -18,6 +19,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class ContactResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = Contact::class;
 
     protected static ?string $navigationGroup = 'Network';
@@ -37,7 +40,8 @@ class ContactResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('full_name')
                     ->required()
-                    ->string(),
+                    ->string()
+                    ->label(__('general.full_name')),
                 Forms\Components\TextInput::make('phone')
                     ->nullable()
                     ->tel()
@@ -48,7 +52,8 @@ class ContactResource extends Resource
                     ->email()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('address')
-                    ->nullable(),
+                    ->nullable()
+                    ->label(__('general.full_address')),
                 Forms\Components\Select::make('gender_id')
                     ->relationship('gender', 'name')
                     ->nullable()
@@ -70,9 +75,6 @@ class ContactResource extends Resource
                     ->nullable()
                     ->exists('organisations','id')
                     ->label(__('general.organisation_singular')),
-                Forms\Components\TextInput::make('organisation_text')
-                    ->nullable()
-                    ->string(),
                 Forms\Components\Select::make('occupation_id')
                     ->relationship('occupation', 'name')
                     ->createOptionForm(fn(Form $form) => OccupationResource::form($form))
@@ -82,24 +84,23 @@ class ContactResource extends Resource
                     ->nullable()
                     ->exists('occupations','id')
                     ->label(__('general.occupation_singular')),
-                Forms\Components\TextInput::make('occupation_text')
-                    ->nullable()
-                    ->string(),
                 Forms\Components\MarkdownEditor::make('explanation')
                     ->columnSpan('full')
-                    ->nullable(),
+                    ->nullable()
+                    ->label(__('general.explanation')),
                 Forms\Components\Select::make('tags')
                     ->relationship('tags', 'name')
                     ->multiple()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->label(__('general.tag_plural')),
                 Forms\Components\Select::make('contact_category_id')
                     ->relationship('contactCategory', 'name')
                     ->createOptionForm(fn(Form $form) => ContactCategoryResource::form($form))
                     ->editOptionForm(fn(Form $form) => ContactCategoryResource::form($form))
                     ->nullable()
                     ->exists('contact_categories','id')
-                    ->label(__('general.category')),
+                    ->label(__('general.contact_category_singular')),
      ]);
     }
 
@@ -109,56 +110,54 @@ class ContactResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('full_name')
                     ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.full_name')),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.phone')),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('address')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.full_address')),
                 Tables\Columns\TextColumn::make('gender.name')
                     ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.gender_singular')),
                 Tables\Columns\TextColumn::make('nationality.name')
                     ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.nationality_singular')),
                 Tables\Columns\TextColumn::make('organisation.name')
                     ->searchable()
-                    ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('organisation_text')
-                    ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.organisation_singular')),
                 Tables\Columns\TextColumn::make('occupation.name')
                     ->searchable()
-                    ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('occupation_text')
-                    ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.occupation_singular')),
                 Tables\Columns\TextColumn::make('explanation')
                     ->words(5)
                     ->wrap()
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.explanation')),
                 Tables\Columns\TextColumn::make('tags.name')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.tag_plural')),
                 Tables\Columns\TextColumn::make('contactCategory.name')
                     ->searchable()
-                    ->sortable()
                     ->badge()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.contact_category_plural')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->sortable()
                     ->date('Y-m-d')
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.created_date')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('full_name','asc')

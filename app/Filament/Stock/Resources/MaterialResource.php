@@ -6,6 +6,7 @@ use App\Filament\Resources\MaterialResource\Pages;
 use App\Filament\Resources\MaterialResource\RelationManagers;
 use App\Filament\Stock\Resources;
 use App\Models\Material;
+use App\Traits\NavigationLocalizationTrait;
 use Archilex\ToggleIconColumn\Columns\ToggleIconColumn;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -18,6 +19,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class MaterialResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = Material::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
@@ -44,6 +47,7 @@ class MaterialResource extends Resource
                     ->preload()
                     ->searchable()
                     ->nullable()
+                    ->label(__('general.material_category_singular'))
                     ->exists('material_categories','id'),
             ]);
     }
@@ -55,11 +59,13 @@ class MaterialResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.name')),
                 Tables\Columns\TextColumn::make('materialCategory.name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.material_category_singular')),
             ])
             ->paginated([10, 25, 50, 100])
             ->defaultSort('name','asc')

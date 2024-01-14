@@ -6,6 +6,7 @@ use App\Filament\Resources\MaterialStockResource\Pages;
 use App\Filament\Resources\MaterialStockResource\RelationManagers;
 use App\Filament\Stock\Resources;
 use App\Models\MaterialStock;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class MaterialStockResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = MaterialStock::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
@@ -34,6 +37,7 @@ class MaterialStockResource extends Resource
                     ->preload()
                     ->searchable()
                     ->required()
+                    ->label(__('general.name'))
                     ->exists('materials','id'),
                 Forms\Components\Select::make('stock_place_id')
                     ->relationship('stockPlace', 'name')
@@ -42,13 +46,16 @@ class MaterialStockResource extends Resource
                     ->preload()
                     ->searchable()
                     ->required()
+                    ->label(__('general.stock_place_singular'))
                     ->exists('stock_places','id'),
                 Forms\Components\TextInput::make('lower_limit')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->label(__('general.lower_limit')),
                 Forms\Components\TextInput::make('current_amount')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->label(__('general.current_amount')),
             ]);
     }
 
@@ -59,33 +66,29 @@ class MaterialStockResource extends Resource
                 Tables\Columns\TextColumn::make('material.name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('material.type')
-                    ->searchable()
-                    ->sortable()
                     ->toggleable()
-                    ->label('Type'),
-                Tables\Columns\TextColumn::make('material.language.name')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+                    ->label(__('general.name')),
                 Tables\Columns\TextColumn::make('material.materialCategory.name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.material_category_singular')),
                 Tables\Columns\TextColumn::make('stockPlace.name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.stock_place_singular')),
                 Tables\Columns\TextColumn::make('lower_limit')
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.lower_limit')),
                 Tables\Columns\TextColumn::make('current_amount')
                     ->sortable()
                     ->toggleable()
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                    ]),
+                    ])
+                    ->label(__('general.current_amount')),
             ])
             ->paginated([10, 25, 50, 100])
             ->defaultSort('stock_place_id','asc')
