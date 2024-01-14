@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Resources\OccupationResource\Pages;
 use App\Filament\Resources\OccupationResource\RelationManagers;
 use App\Models\Occupation;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class OccupationResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = Occupation::class;
 
     protected static ?string $navigationGroup = 'Reference Models';

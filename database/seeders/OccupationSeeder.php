@@ -13,7 +13,7 @@ class OccupationSeeder extends Seeder
      */
     public function run(): void
     {
-        $occupations = json_decode(file_get_contents(database_path('jsons/occupations.json')));
+        $occupations = json_decode(file_get_contents(database_path('jsons/occupations_tr.json')));
 
         $data = [];
         foreach ($occupations as $occupation) {

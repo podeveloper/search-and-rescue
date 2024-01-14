@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Resources\LanguageResource\Pages;
 use App\Filament\Resources\LanguageResource\RelationManagers;
 use App\Models\Language;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class LanguageResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = Language::class;
 
     protected static ?string $navigationGroup = 'Reference Models';
@@ -52,16 +55,18 @@ class LanguageResource extends Resource
                 Tables\Columns\TextColumn::make('code')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.code')),
                 Tables\Columns\TextColumn::make('native_name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('general.native')),
                 Tables\Columns\TextColumn::make('users_count')
                     ->counts('users')
                     ->sortable()
                     ->toggleable()
-                    ->label('User Speaks'),
+                    ->label(__('general.user_count')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
@@ -103,5 +108,10 @@ class LanguageResource extends Resource
     public static function canDeleteAny() : bool
     {
         return auth()->user()->is_admin;
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

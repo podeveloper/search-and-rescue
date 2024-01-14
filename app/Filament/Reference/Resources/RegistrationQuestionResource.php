@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Coordinator\Resources\RegistrationQuestionResource\Pages;
 use App\Filament\Coordinator\Resources\RegistrationQuestionResource\RelationManagers;
 use App\Models\RegistrationQuestion;
+use App\Traits\NavigationLocalizationTrait;
 use Archilex\ToggleIconColumn\Columns\ToggleIconColumn;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -16,6 +17,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class RegistrationQuestionResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = RegistrationQuestion::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-question-mark-circle';

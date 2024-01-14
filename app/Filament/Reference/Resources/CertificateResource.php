@@ -19,6 +19,8 @@ class CertificateResource extends Resource
 {
     use NavigationLocalizationTrait;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = Certificate::class;
 
     protected static ?string $navigationGroup = 'Reference Models';

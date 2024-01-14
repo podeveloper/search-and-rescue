@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Reference\Resources\EquipmentResource\Pages;
 use App\Filament\Reference\Resources\EquipmentResource\RelationManagers;
 use App\Models\Equipment;
+use App\Traits\NavigationLocalizationTrait;
 use Archilex\ToggleIconColumn\Columns\ToggleIconColumn;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Cache;
 
 class EquipmentResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = Equipment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench';

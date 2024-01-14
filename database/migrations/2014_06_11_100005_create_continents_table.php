@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('continents', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('name_en');
             $table->softDeletes();
         });
     }

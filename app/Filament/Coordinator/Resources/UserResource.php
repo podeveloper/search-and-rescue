@@ -82,7 +82,7 @@ class UserResource extends Resource
     public static function getGloballySearchableAttributes(): array
     {
         return [
-            'name', 'surname', 'full_name', 'email', 'phone','nationality.name','educationLevel.name','occupation.name','occupation_text','organisation.name','organisation_text','languages.name','tags.name','categories.name','certificates.title','addresses.country.name','addresses.city.name','addresses.district.name',
+            'name', 'surname', 'full_name', 'email', 'phone','nationality.name','educationLevel.name','occupation.name','occupation_text','organisation.name','organisation_text','languages.name','tags.name','categories.name','addresses.country.name','addresses.city.name','addresses.district.name',
             'driverLicences.class',
             'firstAidCertificate.training_institution',
             'healthProfile.medications','healthProfile.allergies','healthProfile.medical_conditions','healthProfile.vision_aids',
@@ -159,8 +159,8 @@ class UserResource extends Resource
                             ->label(__('general.date_of_birth')),
                         Forms\Components\Select::make('marital_status')
                             ->options([
-                                'single' => 'Single',
-                                'married' => 'Married',
+                                'single' => __('general.single'),
+                                'married' => __('general.married'),
                             ])
                             ->nullable()
                             ->label(__('general.marital_status')),
@@ -266,12 +266,6 @@ class UserResource extends Resource
                             ->searchable()
                             ->preload()
                             ->label(__('general.user_category_plural')),
-                        Forms\Components\Select::make('certificates')
-                            ->relationship('certificates', 'title')
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->label(__('general.certificate_plural')),
                         Forms\Components\TextInput::make('reference_name')
                             ->nullable()
                             ->string(),
@@ -731,8 +725,8 @@ class UserResource extends Resource
                     ->label(__('general.organisation_singular')),
                 Tables\Filters\SelectFilter::make('marital_status')
                     ->options([
-                        'single' => 'Single',
-                        'married' => 'Married',
+                        'single' => __('general.single'),
+                        'married' => __('general.married'),
                     ])
                     ->multiple()
                     ->label(__('general.marital_status')),
@@ -1252,7 +1246,6 @@ class UserResource extends Resource
         return [
             AddressesRelationManager::class,
             SocialAccountsRelationManager::class,
-            CertificatesRelationManager::class,
             RegistrationQuestionAnswersRelationManager::class,
             DriverLicencesRelationManager::class,
             FirstAidCertificateRelationManager::class,

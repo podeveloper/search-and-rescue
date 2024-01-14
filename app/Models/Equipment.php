@@ -26,17 +26,17 @@ class Equipment extends Model
     public static function colors(): array
     {
         $baseColors = [
-            'red'    => 'Red',
-            'green'  => 'Green',
-            'blue'   => 'Blue',
-            'yellow' => 'Yellow',
-            'orange' => 'Orange',
-            'purple' => 'Purple',
-            'pink'   => 'Pink',
-            'brown'  => 'Brown',
-            'gray'   => 'Gray',
-            'black'  => 'Black',
-            'white'  => 'White',
+            'red'    => __('general.red'),
+            'green'  => __('general.green'),
+            'blue'   => __('general.blue'),
+            'yellow' => __('general.yellow'),
+            'orange' => __('general.orange'),
+            'purple' => __('general.purple'),
+            'pink'   => __('general.pink'),
+            'brown'  => __('general.brown'),
+            'gray'   => __('general.gray'),
+            'black'  => __('general.black'),
+            'white'  => __('general.white'),
         ];
 
         $colorCombinations = [];

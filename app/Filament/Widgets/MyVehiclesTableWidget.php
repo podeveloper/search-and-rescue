@@ -269,6 +269,8 @@ class MyVehiclesTableWidget extends BaseWidget
                     ->color('danger')
                     ->requiresConfirmation()
                     ->action(fn(Vehicle $record) => $record->delete()),
-            ], position: ActionsPosition::BeforeColumns);
+            ], position: ActionsPosition::BeforeColumns)
+            ->emptyStateHeading(__('general.table_empty_state_heading'))
+            ->emptyStateDescription('');
     }
 }

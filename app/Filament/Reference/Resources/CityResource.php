@@ -5,6 +5,7 @@ namespace App\Filament\Reference\Resources;
 use App\Filament\Resources\CityResource\Pages;
 use App\Filament\Resources\CityResource\RelationManagers;
 use App\Models\City;
+use App\Traits\NavigationLocalizationTrait;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class CityResource extends Resource
 {
+    use NavigationLocalizationTrait;
+
     protected static ?string $model = City::class;
 
     protected static ?string $navigationGroup = 'Reference Models';
@@ -53,11 +56,13 @@ class CityResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->toggleable()
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('general.name')),
                 Tables\Columns\TextColumn::make('country.name')
                     ->searchable()
                     ->toggleable()
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('general.country_singular')),
             ])
             ->paginated([10, 25, 50])
             ->defaultSort('name','asc')
@@ -99,5 +104,10 @@ class CityResource extends Resource
     public static function canDeleteAny() : bool
     {
         return auth()->user()->is_admin;
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

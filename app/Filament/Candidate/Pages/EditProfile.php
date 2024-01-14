@@ -117,8 +117,8 @@ class EditProfile extends Page
                             ->label(__('general.date_of_birth')),
                         Select::make('marital_status')
                             ->options([
-                                'single' => 'Single',
-                                'married' => 'Married',
+                                'single' => __('general.single'),
+                                'married' => __('general.married'),
                             ])
                             ->required()
                             ->label(__('general.marital_status')),
@@ -207,8 +207,7 @@ class EditProfile extends Page
                             ->exists('occupations', 'id')
                             ->label(__('general.occupation_singular')),
                         TextInput::make('organisation_text')
-                            ->label(__('general.organisation_singular'))
-                            ->required(),
+                            ->label(__('general.organisation_singular')),
                         Select::make('referral_source_id')
                             ->relationship('referralSource', 'name')
                             ->nullable()

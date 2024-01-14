@@ -167,12 +167,13 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
-        App\Providers\Filament\CoordinatorPanelProvider::class,
-        App\Providers\Filament\NetworkPanelProvider::class,
-        App\Providers\Filament\StockPanelProvider::class,
-        App\Providers\Filament\ReferencePanelProvider::class,
         App\Providers\Filament\CandidatePanelProvider::class,
+        App\Providers\Filament\CoordinatorPanelProvider::class,
         App\Providers\Filament\OfficialPanelProvider::class,
+        App\Providers\Filament\NetworkPanelProvider::class,
+        App\Providers\Filament\ReferencePanelProvider::class,
+        App\Providers\Filament\StockPanelProvider::class,
+
         App\Providers\RouteServiceProvider::class,
     ])->toArray(),
 
