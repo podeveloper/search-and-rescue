@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('genders', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-                $table->softDeletes();
+            $table->string('name_en');
+            $table->softDeletes();
         });
     }
 
