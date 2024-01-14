@@ -158,6 +158,7 @@ class MyEquipmentsTableWidget extends BaseWidget
                     ->size(ActionSize::ExtraSmall)
                     ->modalHeading(__('general.equipment_remove'))
                     ->label(__('general.equipment_remove')),
-            ], position: ActionsPosition::BeforeColumns);
+            ], position: ActionsPosition::BeforeColumns)
+            ->emptyStateHeading(__('general.table_empty_state_heading'));
     }
 }

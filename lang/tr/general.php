@@ -331,5 +331,6 @@ return [
     "brown" => "Kahverengi",
     "gray" => "Gri",
     "black" => "Siyah",
-    "white" => "Beyaz"
+    "white" => "Beyaz",
+    'table_empty_state_heading' => 'Tablo Boş',
 ];

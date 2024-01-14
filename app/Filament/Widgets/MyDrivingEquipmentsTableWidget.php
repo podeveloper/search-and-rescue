@@ -147,6 +147,7 @@ class MyDrivingEquipmentsTableWidget extends BaseWidget
                     ->size(ActionSize::ExtraSmall)
                     ->modalHeading(__('general.driving_equipment_remove'))
                     ->label(__('general.driving_equipment_remove')),
-            ], position: ActionsPosition::BeforeColumns);
+            ], position: ActionsPosition::BeforeColumns)
+            ->emptyStateHeading(__('general.table_empty_state_heading'));
     }
 }

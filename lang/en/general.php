@@ -332,5 +332,6 @@ return [
     "brown" => "Brown",
     "gray" => "Gray",
     "black" => "Black",
-    "white" => "White"
+    "white" => "White",
+    'table_empty_state_heading' => 'The Table is Empty',
 ];
