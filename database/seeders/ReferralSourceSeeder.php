@@ -16,6 +16,7 @@ class ReferralSourceSeeder extends Seeder
         $sources = [
             ['name' => 'Arkadaş'],
             ['name' => 'Sosyal Medya'],
+            ['name' => 'Afet Alanı'],
             ['name' => 'Saha Eğitimi'],
             ['name' => 'Seminer'],
             ['name' => 'Etkinlik'],
