@@ -39,7 +39,7 @@ class CountrySeeder extends Seeder
                     $nationality = DB::table('nationalities')->updateOrInsert(
                         [
                             'id' => $countryData['id'],
-                            'name' => $countryData['nationality'],
+                            'name' => $countryData['nationality_tr'],
                         ]
                     );
                 }
@@ -47,7 +47,8 @@ class CountrySeeder extends Seeder
                 // Create the Country record
                 $country = DB::table('countries')->insertGetId([
                     'id' => $countryData['id'],
-                    'name' => $countryData['name'],
+                    'name' => $countryData["translations"]["tr"],
+                    'name_en' => $countryData['name'],
                     'iso3' => $countryData['iso3'],
                     'iso2' => $countryData['iso2'],
                     'numeric_code' => $countryData['numeric_code'],

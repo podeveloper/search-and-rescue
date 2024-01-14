@@ -14,13 +14,13 @@ class ContinentSeeder extends Seeder
     public function run(): void
     {
         $continents = [
-            ['name' => 'Asia'],
-            ['name' => 'Europe'],
-            ['name' => 'Africa'],
-            ['name' => 'North America'],
-            ['name' => 'South America'],
-            ['name' => 'Oceania'],
-            ['name' => 'Antarctica'],
+            ['name' => 'Asya'],
+            ['name' => 'Avrupa'],
+            ['name' => 'Afrika'],
+            ['name' => 'Kuzey Amerika'],
+            ['name' => 'Güney Amerika'],
+            ['name' => 'Okyanusya'],
+            ['name' => 'Antarktika'],
         ];
 
         DB::table('continents')->insert($continents);
