@@ -78,7 +78,7 @@ class MyEquipmentsTableWidget extends BaseWidget
                             ->weight(FontWeight::Bold)
                             ->default(fn()=> __('general.color') . ':'),
                         TextColumn::make('color')
-                            ->default(fn(Equipment $equipment) => strtoupper($equipment->users->first()->pivot->color))
+                            ->default(fn(Equipment $equipment) => __('general.'.$equipment->users->first()->pivot->color))
                             ->badge()
                             ->extraAttributes(['class' => 'mb-2'])
                             ->searchable()
