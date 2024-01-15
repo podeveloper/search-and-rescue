@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Candidate\Pages;
+namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;

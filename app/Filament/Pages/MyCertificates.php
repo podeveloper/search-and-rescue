@@ -1,24 +1,20 @@
 <?php
 
-namespace App\Filament\Candidate\Pages;
+namespace App\Filament\Pages;
 
 use App\Models\City;
 use App\Models\Country;
-use App\Models\ForestFireFightingCertificate;
 use App\Models\FirstAidCertificate;
+use App\Models\ForestFireFightingCertificate;
 use App\Models\RadioCertificate;
 use App\Models\User;
-use Carbon\Carbon;
-use Database\Seeders\DemoDataSeeder;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Exceptions\Halt;
@@ -26,9 +22,6 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use libphonenumber\PhoneNumberType;
-use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
-use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
 class MyCertificates extends Page
 {

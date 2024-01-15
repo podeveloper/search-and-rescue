@@ -2,10 +2,25 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\EditProfile;
+use App\Filament\Pages\MyCertificates;
+use App\Filament\Pages\MyDriverProfile;
+use App\Filament\Pages\MyEquipments;
+use App\Filament\Pages\MyEvents;
+use App\Filament\Pages\MyHealthInfo;
+use App\Filament\Pages\MyVehicles;
+use App\Filament\Widgets\IncomingEventsWidget;
+use App\Filament\Widgets\MyDrivingEquipmentsTableWidget;
+use App\Filament\Widgets\MyEquipmentsTableWidget;
+use App\Filament\Widgets\MyEventsTableWidget;
+use App\Filament\Widgets\MyVehiclesTableWidget;
 use BezhanSalleh\FilamentLanguageSwitch\FilamentLanguageSwitchPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -35,19 +50,30 @@ class OfficialPanelProvider extends PanelProvider
             ->brandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo.png' : 'img/panel-logo.png'))
             ->darkModeBrandLogo(asset(str_contains(request()->url(),'login') ? 'img/login-logo-dark-mode.png' : 'img/panel-logo-dark-mode.png'))
             ->brandLogoHeight(str_contains(request()->url(),'login') ? '150px' : '50px')
+            ->maxContentWidth('full')
             ->favicon(asset('img/favicon-32x32.png'))
             ->discoverResources(in: app_path('Filament/Official/Resources'), for: 'App\\Filament\\Official\\Resources')
-            ->discoverPages(in: app_path('Filament/Official/Pages'), for: 'App\\Filament\\Official\\Pages')
+            //->discoverPages(in: app_path('Filament/Official/Pages'), for: 'App\\Filament\\Official\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
+                EditProfile::class,
+                MyDriverProfile::class,
+                MyEquipments::class,
+                MyVehicles::class,
+                MyCertificates::class,
+                MyHealthInfo::class,
+                MyEvents::class,
             ])
             ->plugins([
                 FilamentLanguageSwitchPlugin::make(),
             ])
-            ->discoverWidgets(in: app_path('Filament/Official/Widgets'), for: 'App\\Filament\\Official\\Widgets')
+            //->discoverWidgets(in: app_path('Filament/Official/Widgets'), for: 'App\\Filament\\Official\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                MyVehiclesTableWidget::class,
+                MyEquipmentsTableWidget::class,
+                MyDrivingEquipmentsTableWidget::class,
+                MyEventsTableWidget::class,
+                IncomingEventsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -60,8 +86,29 @@ class OfficialPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label(function (){ return trans('general.edit_profile'); })
+                    ->url(fn()=> EditProfile::getUrl())
+                    ->icon('heroicon-o-user'),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Incoming Events')
+                    ->label(function (){ return trans('general.event_incoming_events'); })
+                    ->icon('fas-calendar-day')
+                    ->group('Events')
+                    ->sort(96)
+                    ->url(url('/incoming-events'),true),
+                NavigationItem::make('Help & Whatsapp Support')
+                    ->label(function (){ return trans('general.help_whatsapp_support'); })
+                    ->icon('heroicon-o-question-mark-circle')
+                    ->group('Help')
+                    ->sort(99)
+                    ->url('https://wa.me/'.config('foundation.support_phone'),true),
             ])
             ->spa();
     }

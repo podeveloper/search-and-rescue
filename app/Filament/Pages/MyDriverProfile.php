@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Filament\Candidate\Pages;
+namespace App\Filament\Pages;
 
-use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
