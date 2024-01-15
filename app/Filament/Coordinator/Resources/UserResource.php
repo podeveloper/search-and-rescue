@@ -82,7 +82,7 @@ class UserResource extends Resource
     public static function getGloballySearchableAttributes(): array
     {
         return [
-            'name', 'surname', 'full_name', 'email', 'phone','nationality.name','educationLevel.name','occupation.name','organisation.name','organisation_text','languages.name','tags.name','categories.name','addresses.country.name','addresses.city.name','addresses.district.name',
+            'name', 'surname', 'full_name', 'email', 'phone','nationality.name','educationLevel.name','occupation.name','organisation_text','languages.name','tags.name','categories.name','addresses.country.name','addresses.city.name','addresses.district.name',
             'driverLicences.class',
             'firstAidCertificate.training_institution',
             'healthProfile.medications','healthProfile.allergies','healthProfile.medical_conditions','healthProfile.vision_aids',
