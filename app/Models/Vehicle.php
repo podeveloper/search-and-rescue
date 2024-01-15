@@ -24,7 +24,7 @@ class Vehicle extends Model
 
     public function getCombinedAttribute()
     {
-        $color = ucwords($this->color);
+        $color = $this->color ? ucwords(__('general.'.$this->color)) : '';
         return "{$this->brand->name} {$this->model->name} ({$this->year} - $color) [{$this->licence_plate}]";
     }
 
