@@ -72,7 +72,8 @@ class MyHealthInfo extends Page
                         Select::make('blood_type')
                             ->required()
                             ->columnSpanFull()
-                            ->options(Healthprofile::bloodTypes()),
+                            ->options(Healthprofile::bloodTypes())
+                            ->label(__('general.blood_type')),
                         TextInput::make('emergency_contact_name')
                             ->required()
                             ->string()
@@ -85,7 +86,8 @@ class MyHealthInfo extends Page
                                 country: 'TR',
                                 type: PhoneNumberType::MOBILE | PhoneNumberType::FIXED_LINE, // default: null
                                 lenient: true
-                            ),
+                            )
+                            ->label(__('general.emergency_contact_phone')),
                     ]),
                 Section::make(__('general.medical_info'))
                     ->schema([
