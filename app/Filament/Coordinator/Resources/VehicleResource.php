@@ -95,6 +95,7 @@ class VehicleResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('color')
+                    ->formatStateUsing(fn($state)=>__('general.'.$state))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('licence_plate')
                     ->searchable(),
