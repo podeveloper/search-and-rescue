@@ -1237,17 +1237,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            AddressesRelationManager::class,
-            SocialAccountsRelationManager::class,
-            RegistrationQuestionAnswersRelationManager::class,
-            DriverLicencesRelationManager::class,
-            FirstAidCertificateRelationManager::class,
-            RadioCertificateRelationManager::class,
-            HealthProfileRelationManager::class,
-            VehiclesRelationManager::class,
-            ForestFireFightingCertificateRelationManager::class,
-            EquipmentsRelationManager::class,
-            DrivingEquipmentsRelationManager::class,
+            //
         ];
     }
 
