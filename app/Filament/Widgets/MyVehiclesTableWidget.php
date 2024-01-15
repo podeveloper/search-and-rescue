@@ -88,6 +88,7 @@ class MyVehiclesTableWidget extends BaseWidget
                             ->weight(FontWeight::Bold)
                             ->default(fn()=> __('general.color') . ':'),
                         TextColumn::make('color')
+                            ->formatStateUsing(fn($state)=>__('general.'.$state))
                             ->badge()
                             ->extraAttributes(['class' => 'mb-2'])
                             ->searchable()
