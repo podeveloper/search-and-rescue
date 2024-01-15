@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Candidate\Pages;
+namespace App\Filament\Pages;
 
 use App\Models\Address;
 use App\Models\City;
