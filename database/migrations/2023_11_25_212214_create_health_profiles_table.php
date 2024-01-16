@@ -20,6 +20,8 @@ return new class extends Migration
             $table->text('prosthetics')->nullable();
             $table->string('emergency_contact_name')->nullable();
             $table->string('emergency_contact_phone')->nullable();
+            $table->string('emergency_contact_name_2')->nullable();
+            $table->string('emergency_contact_phone_2')->nullable();
             $table->string('blood_type')->nullable();
             $table->longText('other_health_information')->nullable();
             $table->unsignedBigInteger('user_id');

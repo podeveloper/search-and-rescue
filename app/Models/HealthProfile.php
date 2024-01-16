@@ -18,6 +18,8 @@ class HealthProfile extends Model
         'prosthetics',
         'emergency_contact_name',
         'emergency_contact_phone',
+        'emergency_contact_name_2',
+        'emergency_contact_phone_2',
         'blood_type',
         'other_health_information',
         'user_id',
