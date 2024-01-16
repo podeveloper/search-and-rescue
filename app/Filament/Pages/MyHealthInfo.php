@@ -85,6 +85,20 @@ class MyHealthInfo extends Page
                                 lenient: true
                             )
                             ->label(__('general.emergency_contact_phone')),
+                        TextInput::make('emergency_contact_name_2')
+                            ->required()
+                            ->string()
+                            ->label(__('general.emergency_contact_name') . ' 2'),
+                        PhoneInput::make('emergency_contact_phone_2')
+                            ->defaultCountry('tr')
+                            ->onlyCountries(['tr'])
+                            ->displayNumberFormat(PhoneInputNumberType::NATIONAL)
+                            ->validateFor(
+                                country: 'TR',
+                                type: PhoneNumberType::MOBILE | PhoneNumberType::FIXED_LINE, // default: null
+                                lenient: true
+                            )
+                            ->label(__('general.emergency_contact_phone'). ' 2'),
                     ]),
                 Section::make(__('general.medical_info'))
                     ->schema([
