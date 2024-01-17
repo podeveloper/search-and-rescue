@@ -10,7 +10,7 @@ return [
 
         'register' => [
             'before' => 'veya',
-            'label' => 'bir hesap oluşturun',
+            'label' => 'gönüllü olun',
         ],
 
         'request_password_reset' => [
