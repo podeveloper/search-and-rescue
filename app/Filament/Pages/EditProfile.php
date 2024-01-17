@@ -335,11 +335,11 @@ class EditProfile extends Page
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $userData = collect($data)->except(['country_id','city_id','district_id'])->toArray();
+        $userData = collect($data)->except(['country_id','city_id','district_id','full_address'])->toArray();
         $record->update($userData);
         $record->load('addresses');
 
-        $addressData = collect($data)->only(['country_id','city_id','district_id'])->toArray();
+        $addressData = collect($data)->only(['country_id','city_id','district_id','full_address'])->toArray();
         $addressData['user_id'] = $record->id;
 
         $address = $record->addresses?->first();
