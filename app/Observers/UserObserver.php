@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Events\UserApplied;
 use App\Helpers\FilamentRequest;
 use App\Models\Address;
+use App\Models\DataProcessingConsent;
 use App\Models\RegistrationQuestionAnswer;
 use App\Models\SocialAccount;
 use App\Models\User;
@@ -48,7 +49,7 @@ class UserObserver
 
         if ($request)
         {
-            if ($request->speaking_languages)
+            if (property_exists($request,'speaking_languages'))
             {
                 foreach ($request->speaking_languages as $language)
                 {
@@ -59,7 +60,7 @@ class UserObserver
             $socialPlatforms = ['instagram','facebook','twitter'];
             foreach ($socialPlatforms as $platform)
             {
-                if ($request->$platform){
+                if (property_exists($request,$platform)){
                     SocialAccount::create([
                         'user_id' => $user->id,
                         'platform' => $platform,
@@ -68,7 +69,7 @@ class UserObserver
                 }
             }
 
-            if ($request->country_id) {
+            if (property_exists($request,'country_id')) {
                 Address::create([
                     'type' => 'home',
                     'country_id' => $request->country_id,
@@ -89,7 +90,13 @@ class UserObserver
             }
         }
 
-        UserApplied::dispatch($user);
+        DataProcessingConsent::firstOrCreate([
+            'kvkk_approval' => now(),
+            'explicit_consent_approval' => now(),
+            'user_id' => $user->id,
+        ]);
+
+        // UserApplied::dispatch($user);
     }
 
     /**
