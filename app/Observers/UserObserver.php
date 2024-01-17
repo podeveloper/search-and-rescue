@@ -61,11 +61,14 @@ class UserObserver
             foreach ($socialPlatforms as $platform)
             {
                 if (property_exists($request,$platform)){
-                    SocialAccount::create([
-                        'user_id' => $user->id,
-                        'platform' => $platform,
-                        'username' => $request->$platform,
-                    ]);
+                    if ($request->$platform)
+                    {
+                        SocialAccount::create([
+                            'user_id' => $user->id,
+                            'platform' => $platform,
+                            'username' => $request->$platform,
+                        ]);
+                    }
                 }
             }
 

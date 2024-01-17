@@ -17,6 +17,7 @@ use App\Http\Controllers\ShahadahCertificateController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('application-form/success',[\App\Http\Controllers\ApplicationFormController::class,'index'])->name('application-form.success');
 Route::get('apply', fn () => redirect()->route('filament.candidate.auth.register'))->name('apply');
 Route::get('login', fn () => redirect()->route('filament.candidate.auth.login'))->name('login');
 Route::get('/download-vcard/{id}', [\App\Http\Controllers\VcardController::class,'downloadVCard'])->name('download.vcard');

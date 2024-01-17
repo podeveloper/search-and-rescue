@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use BezhanSalleh\PanelSwitch\PanelSwitch;
+use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
 use Illuminate\Support\ServiceProvider;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -15,7 +16,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(
+            RegistrationResponse::class,
+            \App\Http\Responses\RegistrationResponse::class
+        );
     }
 
     /**

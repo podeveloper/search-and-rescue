@@ -13,6 +13,7 @@ use App\Models\Occupation;
 use App\Models\ReferralSource;
 use App\Models\RegistrationQuestion;
 use App\Models\User;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -21,6 +22,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Pages\Auth\Register as BaseRegister;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 
 class Apply extends BaseRegister
 {
@@ -155,6 +157,12 @@ class Apply extends BaseRegister
                 ->nullable()
                 ->string()
                 ->placeholder('username'),
+            Checkbox::make('kvkk_approval')
+                ->label(fn()=>new HtmlString('<a href="https://makudder.org/kvkk/" target="_blank"><span style="color:red">KVKK Metnini</span></a> Okudum Onaylıyorum.'))
+                ->required(),
+            Checkbox::make('explicit_consent_approval')
+                ->label(fn()=>new HtmlString('<a href="https://makudder.org/makud-acik-riza-beyani/" target="_blank"><span style="color:red">Açık Rıza Beyanını</span></a> Okudum Onaylıyorum.'))
+                ->required(),
         ];
 
         $questions = RegistrationQuestion::where('is_published',true)->orderBy('sort_order','asc')->get();
