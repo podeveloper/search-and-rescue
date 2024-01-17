@@ -359,4 +359,9 @@ class User extends Authenticatable implements FilamentUser
             'size',
         ]);
     }
+
+    public function dataProcessingConsent(): HasOne
+    {
+        return $this->hasOne(DataProcessingConsent::class);
+    }
 }

@@ -16,6 +16,8 @@ class RoleSeeder extends Seeder
         $base_roles = [
             'candidate',
             'official',
+            'unit manager',
+            'board member',
         ];
 
         $additional_roles = [
