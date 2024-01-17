@@ -49,6 +49,8 @@ class AppServiceProvider extends ServiceProvider
                     'report' => __('general.panel_report'),
                 ])
                 ->visible(auth()->user() && auth()->user()?->hasRole([
+                        'board member',
+                        'unit manager',
                         'coordinator',
                         'network operator',
                         'stock operator',
