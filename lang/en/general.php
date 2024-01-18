@@ -413,4 +413,6 @@ return [
     'duty' => 'Duty',
     'first_aid_info' => 'First Aid Certificate Information',
     'training_institution' => 'Training Institution',
+    'give_an_excuse' => 'Give An Excuse',
+    'excuse' => 'Excuse:',
 ];

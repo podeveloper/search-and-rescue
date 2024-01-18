@@ -133,7 +133,7 @@ class IncomingEventsWidget extends BaseWidget
                     Split::make([
                         TextColumn::make('label')
                             ->weight(FontWeight::Bold)
-                            ->default('Description:'),
+                            ->default(__('general.description')),
                         TextColumn::make('description')
                             ->formatStateUsing(fn(Event $record) => new HtmlString($record->description)),
                     ]),
@@ -154,21 +154,62 @@ class IncomingEventsWidget extends BaseWidget
                     ->button()
                     ->size(ActionSize::ExtraSmall)
                     ->action(function (array $data, Event $record) {
-                        $record->users()->attach(auth()->user()->id);
+
+                        $attributesArray = [
+                            'status' => true,
+                            'excuse' => null,
+                        ];
+
+                        if (!$record->users->contains(auth()?->user()?->id)) {
+                            auth()->user()->events()->attach($record->id, $attributesArray);
+                        } else {
+                            auth()->user()->events()->updateExistingPivot($record->id, $attributesArray);
+                        }
                     })
-                    ->visible(fn(Event $record) => auth()?->user() != null && !$record->users->contains(auth()?->user()?->id)),
-                Action::make('Leave')
-                    ->requiresConfirmation()
-                    ->label(__('general.leave'))
+                    ->visible(function (Event $record) {
+                        if (auth()?->user() == null) return false;
+
+                        if ($record->users->contains(auth()?->user()?->id)) {
+                            $pivotData = $record->users->first()->pivot;
+                            return ($pivotData->status == false);
+                        }
+
+                        return true;
+                    }),
+                Action::make('give_an_excuse')
+                    ->form([
+                        Textarea::make('excuse')
+                            ->label(__('general.excuse'))
+                    ])
+                    ->label(__('general.give_an_excuse'))
                     ->color('danger')
-                    ->icon('heroicon-m-arrow-right-on-rectangle')
                     ->iconPosition(IconPosition::After)
                     ->button()
                     ->size(ActionSize::ExtraSmall)
-                    ->action(function (array $data, Event $record) {
-                        $record->users()->detach(auth()->user()->id);
+                    ->visible(function(Event $record){
+                        if (auth()?->user() == null) return false;
+
+                        if($record->users->contains(auth()?->user()?->id))
+                        {
+                            $pivotData = $record->users->first()->pivot;
+                            return ($pivotData->status);
+                        }
+
+                        return true;
                     })
-                    ->visible(fn(Event $record) => auth()?->user() != null && $record->users->contains(auth()?->user()?->id)),
+                    ->action(function (array $data, Event $record) {
+
+                        $attributesArray = [
+                            'status' => false,
+                            'excuse' => $data["excuse"],
+                        ];
+
+                        if (!$record->users->contains(auth()?->user()?->id)) {
+                            auth()->user()->events()->attach($record->id, $attributesArray);
+                        } else {
+                            auth()->user()->events()->updateExistingPivot($record->id, $attributesArray);
+                        }
+                    }),
             ], position: ActionsPosition::BeforeColumns)
             ->paginated(false)
             ->defaultGroup('eventPlace.name')

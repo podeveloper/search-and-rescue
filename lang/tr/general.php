@@ -413,4 +413,6 @@ return [
     'duty' => 'Görevi',
     'first_aid_info' => 'İlk Yardım Sertifika Bilgisi',
     'training_institution' => 'Sertifikayı Veren Kurum',
+    'give_an_excuse' => 'Mazeret Bildir',
+    'excuse' => 'Katılamama Mazereti:',
 ];
