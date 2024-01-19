@@ -137,6 +137,32 @@ class IncomingEventsWidget extends BaseWidget
                         TextColumn::make('description')
                             ->formatStateUsing(fn(Event $record) => new HtmlString($record->description)),
                     ]),
+                    Split::make([
+                        TextColumn::make('participation_status_label')
+                            ->weight(FontWeight::Bold)
+                            ->extraAttributes(['class' => 'py-2'])
+                            ->default(__('general.participation_status')),
+                        TextColumn::make('participation_status')
+                            ->default(function(Event $record) {
+                                if ($record->users->contains(auth()?->user()?->id)) {
+                                    $pivotData = $record->users->first()->pivot;
+                                    return ($pivotData->status) ? __('general.participation_yes') : (__('general.participation_excused') . ' ' . '(') . __('general.'.$pivotData->excuse_category) . ')';
+                                }
+
+                                return __('general.participation_false');
+                            })
+                            ->badge()
+                            ->color(function(Event $record) {
+                                if ($record->users->contains(auth()?->user()?->id)) {
+                                    $pivotData = $record->users->first()->pivot;
+                                    return ($pivotData->status) ? 'success' : 'danger';
+                                }
+
+                                return 'danger';
+                            })
+                            ->weight(FontWeight::Bold)
+                            ->label(__('general.time')),
+                    ]),
                 ])
                     ->collapsible(),
             ])
@@ -157,7 +183,8 @@ class IncomingEventsWidget extends BaseWidget
 
                         $attributesArray = [
                             'status' => true,
-                            'excuse' => null,
+                            'excuse_text' => null,
+                            'excuse_category' => null,
                         ];
 
                         if (!$record->users->contains(auth()?->user()?->id)) {
@@ -178,8 +205,21 @@ class IncomingEventsWidget extends BaseWidget
                     }),
                 Action::make('give_an_excuse')
                     ->form([
-                        Textarea::make('excuse')
-                            ->label(__('general.excuse'))
+                        Select::make('excuse_category')
+                            ->options([
+                                'emergency' => 'Acil Durum',
+                                'illness' => 'Hastalık',
+                                'work_commitment' => 'İş Durumu',
+                                'education_exam' => 'Eğitim & Sınav',
+                                'family_personal_matters' => 'Aile ve Kişisel Meseleler',
+                                'transportation_issues' => 'Ulaşım Zorluğu',
+                                'travel' => 'Seyahat',
+                            ])
+                            ->required()
+                            ->label(__('general.excuse')),
+                        Textarea::make('excuse_text')
+                            ->required()
+                            ->label(__('general.explanation'))
                     ])
                     ->label(__('general.give_an_excuse'))
                     ->color('danger')
@@ -201,7 +241,8 @@ class IncomingEventsWidget extends BaseWidget
 
                         $attributesArray = [
                             'status' => false,
-                            'excuse' => $data["excuse"],
+                            'excuse_text' => $data["excuse_text"],
+                            'excuse_category' => $data['excuse_category'],
                         ];
 
                         if (!$record->users->contains(auth()?->user()?->id)) {
