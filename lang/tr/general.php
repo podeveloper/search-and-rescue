@@ -425,5 +425,5 @@ return [
     'travel' => 'Seyahat',
     'participation_yes' => 'Katılacaksınız',
     'participation_excused' => 'Mazeretli',
-    'participation_false' => 'Henüz katılım durumunuzu belirtmediniz',
+    'participation_false' => 'Belirtilmedi',
 ];
