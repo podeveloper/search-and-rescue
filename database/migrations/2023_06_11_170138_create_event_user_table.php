@@ -17,7 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('event_id');
             $table->unsignedBigInteger('user_id');
             $table->boolean('status')->default(true);
-            $table->longText('excuse')->nullable();
+            $table->longText('excuse_text')->nullable();
+            $table->longText('excuse_category')->nullable();
 
             $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
