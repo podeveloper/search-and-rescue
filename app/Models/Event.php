@@ -49,7 +49,7 @@ class Event extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'event_user');
+        return $this->belongsToMany(User::class, 'event_user')->withPivot(['status','excuse']);
     }
 
     public function responsibles(): BelongsToMany

@@ -277,7 +277,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function events(): BelongsToMany
     {
-        return $this->belongsToMany(Event::class);
+        return $this->belongsToMany(Event::class)->withPivot(['status','excuse']);
     }
 
     public function certificates(): BelongsToMany
